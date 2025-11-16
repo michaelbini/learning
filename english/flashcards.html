@@ -497,9 +497,6 @@
                 document.getElementById('question').textContent = card.english;
                 document.getElementById('answer').textContent = card.hebrew;
                 document.getElementById('progress').textContent = `קלף ${currentIndex + 1} מתוך ${cards.length}`;
-                
-                // Auto-play word pronunciation
-                setTimeout(() => speakWord(), 300);
             }, 0);
         }
 
