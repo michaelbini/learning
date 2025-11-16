@@ -1,131 +1,452 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>משחק קלפי אוצר מילים - אנגלית-עברית</title>
-    <link rel="stylesheet" href="vocabulary-games-styles.css">
+    <title>משחק קלפי אוצר מילים</title>
+    <script src="lesson-manager.js" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .speaker-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .speaker-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .speaker-btn:active {
+            transform: scale(0.95);
+        }
+
+        .speaker-btn.playing {
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .card {
+            width: 100%;
+            height: 350px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+            transform: rotateY(0deg);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            color: #333;
+            z-index: 2;
+            transform: rotateY(0deg);
+            position: relative;
+        }
+
+        .speaker-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(102, 126, 234, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .speaker-btn:hover {
+            background: rgba(102, 126, 234, 0.4);
+            transform: scale(1.1);
+        }
+
+        .speaker-btn:active {
+            transform: scale(0.95);
+        }
+
+        .speaker-btn.playing {
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            transform: rotateY(180deg);
+            z-index: 1;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-flip {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-shuffle {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .progress {
+            color: white;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hint {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1em;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .card-face {
+                font-size: 1.8em;
+                padding: 20px;
+            }
+            
+            button {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎴 קלפי אוצר מילים</h1>
+        <h1>🎴 משחק קלפי אוצר מילים - Flashcards</h1>
         
-        <!-- Score Display -->
-        <div class="score-container">
-            <div class="score-box">
-                <div class="score-label">✅ נכון</div>
-                <div class="score-value correct" id="correctScore">0</div>
+        <div id="lessonSelector" style="text-align: center; margin-bottom: 20px;"></div>
+        
+        <div class="progress">
+            <span id="progress">קלף 1 מתוך 63</span>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 20px;">
+            <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <span style="color: white; font-size: 1.2em;">✅ צדקתי: <strong id="correctScore">0</strong></span>
             </div>
-            <div class="score-box">
-                <div class="score-label">❌ לא נכון</div>
-                <div class="score-value wrong" id="wrongScore">0</div>
+            <div style="background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <span style="color: white; font-size: 1.2em;">❌ טעיתי: <strong id="wrongScore">0</strong></span>
             </div>
         </div>
 
-        <!-- Progress Indicator -->
-        <div class="progress-indicator" id="progress">קלף 1 מתוך 40</div>
-
-        <!-- Flashcard -->
         <div class="card-container">
+            <button class="speaker-btn" id="speakerBtn" onclick="speakWord()" title="הקרא את המילה">
+                🔊
+            </button>
             <div class="card" id="card" onclick="flipCard()">
-                <div class="card-face card-front">
-                    <div class="word-display word-english" id="question"></div>
-                    <button class="speaker-button" onclick="event.stopPropagation(); speak('en')">🔊</button>
+                <div class="card-face card-front" id="front">
+                    <button class="speaker-btn" onclick="event.stopPropagation(); speakWord();" title="הקרא את המילה">
+                        🔊
+                    </button>
+                    <span id="question"></span>
                 </div>
-                <div class="card-face card-back">
-                    <div class="word-display word-hebrew" id="answer"></div>
-                    <button class="speaker-button" onclick="event.stopPropagation(); speak('he')">🔊</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Control Buttons -->
-        <div class="btn-group">
-            <button class="btn btn-success" onclick="markCorrect()">✓ ידעתי</button>
-            <button class="btn btn-primary" onclick="flipCard()">🔄 הפוך קלף</button>
-            <button class="btn btn-danger" onclick="markWrong()">✗ לא ידעתי</button>
-        </div>
-
-        <div class="btn-group mt-20">
-            <button class="btn btn-info" onclick="nextCard()">➡️ הבא</button>
-            <button class="btn btn-warning" onclick="previousCard()">⬅️ הקודם</button>
-            <button class="btn btn-secondary" onclick="shuffleCards()">🔀 ערבב</button>
-        </div>
-
-        <!-- Results Section (Initially Hidden) -->
-        <div id="results" class="results-container hidden">
-            <h2 class="results-title">🎉 סיימת את כל הקלפים!</h2>
-            <div class="results-stats">
-                <div class="result-item">
-                    <div class="result-number" style="color: #48bb78;" id="finalCorrect">0</div>
-                    <div class="result-label">תשובות נכונות</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-number" style="color: #f56565;" id="finalWrong">0</div>
-                    <div class="result-label">תשובות שגויות</div>
+                <div class="card-face card-back" id="back">
+                    <span id="answer"></span>
                 </div>
             </div>
-            <div class="percentage" id="percentage">0%</div>
-            <div class="btn-group mt-20">
-                <button class="btn btn-primary" onclick="retryWrong()">🔁 תרגל מילים שטעית</button>
-                <button class="btn btn-secondary" onclick="restartGame()">🎮 התחל מחדש</button>
+        </div>
+
+        <div class="controls">
+            <button class="btn-flip" onclick="flipCard()">🔄 הפוך קלף</button>
+        </div>
+
+        <div class="controls" id="answerButtons" style="margin-top: 10px;">
+            <button style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 15px 30px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="markAnswer(true)">
+                ✅ צדקתי
+            </button>
+            <button style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; padding: 15px 30px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="markAnswer(false)">
+                ❌ טעיתי
+            </button>
+        </div>
+
+        <div class="controls" style="margin-top: 20px;">
+            <button class="btn-shuffle" onclick="shuffleCards()">🔀 ערבב</button>
+        </div>
+
+        <div class="hint">
+            💡 לחץ על הקלף כדי לראות את התרגום
+        </div>
+
+        <div id="finalScreen" style="display: none; background: white; border-radius: 20px; padding: 40px; margin-top: 20px; text-align: center;">
+            <h2 style="color: #667eea; font-size: 2.5em; margin-bottom: 20px;">🎉 סיימת!</h2>
+            <div style="font-size: 1.5em; margin: 20px 0; color: #333;">
+                <div style="margin: 10px 0;">✅ צדקתי: <strong style="color: #11998e; font-size: 1.5em;" id="finalCorrect">0</strong></div>
+                <div style="margin: 10px 0;">❌ טעיתי: <strong style="color: #eb3349; font-size: 1.5em;" id="finalWrong">0</strong></div>
+            </div>
+            <div style="margin-top: 30px;">
+                <button onclick="restartGame()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; font-size: 1.2em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px;">
+                    🔄 שחק שוב (כל המילים)
+                </button>
+                <button id="retryWrongBtn" onclick="retryWrongCards()" style="display: none; background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; padding: 15px 30px; font-size: 1.2em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px;">
+                    💪 תרגל רק מילים שטעיתי
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // Vocabulary data
-        const vocabulary = [
-            { english: "degree", hebrew: "תואר" },
-            { english: "excited", hebrew: "נרגש" },
-            { english: "nervous", hebrew: "עצבני" },
-            { english: "semester", hebrew: "סמסטר" },
-            { english: "though", hebrew: "אף על פי, למרות" },
-            { english: "although", hebrew: "למרות ש, אף על פי ש" },
-            { english: "abroad", hebrew: "בחו״ל" },
-            { english: "advice", hebrew: "עצה" },
-            { english: "miss", hebrew: "להתגעגע, לפספס" },
-            { english: "accept", hebrew: "לקבל" },
-            { english: "several", hebrew: "כמה, מספר" },
-            { english: "internship", hebrew: "התמחות" },
-            { english: "whether", hebrew: "האם, בין אם" },
-            { english: "either", hebrew: "גם, אחד משניים" },
-            { english: "neither", hebrew: "אף אחד משניים" },
-            { english: "responsibility", hebrew: "אחריות" },
-            { english: "anxious", hebrew: "חרד, דואג" },
-            { english: "definitely", hebrew: "בהחלט" },
-            { english: "diploma", hebrew: "תעודה" },
-            { english: "involve", hebrew: "לכלול, לערב" },
-            { english: "by", hebrew: "ליד, על ידי" },
-            { english: "local", hebrew: "מקומי" },
-            { english: "open (v)", hebrew: "לפתוח" },
-            { english: "opportunity", hebrew: "הזדמנות" },
-            { english: "perform", hebrew: "לבצע, להופיע" },
-            { english: "reason", hebrew: "סיבה" },
-            { english: "regret", hebrew: "להצטער, חרטה" },
-            { english: "sense", hebrew: "חוש, הגיון" },
-            { english: "suppose", hebrew: "להניח" },
-            { english: "towards", hebrew: "לכיוון, כלפי" },
-            { english: "afraid", hebrew: "מפחד" },
-            { english: "anymore", hebrew: "יותר, עוד" },
-            { english: "appreciate", hebrew: "להעריך" },
-            { english: "challenge", hebrew: "אתגר" },
-            { english: "contact", hebrew: "קשר, ליצור קשר" },
-            { english: "entire", hebrew: "כולו, שלם" },
-            { english: "figure out", hebrew: "להבין, לפתור" },
-            { english: "huge", hebrew: "ענק" },
-            { english: "industry", hebrew: "תעשייה" },
-            { english: "instead", hebrew: "במקום" }
+        // ============================================
+        // JSON מוטמע (ברירת מחדל)
+        // ============================================
+        const EMBEDDED_VOCABULARY = [
+            { "english": "area", "hebrew": "אזור", "lesson": 1 },
+            { "english": "accompany", "hebrew": "ללוות", "lesson": 1 },
+            { "english": "bridge", "hebrew": "גשר", "lesson": 1 },
+            { "english": "certain", "hebrew": "בטוח, ודאי" },
+            { "english": "danger", "hebrew": "סכנה" },
+            { "english": "dangerous", "hebrew": "מסוכן" },
+            { "english": "improve", "hebrew": "לשפר" },
+            { "english": "imagine", "hebrew": "לדמיין" },
+            { "english": "in fact", "hebrew": "למעשה, בעצם" },
+            { "english": "kilometer", "hebrew": "קילומטר" },
+            { "english": "manage (to)", "hebrew": "להצליח ל" },
+            { "english": "article", "hebrew": "מאמר" },
+            { "english": "be worth it", "hebrew": "להיות שווה" },
+            { "english": "blood", "hebrew": "דם" },
+            { "english": "common", "hebrew": "נפוץ, מצוי" },
+            { "english": "disease", "hebrew": "מחלה" },
+            { "english": "do (one's) best", "hebrew": "לעשות כמיטב יכולתו" },
+            { "english": "emergency", "hebrew": "חירום" },
+            { "english": "fine", "hebrew": "קנס" },
+            { "english": "health", "hebrew": "בריאות" },
+            { "english": "in case", "hebrew": "במקרה ש" },
+            { "english": "necessary", "hebrew": "הכרחי, נחוץ" },
+            { "english": "obvious", "hebrew": "ברור, מובן" },
+            { "english": "one day", "hebrew": "יום אחד" },
+            { "english": "organize", "hebrew": "לארגן" },
+            { "english": "patient (n)", "hebrew": "חולה" },
+            { "english": "peace", "hebrew": "שלום" },
+            { "english": "pleased", "hebrew": "מרוצה" },
+            { "english": "suggest", "hebrew": "להציע" },
+            { "english": "terrible", "hebrew": "נורא" },
+            { "english": "toothache", "hebrew": "כאב שיניים" },
+            { "english": "typical", "hebrew": "טיפוסי" },
+            { "english": "across", "hebrew": "מעבר ל" },
+            { "english": "activity", "hebrew": "פעילות" },
+            { "english": "be located in", "hebrew": "להיות ממוקם ב" },
+            { "english": "be made of", "hebrew": "להיות עשוי מ" },
+            { "english": "carry", "hebrew": "לשאת, לסחוב" },
+            { "english": "distance", "hebrew": "מרחק" },
+            { "english": "fear (n)", "hebrew": "פחד" },
+            { "english": "however", "hebrew": "אולם, עם זאת" },
+            { "english": "hurt (v)", "hebrew": "לפגוע, להכאיב" },
+            { "english": "in time", "hebrew": "בזמן" },
+            { "english": "make sure (that)", "hebrew": "לוודא ש" },
+            { "english": "on foot", "hebrew": "ברגל" },
+            { "english": "ordinary", "hebrew": "רגיל" },
+            { "english": "path", "hebrew": "שביל" },
+            { "english": "piece", "hebrew": "חתיכה" },
+            { "english": "protect", "hebrew": "להגן" },
+            { "english": "reach", "hebrew": "להגיע" },
+            { "english": "really", "hebrew": "באמת" },
+            { "english": "responsibility", "hebrew": "אחריות" },
+            { "english": "simple", "hebrew": "פשוט" },
+            { "english": "stay (v)", "hebrew": "להישאר" },
+            { "english": "suddenly", "hebrew": "פתאום" },
+            { "english": "themselves", "hebrew": "עצמם" },
+            { "english": "be willing to", "hebrew": "להיות מוכן ל" },
+            { "english": "closing time", "hebrew": "שעת סגירה" },
+            { "english": "definitely", "hebrew": "בהחלט" },
+            { "english": "diploma", "hebrew": "תעודה" },
+            { "english": "involve", "hebrew": "לכלול, לערב" },
+            { "english": "by", "hebrew": "ליד, על ידי" },
+            { "english": "local", "hebrew": "מקומי" },
+            { "english": "open (v)", "hebrew": "לפתוח" },
+            { "english": "opportunity", "hebrew": "הזדמנות" }
         ];
+
+        let vocabulary = EMBEDDED_VOCABULARY;
+
+        // ============================================
+        // טעינה אוטומטית עם תמיכה בשיעורים
+        // ============================================
+        async function loadVocabulary() {
+            // Check if LessonManager exists
+            if (typeof LessonManager !== 'undefined') {
+                await LessonManager.init(EMBEDDED_VOCABULARY);
+                LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                initializeGame();
+            } else {
+                // Fallback: load directly without lesson support
+                try {
+                    const response = await fetch('vocabulary.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Check if new structure (with lessons array)
+                        if (data.lessons && Array.isArray(data.lessons)) {
+                            vocabulary = data.lessons.flatMap(lesson => lesson.words);
+                            console.log('✅ Vocabulary loaded from JSON (all lessons)');
+                        } else {
+                            vocabulary = data;
+                            console.log('✅ Vocabulary loaded from JSON');
+                        }
+                    } else {
+                        console.log('ℹ️ Using embedded vocabulary');
+                    }
+                } catch (error) {
+                    console.log('ℹ️ Using embedded vocabulary');
+                }
+                initializeGame();
+            }
+        }
+        
+        function onLessonChange(lesson) {
+            // Reset game state
+            correctCount = 0;
+            wrongCount = 0;
+            wrongCards = [];
+            currentIndex = 0;
+            
+            document.getElementById('correctScore').textContent = '0';
+            document.getElementById('wrongScore').textContent = '0';
+            
+            // Reinitialize with new lesson
+            initializeGame();
+        }
+
+        function initializeGame() {
+            if (typeof LessonManager !== 'undefined') {
+                vocabulary = LessonManager.getCurrentVocabulary();
+            }
+            cards = shuffleArray([...vocabulary]);
+            currentIndex = 0;
+            displayCard();
+        }
 
         let currentIndex = 0;
         let cards = [];
         let correctCount = 0;
         let wrongCount = 0;
-        let wrongCards = [];
+        let wrongCards = []; // Track cards that were marked as wrong
         let isRetryMode = false;
 
-        // Shuffle function
         function shuffleArray(array) {
             const newArray = [...array];
             for (let i = newArray.length - 1; i > 0; i--) {
@@ -135,170 +456,209 @@
             return newArray;
         }
 
-        // Initialize with shuffled cards
-        function initializeGame() {
-            cards = shuffleArray([...vocabulary]);
-            currentIndex = 0;
-            correctCount = 0;
-            wrongCount = 0;
-            wrongCards = [];
-            isRetryMode = false;
-            updateScores();
-            displayCard();
-        }
-
-        // Display current card
-        function displayCard() {
-            if (currentIndex >= cards.length) {
-                showResults();
-                return;
-            }
-
+        function speakWord() {
             const card = cards[currentIndex];
-            document.getElementById('question').textContent = card.english;
-            document.getElementById('answer').textContent = card.hebrew;
-            document.getElementById('progress').textContent = `קלף ${currentIndex + 1} מתוך ${cards.length}`;
+            if (!card) return;
             
-            // Always reset to front (English side)
-            const cardElement = document.getElementById('card');
-            cardElement.classList.remove('flipped');
+            // Check if speech synthesis is supported
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(card.english);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8; // Slower for learning
+                
+                // Add animation
+                const btn = document.getElementById('speakerBtn');
+                if (btn) {
+                    btn.classList.add('playing');
+                    utterance.onend = () => {
+                        btn.classList.remove('playing');
+                    };
+                }
+                
+                window.speechSynthesis.speak(utterance);
+            }
         }
 
-        // Flip card
+        // Initialize with shuffled cards
+        cards = shuffleArray([...vocabulary]);
+
+        function displayCard() {
+            const card = cards[currentIndex];
+            const cardElement = document.getElementById('card');
+            
+            // Force remove flipped class immediately
+            cardElement.classList.remove('flipped');
+            
+            // Small delay to ensure DOM updates, then set content
+            setTimeout(() => {
+                document.getElementById('question').textContent = card.english;
+                document.getElementById('answer').textContent = card.hebrew;
+                document.getElementById('progress').textContent = `קלף ${currentIndex + 1} מתוך ${cards.length}`;
+            }, 0);
+        }
+
+        function speakWord() {
+            const card = cards[currentIndex];
+            if (!card) return;
+            
+            // Check if speech synthesis is supported
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(card.english);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                
+                const btn = document.querySelector('.speaker-btn');
+                if (btn) {
+                    btn.classList.add('playing');
+                    utterance.onend = () => {
+                        btn.classList.remove('playing');
+                    };
+                }
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         function flipCard() {
             document.getElementById('card').classList.toggle('flipped');
         }
 
-        // Mark as correct
-        function markCorrect() {
-            if (currentIndex < cards.length) {
+        function markAnswer(isCorrect) {
+            if (isCorrect) {
                 correctCount++;
-                updateScores();
-                nextCard();
-            }
-        }
-
-        // Mark as wrong
-        function markWrong() {
-            if (currentIndex < cards.length) {
-                wrongCount++;
-                wrongCards.push(cards[currentIndex]);
-                updateScores();
-                nextCard();
-            }
-        }
-
-        // Next card
-        function nextCard() {
-            if (currentIndex < cards.length - 1) {
-                currentIndex++;
-                displayCard();
+                document.getElementById('correctScore').textContent = correctCount;
             } else {
-                showResults();
+                wrongCount++;
+                document.getElementById('wrongScore').textContent = wrongCount;
+                
+                // Track wrong card if not already tracked
+                const currentCard = cards[currentIndex];
+                if (!wrongCards.find(c => c.english === currentCard.english)) {
+                    wrongCards.push(currentCard);
+                }
+            }
+            
+            // First, flip back to English if card is flipped
+            const cardElement = document.getElementById('card');
+            if (cardElement.classList.contains('flipped')) {
+                cardElement.classList.remove('flipped');
+                
+                // Wait for flip animation to complete, then move to next card
+                setTimeout(() => {
+                    nextCard();
+                }, 300); // Half of the 0.6s flip animation
+            } else {
+                // If already showing English, move to next card immediately
+                nextCard();
             }
         }
 
-        // Previous card
-        function previousCard() {
-            if (currentIndex > 0) {
-                currentIndex--;
+        function nextCard() {
+            currentIndex++;
+            if (currentIndex >= cards.length) {
+                showFinalScreen();
+            } else {
                 displayCard();
             }
         }
 
-        // Shuffle cards
         function shuffleCards() {
+            // Shuffle the current cards array
             cards = shuffleArray(cards);
             currentIndex = 0;
             displayCard();
         }
 
-        // Update scores
-        function updateScores() {
-            document.getElementById('correctScore').textContent = correctCount;
-            document.getElementById('wrongScore').textContent = wrongCount;
-        }
-
-        // Show results
-        function showResults() {
-            document.getElementById('results').classList.remove('hidden');
+        function showFinalScreen() {
+            // Hide game area
+            document.querySelector('.card-container').style.display = 'none';
+            document.querySelector('.progress').style.display = 'none';
+            document.getElementById('answerButtons').style.display = 'none';
+            document.querySelector('.controls').style.display = 'none';
+            document.querySelector('.hint').style.display = 'none';
+            
+            // Show final screen
+            document.getElementById('finalScreen').style.display = 'block';
             document.getElementById('finalCorrect').textContent = correctCount;
             document.getElementById('finalWrong').textContent = wrongCount;
             
-            const total = correctCount + wrongCount;
-            const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
-            document.getElementById('percentage').textContent = percentage + '%';
-        }
-
-        // Retry wrong cards
-        function retryWrong() {
+            // Show retry button if there are wrong cards
             if (wrongCards.length > 0) {
-                cards = shuffleArray([...wrongCards]);
-                currentIndex = 0;
-                correctCount = 0;
-                wrongCount = 0;
-                wrongCards = [];
-                isRetryMode = true;
-                updateScores();
-                document.getElementById('results').classList.add('hidden');
-                displayCard();
+                const retryBtn = document.getElementById('retryWrongBtn');
+                retryBtn.style.display = 'inline-block';
+                retryBtn.textContent = `💪 תרגל רק מילים שטעיתי (${wrongCards.length} מילים)`;
             }
         }
 
-        // Restart game
         function restartGame() {
-            document.getElementById('results').classList.add('hidden');
-            initializeGame();
+            // Reset everything and shuffle
+            cards = shuffleArray([...vocabulary]);
+            correctCount = 0;
+            wrongCount = 0;
+            wrongCards = [];
+            isRetryMode = false;
+            currentIndex = 0;
+            
+            document.getElementById('correctScore').textContent = '0';
+            document.getElementById('wrongScore').textContent = '0';
+            
+            // Show game area
+            document.querySelector('.card-container').style.display = 'block';
+            document.querySelector('.progress').style.display = 'block';
+            document.getElementById('answerButtons').style.display = 'flex';
+            document.querySelectorAll('.controls').forEach(el => el.style.display = 'flex');
+            document.querySelector('.hint').style.display = 'block';
+            document.getElementById('finalScreen').style.display = 'none';
+            
+            displayCard();
         }
 
-        // Text to speech
-        function speak(lang) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance();
-                const cardElement = document.getElementById('card');
-                
-                if (lang === 'en') {
-                    utterance.text = document.getElementById('question').textContent;
-                    utterance.lang = 'en-US';
-                } else {
-                    utterance.text = document.getElementById('answer').textContent;
-                    utterance.lang = 'he-IL';
-                }
-                
-                utterance.rate = 0.9;
-                speechSynthesis.speak(utterance);
-            }
+        function retryWrongCards() {
+            // Use only wrong cards and shuffle them
+            cards = shuffleArray([...wrongCards]);
+            wrongCards = []; // Reset wrong cards for the new retry game
+            correctCount = 0;
+            wrongCount = 0;
+            isRetryMode = true;
+            currentIndex = 0;
+            
+            document.getElementById('correctScore').textContent = '0';
+            document.getElementById('wrongScore').textContent = '0';
+            
+            // Show game area
+            document.querySelector('.card-container').style.display = 'block';
+            document.querySelector('.progress').style.display = 'block';
+            document.getElementById('answerButtons').style.display = 'flex';
+            document.querySelectorAll('.controls').forEach(el => el.style.display = 'flex');
+            document.querySelector('.hint').style.display = 'block';
+            document.getElementById('finalScreen').style.display = 'none';
+            
+            displayCard();
         }
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            switch(e.key) {
-                case ' ':
-                case 'Enter':
-                    e.preventDefault();
-                    flipCard();
-                    break;
-                case 'ArrowRight':
-                    e.preventDefault();
-                    nextCard();
-                    break;
-                case 'ArrowLeft':
-                    e.preventDefault();
-                    previousCard();
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    markCorrect();
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
-                    markWrong();
-                    break;
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                nextCard();
             }
         });
 
-        // Initialize game on load
-        initializeGame();
+        // Initialize game on load - automatically check for external JSON
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadVocabulary);
+        } else {
+            loadVocabulary();
+        }
     </script>
 </body>
 </html>
