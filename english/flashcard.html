@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>משחק קלפי אוצר מילים</title>
+    <script src="lesson-manager.js" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
     <style>
         * {
             margin: 0;
@@ -164,6 +165,8 @@
     <div class="container">
         <h1>🎴 משחק קלפי אוצר מילים - Flashcards</h1>
         
+        <div id="lessonSelector" style="text-align: center; margin-bottom: 20px;"></div>
+        
         <div class="progress">
             <span id="progress">קלף 1 מתוך 63</span>
         </div>
@@ -228,12 +231,12 @@
 
     <script>
         // ============================================
-        // אפשרות 1: JSON מוטמע (ברירת מחדל)
+        // JSON מוטמע (ברירת מחדל)
         // ============================================
         const EMBEDDED_VOCABULARY = [
-            { "english": "area", "hebrew": "אזור" },
-            { "english": "accompany", "hebrew": "ללוות" },
-            { "english": "bridge", "hebrew": "גשר" },
+            { "english": "area", "hebrew": "אזור", "lesson": 1 },
+            { "english": "accompany", "hebrew": "ללוות", "lesson": 1 },
+            { "english": "bridge", "hebrew": "גשר", "lesson": 1 },
             { "english": "certain", "hebrew": "בטוח, ודאי" },
             { "english": "danger", "hebrew": "סכנה" },
             { "english": "dangerous", "hebrew": "מסוכן" },
@@ -297,35 +300,64 @@
             { "english": "opportunity", "hebrew": "הזדמנות" }
         ];
 
-        // ============================================
-        // אפשרות 2: טעינה מקובץ חיצוני
-        // כדי להשתמש בזה, הסר את הסימן // מהשורות הבאות
-        // ושים // לפני השורה: let vocabulary = EMBEDDED_VOCABULARY;
-        // ============================================
-        
-        // const USE_EXTERNAL_FILE = true;
-        // const EXTERNAL_FILE_PATH = 'vocabulary.json';
-
         let vocabulary = EMBEDDED_VOCABULARY;
 
-        // Uncomment this function to load from external file:
-        /*
+        // ============================================
+        // טעינה אוטומטית עם תמיכה בשיעורים
+        // ============================================
         async function loadVocabulary() {
-            if (USE_EXTERNAL_FILE) {
+            // Check if LessonManager exists
+            if (typeof LessonManager !== 'undefined') {
+                await LessonManager.init(EMBEDDED_VOCABULARY);
+                LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                initializeGame();
+            } else {
+                // Fallback: load directly without lesson support
                 try {
-                    const response = await fetch(EXTERNAL_FILE_PATH);
-                    if (!response.ok) throw new Error('Failed to load vocabulary');
-                    vocabulary = await response.json();
-                    console.log('Vocabulary loaded from external file');
+                    const response = await fetch('vocabulary.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Check if new structure (with lessons array)
+                        if (data.lessons && Array.isArray(data.lessons)) {
+                            vocabulary = data.lessons.flatMap(lesson => lesson.words);
+                            console.log('✅ Vocabulary loaded from JSON (all lessons)');
+                        } else {
+                            vocabulary = data;
+                            console.log('✅ Vocabulary loaded from JSON');
+                        }
+                    } else {
+                        console.log('ℹ️ Using embedded vocabulary');
+                    }
                 } catch (error) {
-                    console.error('Error loading vocabulary:', error);
-                    console.log('Using embedded vocabulary as fallback');
-                    vocabulary = EMBEDDED_VOCABULARY;
+                    console.log('ℹ️ Using embedded vocabulary');
                 }
+                initializeGame();
             }
+        }
+        
+        function onLessonChange(lesson) {
+            // Reset game state
+            correctCount = 0;
+            wrongCount = 0;
+            wrongCards = [];
+            currentIndex = 0;
+            
+            document.getElementById('correctScore').textContent = '0';
+            document.getElementById('wrongScore').textContent = '0';
+            
+            // Reinitialize with new lesson
             initializeGame();
         }
-        */
+
+        function initializeGame() {
+            if (typeof LessonManager !== 'undefined') {
+                vocabulary = LessonManager.getCurrentVocabulary();
+            }
+            cards = shuffleArray([...vocabulary]);
+            currentIndex = 0;
+            displayCard();
+        }
 
         let currentIndex = 0;
         let cards = [];
@@ -488,20 +520,12 @@
             }
         });
 
-        // Initialize game on load - wait for DOM to be fully loaded
-        // If you want to use external file, call loadVocabulary() instead
+        // Initialize game on load - automatically check for external JSON
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', displayCard);
+            document.addEventListener('DOMContentLoaded', loadVocabulary);
         } else {
-            displayCard();
+            loadVocabulary();
         }
-        
-        // For external file loading, replace the above with:
-        // if (document.readyState === 'loading') {
-        //     document.addEventListener('DOMContentLoaded', loadVocabulary);
-        // } else {
-        //     loadVocabulary();
-        // }
     </script>
 </body>
 </html>
