@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>לוח טריוויה - Board Game</title>
+    <title>משחק טריוויה - אוצר מילים</title>
     <script src="lesson-manager.js" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
     <style>
         * {
@@ -16,133 +16,48 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
         h1 {
-            color: white;
+            color: #667eea;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .score-board {
             display: flex;
-            justify-content: center;
-            gap: 30px;
+            justify-content: space-around;
             margin-bottom: 30px;
             padding: 20px;
-            background: rgba(255,255,255,0.2);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 15px;
-            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1.2em;
         }
 
         .score-item {
             text-align: center;
-            color: white;
-            font-size: 1.3em;
         }
 
         .score-number {
             font-size: 2em;
             font-weight: bold;
             display: block;
-        }
-
-        /* Board Styles */
-        .board {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 15px;
-            padding: 20px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .tile {
-            aspect-ratio: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .tile:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .tile.correct {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        }
-
-        .tile.wrong {
-            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
-        }
-
-        .tile.answered {
-            cursor: default;
-        }
-
-        .tile.answered:hover {
-            transform: none;
-        }
-
-        .tile-icon {
-            position: absolute;
-            font-size: 3em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .tile-number {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 0.5em;
-            opacity: 0.8;
-        }
-
-        /* Quiz Modal Styles */
-        .quiz-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .quiz-modal.active {
-            display: flex;
-        }
-
-        .quiz-content {
-            background: white;
-            border-radius: 25px;
-            padding: 40px;
-            max-width: 700px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
 
         .question-box {
@@ -217,7 +132,7 @@
             color: #333;
         }
 
-        .option-btn:hover:not(:disabled) {
+        .option-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             border-color: #667eea;
@@ -265,58 +180,76 @@
 
         .feedback.correct {
             color: #11998e;
+            animation: fadeIn 0.5s;
         }
 
         .feedback.wrong {
             color: #eb3349;
+            animation: fadeIn 0.5s;
         }
 
-        /* Complete Screen */
-        .complete-screen {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .next-btn {
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .complete-screen.active {
-            display: flex;
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(0,0,0,0.3);
         }
 
-        .complete-content {
-            background: white;
-            border-radius: 25px;
-            padding: 60px;
-            text-align: center;
-            max-width: 600px;
+        .next-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .complete-content h2 {
-            color: #667eea;
+        .celebration {
             font-size: 3em;
-            margin-bottom: 30px;
+            animation: bounce 0.6s;
         }
 
-        .final-stats {
-            font-size: 1.5em;
-            margin: 30px 0;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
         }
 
-        .final-stats div {
-            margin: 15px 0;
+        .final-score {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .final-score h2 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .final-score .big-score {
+            font-size: 4em;
+            color: #11998e;
+            font-weight: bold;
+            margin: 20px 0;
         }
 
         .restart-btn {
             padding: 20px 40px;
             font-size: 1.3em;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
             border: none;
             border-radius: 15px;
@@ -325,19 +258,9 @@
             margin-top: 20px;
         }
 
-        .restart-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
         @media (max-width: 600px) {
-            .board {
-                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-                gap: 10px;
-            }
-
-            .tile {
-                font-size: 1.5em;
+            .container {
+                padding: 20px;
             }
 
             h1 {
@@ -351,65 +274,69 @@
             .options {
                 grid-template-columns: 1fr;
             }
+
+            .option-btn {
+                font-size: 1.1em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 לוח טריוויה - Board Game</h1>
+        <h1>🎯 משחק טריוויה</h1>
         
         <div id="lessonSelector" style="text-align: center; margin-bottom: 20px;"></div>
         
         <div class="score-board">
             <div class="score-item">
+                <span>שאלה</span>
+                <span class="score-number" id="questionNumber">1/63</span>
+            </div>
+            <div class="score-item">
                 <span>✅ נכונות</span>
-                <span class="score-number" id="correctCount">0</span>
+                <span class="score-number" id="correctScore">0</span>
             </div>
             <div class="score-item">
                 <span>❌ טעויות</span>
-                <span class="score-number" id="wrongCount">0</span>
-            </div>
-            <div class="score-item">
-                <span>📊 סה"כ</span>
-                <span class="score-number" id="totalAnswered">0/63</span>
+                <span class="score-number" id="wrongScore">0</span>
             </div>
         </div>
 
-        <div class="board" id="board"></div>
-    </div>
-
-    <!-- Quiz Modal -->
-    <div class="quiz-modal" id="quizModal">
-        <div class="quiz-content">
+        <div id="gameArea">
             <div class="question-box">
                 <button class="speaker-btn" id="speakerBtn" onclick="speakWord()" title="הקרא את המילה">
                     🔊
                 </button>
-                <div class="question" id="modalQuestion"></div>
+                <div class="question" id="question"></div>
             </div>
 
-            <div class="feedback" id="modalFeedback"></div>
+            <div class="feedback" id="feedback"></div>
 
-            <div class="options" id="modalOptions"></div>
+            <div class="options" id="options"></div>
+
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()" disabled>
+                ➡️ שאלה הבאה
+            </button>
         </div>
-    </div>
 
-    <!-- Complete Screen -->
-    <div class="complete-screen" id="completeScreen">
-        <div class="complete-content">
-            <h2>🎉 סיימת את כל הלוח!</h2>
-            <div class="final-stats">
-                <div style="color: #11998e;">✅ נכונות: <strong id="finalCorrect">0</strong></div>
-                <div style="color: #eb3349;">❌ טעויות: <strong id="finalWrong">0</strong></div>
-                <div style="color: #667eea;">📊 ציון: <strong id="finalScore">0%</strong></div>
+        <div id="finalScore" style="display: none;">
+            <div class="final-score">
+                <h2>🎉 סיימת את המשחק!</h2>
+                <div class="big-score" id="finalScoreText"></div>
+                <p style="font-size: 1.3em; color: #666;" id="finalScoreSubtext">נכונות מתוך 63 שאלות</p>
+                <div style="margin-top: 20px;">
+                    <button class="restart-btn" onclick="restartGame()">🔄 שחק שוב (כל המילים)</button>
+                    <button class="restart-btn" id="retryBtn" onclick="retryWrongWords()" style="display: none; background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); margin-top: 10px;">
+                        💪 תרגל רק מילים שטעיתי בהן
+                    </button>
+                </div>
             </div>
-            <button class="restart-btn" onclick="restartGame()">🔄 התחל מחדש</button>
         </div>
     </div>
 
     <script>
         // ============================================
-        // JSON מוטמע
+        // JSON מוטמע (ברירת מחדל)
         // ============================================
         const EMBEDDED_VOCABULARY = [
             { "english": "area", "hebrew": "אזור" },
@@ -488,7 +415,7 @@
             if (typeof LessonManager !== 'undefined') {
                 await LessonManager.init(EMBEDDED_VOCABULARY);
                 LessonManager.createLessonSelector('lessonSelector', onLessonChange);
-                initBoard();
+                initGame();
             } else {
                 // Fallback: load directly without lesson support
                 try {
@@ -510,23 +437,22 @@
                 } catch (error) {
                     console.log('ℹ️ Using embedded vocabulary');
                 }
-                initBoard();
+                initGame();
             }
         }
         
         function onLessonChange(lesson) {
             // Reset and restart game
-            correctCount = 0;
-            wrongCount = 0;
-            currentTileIndex = null;
-            initBoard();
+            initGame(false);
         }
 
-        // Game state
-        let tiles = [];
-        let correctCount = 0;
-        let wrongCount = 0;
-        let currentTileIndex = null;
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+        let questions = [];
+        let hasAnswered = false;
+        let wrongWords = []; // Track words that were answered incorrectly
+        let isRetryMode = false; // Flag to track if we're in retry mode
 
         const encouragingMessages = [
             "🎉 מצוין!",
@@ -551,16 +477,15 @@
         }
 
         function speakWord() {
-            if (currentTileIndex === null) return;
-            const tile = tiles[currentTileIndex];
-            if (!tile) return;
+            const question = questions[currentQuestionIndex];
+            if (!question) return;
             
             // Check if speech synthesis is supported
             if ('speechSynthesis' in window) {
                 // Cancel any ongoing speech
                 window.speechSynthesis.cancel();
                 
-                const utterance = new SpeechSynthesisUtterance(tile.question.question);
+                const utterance = new SpeechSynthesisUtterance(question.question);
                 utterance.lang = 'en-US';
                 utterance.rate = 0.8; // Slower for learning
                 
@@ -593,88 +518,94 @@
             };
         }
 
-        function initBoard() {
+        function initGame(retryMode = false) {
+            isRetryMode = retryMode;
+            
             if (typeof LessonManager !== 'undefined') {
                 vocabulary = LessonManager.getCurrentVocabulary();
             }
             
-            const board = document.getElementById('board');
-            board.innerHTML = '';
+            if (retryMode && wrongWords.length > 0) {
+                // Use only the words that were answered incorrectly
+                const wordsToRetry = [...wrongWords];
+                wrongWords = []; // Reset wrong words for the new retry game
+                questions = wordsToRetry.map(word => generateQuestion(word));
+                questions = shuffleArray(questions);
+            } else {
+                // Use all vocabulary words
+                questions = vocabulary.map(word => generateQuestion(word));
+                questions = shuffleArray(questions);
+                wrongWords = []; // Reset wrong words for new game
+            }
             
-            // Shuffle vocabulary and create tiles
-            const shuffledVocab = shuffleArray([...vocabulary]);
-            tiles = shuffledVocab.map((word, index) => ({
-                id: index,
-                word: word,
-                status: 'unanswered', // unanswered, correct, wrong
-                question: generateQuestion(word)
-            }));
-
-            // Create tile elements
-            tiles.forEach((tile, index) => {
-                const tileElement = document.createElement('div');
-                tileElement.className = 'tile';
-                tileElement.innerHTML = `
-                    <span class="tile-number">#${index + 1}</span>
-                    <span>${index + 1}</span>
-                `;
-                tileElement.onclick = () => openQuiz(index);
-                board.appendChild(tileElement);
-            });
-
-            updateScoreboard();
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            hasAnswered = false;
+            displayQuestion();
         }
 
-        function openQuiz(tileIndex) {
-            const tile = tiles[tileIndex];
-            
-            // Don't open if already answered
-            if (tile.status !== 'unanswered') return;
-            
-            currentTileIndex = tileIndex;
-            const modal = document.getElementById('quizModal');
-            const question = tile.question;
+        function displayQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showFinalScore();
+                return;
+            }
 
-            // Set question
-            document.getElementById('modalQuestion').textContent = question.question;
-            document.getElementById('modalFeedback').textContent = '';
-            document.getElementById('modalFeedback').className = 'feedback';
+            hasAnswered = false;
+            const question = questions[currentQuestionIndex];
+            
+            document.getElementById('question').textContent = question.question;
+            document.getElementById('questionNumber').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('nextBtn').disabled = true;
 
-            // Create options
-            const optionsContainer = document.getElementById('modalOptions');
+            const optionsContainer = document.getElementById('options');
             optionsContainer.innerHTML = '';
 
-            question.options.forEach(option => {
+            question.options.forEach((option, index) => {
                 const button = document.createElement('button');
                 button.className = 'option-btn';
                 button.textContent = option;
                 button.onclick = () => checkAnswer(option, button);
                 optionsContainer.appendChild(button);
             });
-
-            modal.classList.add('active');
         }
 
         function checkAnswer(selectedAnswer, button) {
-            const tile = tiles[currentTileIndex];
-            const question = tile.question;
-            const feedback = document.getElementById('modalFeedback');
+            if (hasAnswered) return;
+            
+            hasAnswered = true;
+            const question = questions[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
             const allButtons = document.querySelectorAll('.option-btn');
 
             allButtons.forEach(btn => btn.disabled = true);
 
             if (selectedAnswer === question.correctAnswer) {
                 button.classList.add('correct');
-                correctCount++;
-                tile.status = 'correct';
+                correctAnswers++;
+                document.getElementById('correctScore').textContent = correctAnswers;
                 
                 const randomMessage = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
-                feedback.textContent = randomMessage;
+                feedback.innerHTML = `<span class="celebration">${randomMessage}</span>`;
                 feedback.className = 'feedback correct';
+                
+                // Auto-advance to next question after 1 second when correct
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    displayQuestion();
+                }, 1000);
             } else {
                 button.classList.add('wrong');
-                wrongCount++;
-                tile.status = 'wrong';
+                wrongAnswers++;
+                document.getElementById('wrongScore').textContent = wrongAnswers;
+                
+                // Track the wrong word for retry mode (find original vocabulary entry)
+                const wrongWord = vocabulary.find(w => w.english === question.question);
+                if (wrongWord && !wrongWords.find(w => w.english === wrongWord.english)) {
+                    wrongWords.push(wrongWord);
+                }
                 
                 feedback.innerHTML = `❌ לא נכון<br><small style="font-size: 0.7em;">התשובה הנכונה: ${question.correctAnswer}</small>`;
                 feedback.className = 'feedback wrong';
@@ -685,66 +616,61 @@
                         btn.classList.add('correct');
                     }
                 });
+                
+                // Enable next button for wrong answers
+                document.getElementById('nextBtn').disabled = false;
             }
-
-            // Close modal and update board after delay
-            setTimeout(() => {
-                closeQuiz();
-                updateBoard();
-                updateScoreboard();
-                
-                // Check if all tiles answered
-                if (tiles.every(t => t.status !== 'unanswered')) {
-                    setTimeout(() => showCompleteScreen(), 500);
-                }
-            }, 1500);
         }
 
-        function closeQuiz() {
-            document.getElementById('quizModal').classList.remove('active');
+        function nextQuestion() {
+            currentQuestionIndex++;
+            displayQuestion();
         }
 
-        function updateBoard() {
-            const boardTiles = document.querySelectorAll('.tile');
-            tiles.forEach((tile, index) => {
-                const tileElement = boardTiles[index];
-                
-                if (tile.status === 'correct') {
-                    tileElement.classList.add('correct', 'answered');
-                    tileElement.innerHTML = `
-                        <span class="tile-number">#${index + 1}</span>
-                        <span class="tile-icon">✅</span>
-                    `;
-                } else if (tile.status === 'wrong') {
-                    tileElement.classList.add('wrong', 'answered');
-                    tileElement.innerHTML = `
-                        <span class="tile-number">#${index + 1}</span>
-                        <span class="tile-icon">❌</span>
-                    `;
-                }
-            });
-        }
-
-        function updateScoreboard() {
-            document.getElementById('correctCount').textContent = correctCount;
-            document.getElementById('wrongCount').textContent = wrongCount;
-            document.getElementById('totalAnswered').textContent = `${correctCount + wrongCount}/${tiles.length}`;
-        }
-
-        function showCompleteScreen() {
-            document.getElementById('finalCorrect').textContent = correctCount;
-            document.getElementById('finalWrong').textContent = wrongCount;
-            const percentage = Math.round((correctCount / tiles.length) * 100);
-            document.getElementById('finalScore').textContent = `${percentage}%`;
-            document.getElementById('completeScreen').classList.add('active');
+        function showFinalScore() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('finalScore').style.display = 'block';
+            
+            const percentage = Math.round((correctAnswers / questions.length) * 100);
+            document.getElementById('finalScoreText').textContent = `${correctAnswers}`;
+            
+            // Update subtext based on mode
+            if (isRetryMode) {
+                document.getElementById('finalScoreSubtext').textContent = `נכונות מתוך ${questions.length} מילים שתרגלת`;
+            } else {
+                document.getElementById('finalScoreSubtext').textContent = `נכונות מתוך ${questions.length} שאלות`;
+            }
+            
+            if (percentage >= 90) {
+                document.getElementById('finalScoreText').innerHTML += '<br>🏆 מדהים!';
+            } else if (percentage >= 70) {
+                document.getElementById('finalScoreText').innerHTML += '<br>⭐ מצוין!';
+            } else if (percentage >= 50) {
+                document.getElementById('finalScoreText').innerHTML += '<br>👍 יפה!';
+            } else {
+                document.getElementById('finalScoreText').innerHTML += '<br>💪 כדאי לתרגל עוד';
+            }
+            
+            // Show retry button only if there are wrong answers and not already in retry mode
+            const retryBtn = document.getElementById('retryBtn');
+            if (wrongWords.length > 0 && !isRetryMode) {
+                retryBtn.style.display = 'block';
+                retryBtn.textContent = `💪 תרגל רק מילים שטעיתי בהן (${wrongWords.length} מילים)`;
+            } else {
+                retryBtn.style.display = 'none';
+            }
         }
 
         function restartGame() {
-            correctCount = 0;
-            wrongCount = 0;
-            currentTileIndex = null;
-            document.getElementById('completeScreen').classList.remove('active');
-            initBoard();
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('finalScore').style.display = 'none';
+            initGame(false); // Start fresh game with all words
+        }
+
+        function retryWrongWords() {
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('finalScore').style.display = 'none';
+            initGame(true); // Start retry mode with only wrong words
         }
 
         // Initialize game on load - automatically check for external JSON
