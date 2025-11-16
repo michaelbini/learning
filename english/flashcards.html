@@ -9,10 +9,12 @@
 </head>
 <body class="flashcards-body">
     <div class="container">
-        <h1>🎴 משחק קלפי אוצר מילים - Flashcards</h1>
-        
-        <div id="lessonSelector" style="text-align: center; margin-bottom: 20px;"></div>
-        
+        <h1>🎴 Flashcards</h1>
+
+        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+            <div id="lessonSelector"></div>
+        </div>
+
         <div class="progress">
             <span id="progress">קלף 1 מתוך 63</span>
         </div>
@@ -36,6 +38,9 @@
                         🔊
                     </button>
                     <span id="question"></span>
+                    <div style="position: absolute; bottom: 15px; left: 0; right: 0; text-align: center; font-size: 0.5em; color: #999; font-style: italic;">
+                        💡 לחץ על הקלף
+                    </div>
                 </div>
                 <div class="card-face card-back" id="back">
                     <span id="answer"></span>
@@ -43,25 +48,13 @@
             </div>
         </div>
 
-        <div class="controls">
-            <button class="btn-flip" onclick="flipCard()">🔄 הפוך קלף</button>
-        </div>
-
-        <div class="controls" id="answerButtons" style="margin-top: 10px;">
+        <div class="controls" id="answerButtons">
             <button style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 15px 30px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="markAnswer(true)">
                 ✅ צדקתי
             </button>
             <button style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; padding: 15px 30px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="markAnswer(false)">
                 ❌ טעיתי
             </button>
-        </div>
-
-        <div class="controls" style="margin-top: 20px;">
-            <button class="btn-shuffle" onclick="shuffleCards()">🔀 ערבב</button>
-        </div>
-
-        <div class="hint">
-            💡 לחץ על הקלף כדי לראות את התרגום
         </div>
 
         <div id="finalScreen" style="display: none; background: white; border-radius: 20px; padding: 40px; margin-top: 20px; text-align: center;">
@@ -108,7 +101,10 @@
                     // Check if LessonManager exists
                     if (typeof LessonManager !== 'undefined') {
                         await LessonManager.init(data.lessons && Array.isArray(data.lessons) ? data.lessons.flatMap(lesson => lesson.words) : data);
-                        LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                        LessonManager.createLessonSelector('lessonSelector', onLessonChange, {
+                            includeShuffleButton: true,
+                            onShuffle: shuffleCards
+                        });
                         console.log('✅ Vocabulary loaded from JSON with LessonManager');
                     } else {
                         // No LessonManager, load vocabulary directly
@@ -129,7 +125,10 @@
             // Fallback to embedded vocabulary
             if (typeof LessonManager !== 'undefined') {
                 await LessonManager.init(EMBEDDED_VOCABULARY);
-                LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                LessonManager.createLessonSelector('lessonSelector', onLessonChange, {
+                    includeShuffleButton: true,
+                    onShuffle: shuffleCards
+                });
             }
             console.log('ℹ️ Using embedded vocabulary');
             initializeGame();
