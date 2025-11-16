@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק הקלדה - Typing Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="lesson-manager.js" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
+</head>
+<body class="typing-body">
+    <div class="container">
+        <h1>⌨️ משחק הקלדה - Typing Game</h1>
+        
+        <div id="lessonSelector"></div>
+
+        <div class="score-section">
+            <div class="score-box">
+                <span>✅ נכונות</span>
+                <span class="score-number" id="correctScore">0</span>
+            </div>
+            <div class="score-box">
+                <span>❌ טעויות</span>
+                <span class="score-number" id="wrongScore">0</span>
+            </div>
+        </div>
+
+        <div class="game-card" id="gameArea">
+            <div class="word-display">
+                <button class="speaker-btn" id="speakerBtn" onclick="speakWord()" title="הקרא את המילה">
+                    🔊
+                </button>
+                <div class="english-word" id="englishWord">Loading...</div>
+                <div class="progress-text" id="progressText">מילה 1 מתוך 63</div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-label">תרגם לעברית:</div>
+                <input 
+                    type="text" 
+                    class="answer-input" 
+                    id="answerInput" 
+                    placeholder="הקלד את התרגום כאן..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="controls">
+                <button class="btn btn-submit" id="submitBtn" onclick="checkAnswer()">
+                    ✓ בדוק תשובה
+                </button>
+                <button class="btn btn-skip" id="skipBtn" onclick="skipWord()">
+                    ⏭️ דלג
+                </button>
+                <button class="btn btn-next" id="nextBtn" onclick="nextWord()" style="display: none;">
+                    ➡️ הבא
+                </button>
+            </div>
+        </div>
+
+        <div class="complete-screen" id="completeScreen">
+            <h2>🎉 סיימת!</h2>
+            <div class="final-stats">
+                <div>✅ תשובות נכונות: <span class="stat-highlight" id="finalCorrect">0</span></div>
+                <div>❌ טעויות: <span class="stat-highlight" id="finalWrong">0</span></div>
+                <div>⏭️ דילוגים: <span class="stat-highlight" id="finalSkipped">0</span></div>
+                <div>📊 ציון: <span class="stat-highlight" id="finalPercentage">0%</span></div>
+            </div>
+            <div>
+                <button class="restart-btn" onclick="restartGame()">🔄 שחק שוב (כל המילים)</button>
+                <button class="retry-btn" id="retryWrongBtn" onclick="retryWrong()" style="display: none;">
+                    💪 תרגל מילים שטעית
+                </button>
+            </div>
+        </div>
+
+        <div class="hint">
+            💡 לחץ על 🔊 כדי לשמוע את המילה | הקלד את התרגום בעברית ולחץ Enter
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // JSON מוטמע (ברירת מחדל)
+        // ============================================
+        const EMBEDDED_VOCABULARY = [
+            { "english": "perfect", "hebrew": "מושלם" },
+            { "english": "inside", "hebrew": "בפנים" },
+            { "english": "area", "hebrew": "אזור" },
+            { "english": "bridge", "hebrew": "גשר" },
+            { "english": "danger", "hebrew": "סכנה" }
+        ];
+
+        let vocabulary = EMBEDDED_VOCABULARY;
+        let words = [];
+        let currentIndex = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let skippedCount = 0;
+        let wrongWords = [];
+        let hasAnswered = false;
+        let isRetryMode = false;
+
+        const encouragingMessages = [
+            "🎉 מצוין!",
+            "💪 כל הכבוד!",
+            "⭐ נהדר!",
+            "🌟 מעולה!",
+            "👏 יפה מאוד!",
+            "🔥 אש!",
+            "🚀 פצצה!",
+            "💎 מושלם!",
+            "🏆 אלוף!",
+            "✨ יפה!"
+        ];
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function normalizeHebrew(text) {
+            // Remove extra spaces, trim, and normalize
+            return text.trim().replace(/\s+/g, ' ').toLowerCase();
+        }
+
+        function speakWord() {
+            const word = words[currentIndex];
+            if (!word) return;
+            
+            // Check if speech synthesis is supported
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(word.english);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8; // Slower for learning
+                
+                // Add animation
+                const btn = document.getElementById('speakerBtn');
+                btn.classList.add('playing');
+                
+                utterance.onend = () => {
+                    btn.classList.remove('playing');
+                };
+                
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('הדפדפן שלך לא תומך בהקראת טקסט');
+            }
+        }
+
+        function isAnswerCorrect(userAnswer, correctAnswer) {
+            const normalized1 = normalizeHebrew(userAnswer);
+            const normalized2 = normalizeHebrew(correctAnswer);
+            
+            // Check if answers are the same
+            if (normalized1 === normalized2) return true;
+            
+            // Check if correctAnswer has multiple options (separated by comma)
+            const options = correctAnswer.split(',').map(opt => normalizeHebrew(opt));
+            return options.some(opt => opt === normalized1);
+        }
+
+        async function loadVocabulary() {
+            // Try to load from vocabulary.json first
+            try {
+                const response = await fetch('vocabulary.json');
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Check if LessonManager exists
+                    if (typeof LessonManager !== 'undefined') {
+                        await LessonManager.init(data.lessons && Array.isArray(data.lessons) ? data.lessons.flatMap(lesson => lesson.words) : data);
+                        LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                        console.log('✅ Vocabulary loaded from JSON with LessonManager');
+                    } else {
+                        // No LessonManager, load vocabulary directly
+                        if (data.lessons && Array.isArray(data.lessons)) {
+                            vocabulary = data.lessons.flatMap(lesson => lesson.words);
+                        } else {
+                            vocabulary = data;
+                        }
+                        console.log('✅ Vocabulary loaded from JSON');
+                    }
+                    initializeGame();
+                    return;
+                }
+            } catch (error) {
+                console.log('⚠️ Could not load vocabulary.json, using embedded vocabulary');
+            }
+
+            // Fallback to embedded vocabulary
+            if (typeof LessonManager !== 'undefined') {
+                await LessonManager.init(EMBEDDED_VOCABULARY);
+                LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+            }
+            console.log('ℹ️ Using embedded vocabulary');
+            initializeGame();
+        }
+
+        function onLessonChange(lesson) {
+            correctCount = 0;
+            wrongCount = 0;
+            skippedCount = 0;
+            wrongWords = [];
+            document.getElementById('correctScore').textContent = '0';
+            document.getElementById('wrongScore').textContent = '0';
+            initializeGame();
+        }
+
+        function initializeGame() {
+            if (typeof LessonManager !== 'undefined') {
+                vocabulary = LessonManager.getCurrentVocabulary();
+            }
+            words = shuffleArray([...vocabulary]);
+            currentIndex = 0;
+            displayWord();
+        }
+
+        function displayWord() {
+            if (currentIndex >= words.length) {
+                showCompleteScreen();
+                return;
+            }
+
+            hasAnswered = false;
+            const word = words[currentIndex];
+            
+            document.getElementById('englishWord').textContent = word.english;
+            document.getElementById('progressText').textContent = `מילה ${currentIndex + 1} מתוך ${words.length}`;
+            document.getElementById('answerInput').value = '';
+            document.getElementById('answerInput').className = 'answer-input';
+            document.getElementById('answerInput').disabled = false;
+            document.getElementById('feedback').innerHTML = '';
+            document.getElementById('feedback').className = 'feedback';
+            
+            document.getElementById('submitBtn').style.display = 'inline-block';
+            document.getElementById('skipBtn').style.display = 'inline-block';
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            // Focus on input
+            document.getElementById('answerInput').focus();
+        }
+
+        function checkAnswer() {
+            if (hasAnswered) return;
+            
+            const userAnswer = document.getElementById('answerInput').value.trim();
+            if (!userAnswer) {
+                alert('אנא הקלד תשובה');
+                return;
+            }
+            
+            hasAnswered = true;
+            const word = words[currentIndex];
+            const input = document.getElementById('answerInput');
+            const feedback = document.getElementById('feedback');
+            
+            input.disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('skipBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            
+            if (isAnswerCorrect(userAnswer, word.hebrew)) {
+                input.classList.add('correct');
+                correctCount++;
+                document.getElementById('correctScore').textContent = correctCount;
+                
+                const randomMessage = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
+                feedback.innerHTML = `<div class="feedback-icon">✅</div><div>${randomMessage}</div>`;
+                feedback.className = 'feedback correct';
+            } else {
+                input.classList.add('wrong');
+                wrongCount++;
+                document.getElementById('wrongScore').textContent = wrongCount;
+                
+                // Track wrong word
+                if (!wrongWords.find(w => w.english === word.english)) {
+                    wrongWords.push(word);
+                }
+                
+                feedback.innerHTML = `
+                    <div class="feedback-icon">❌</div>
+                    <div>לא נכון</div>
+                    <div class="correct-answer">התשובה הנכונה: ${word.hebrew}</div>
+                `;
+                feedback.className = 'feedback wrong';
+            }
+        }
+
+        function skipWord() {
+            if (hasAnswered) return;
+            
+            const word = words[currentIndex];
+            const feedback = document.getElementById('feedback');
+            
+            skippedCount++;
+            
+            // Track as wrong word for retry
+            if (!wrongWords.find(w => w.english === word.english)) {
+                wrongWords.push(word);
+            }
+            
+            feedback.innerHTML = `
+                <div class="feedback-icon">⏭️</div>
+                <div>דילגת</div>
+                <div class="correct-answer">התשובה: ${word.hebrew}</div>
+            `;
+            feedback.className = 'feedback';
+            
+            hasAnswered = true;
+            document.getElementById('answerInput').disabled = true;
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('skipBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function nextWord() {
+            currentIndex++;
+            displayWord();
+        }
+
+        function showCompleteScreen() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('completeScreen').style.display = 'block';
+            
+            const total = words.length;
+            const percentage = Math.round((correctCount / total) * 100);
+            
+            document.getElementById('finalCorrect').textContent = correctCount;
+            document.getElementById('finalWrong').textContent = wrongCount;
+            document.getElementById('finalSkipped').textContent = skippedCount;
+            document.getElementById('finalPercentage').textContent = `${percentage}%`;
+            
+            // Show retry button if there are wrong words
+            if (wrongWords.length > 0) {
+                const retryBtn = document.getElementById('retryWrongBtn');
+                retryBtn.style.display = 'inline-block';
+                retryBtn.textContent = `💪 תרגל מילים שטעית (${wrongWords.length} מילים)`;
+            }
+        }
+
+        function restartGame() {
+            words = shuffleArray([...vocabulary]);
+            currentIndex = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            skippedCount = 0;
+            wrongWords = [];
+            isRetryMode = false;
+            
+            document.getElementById('correctScore').textContent = '0';
+            document.getElementById('wrongScore').textContent = '0';
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('completeScreen').style.display = 'none';
+            
+            displayWord();
+        }
+
+        function retryWrong() {
+            words = shuffleArray([...wrongWords]);
+            wrongWords = []; // Reset wrong words for the new retry game
+            currentIndex = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            skippedCount = 0;
+            isRetryMode = true;
+            
+            document.getElementById('correctScore').textContent = '0';
+            document.getElementById('wrongScore').textContent = '0';
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('completeScreen').style.display = 'none';
+            
+            displayWord();
+        }
+
+        // Enter key support
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('answerInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    if (!hasAnswered) {
+                        checkAnswer();
+                    } else {
+                        nextWord();
+                    }
+                }
+            });
+        });
+
+        // Initialize game on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadVocabulary);
+        } else {
+            loadVocabulary();
+        }
+    </script>
+</body>
+</html>

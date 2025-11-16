@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לוח טריוויה - Board Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="lesson-manager.js" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
+</head>
+<body class="board-body">
+    <div class="container">
+        <h1>🎮 לוח טריוויה - Board Game</h1>
+        
+        <div id="lessonSelector" style="text-align: center; margin-bottom: 20px;"></div>
+        
+        <div class="score-board">
+            <div class="score-item">
+                <span>✅ נכונות</span>
+                <span class="score-number" id="correctCount">0</span>
+            </div>
+            <div class="score-item">
+                <span>❌ טעויות</span>
+                <span class="score-number" id="wrongCount">0</span>
+            </div>
+            <div class="score-item">
+                <span>📊 סה"כ</span>
+                <span class="score-number" id="totalAnswered">0/63</span>
+            </div>
+        </div>
+
+        <div class="board" id="board"></div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="quiz-modal" id="quizModal">
+        <div class="quiz-content">
+            <div class="question-box">
+                <div class="question" id="modalQuestion"></div>
+            </div>
+
+            <div class="feedback" id="modalFeedback"></div>
+
+            <div class="options" id="modalOptions"></div>
+        </div>
+    </div>
+
+    <!-- Complete Screen -->
+    <div class="complete-screen board-complete-screen" id="completeScreen">
+        <div class="complete-content">
+            <h2>🎉 סיימת את כל הלוח!</h2>
+            <div class="final-stats">
+                <div style="color: #11998e;">✅ נכונות: <strong id="finalCorrect">0</strong></div>
+                <div style="color: #eb3349;">❌ טעויות: <strong id="finalWrong">0</strong></div>
+                <div style="color: #667eea;">📊 ציון: <strong id="finalScore">0%</strong></div>
+            </div>
+            <button class="restart-btn" onclick="restartGame()">🔄 התחל מחדש</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // JSON מוטמע
+        // ============================================
+        const EMBEDDED_VOCABULARY = [
+            { "english": "perfect", "hebrew": "מושלם" },
+            { "english": "inside", "hebrew": "בפנים" },
+            { "english": "area", "hebrew": "אזור" },
+            { "english": "bridge", "hebrew": "גשר" },
+            { "english": "danger", "hebrew": "סכנה" }
+        ];
+
+        let vocabulary = EMBEDDED_VOCABULARY;
+
+        // ============================================
+        // טעינה אוטומטית עם תמיכה בשיעורים
+        // ============================================
+        async function loadVocabulary() {
+            // Try to load from vocabulary.json first
+            try {
+                const response = await fetch('vocabulary.json');
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Check if LessonManager exists
+                    if (typeof LessonManager !== 'undefined') {
+                        await LessonManager.init(data.lessons && Array.isArray(data.lessons) ? data.lessons.flatMap(lesson => lesson.words) : data);
+                        LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                        console.log('✅ Vocabulary loaded from JSON with LessonManager');
+                    } else {
+                        // No LessonManager, load vocabulary directly
+                        if (data.lessons && Array.isArray(data.lessons)) {
+                            vocabulary = data.lessons.flatMap(lesson => lesson.words);
+                        } else {
+                            vocabulary = data;
+                        }
+                        console.log('✅ Vocabulary loaded from JSON');
+                    }
+                    initBoard();
+                    return;
+                }
+            } catch (error) {
+                console.log('⚠️ Could not load vocabulary.json, using embedded vocabulary');
+            }
+
+            // Fallback to embedded vocabulary
+            if (typeof LessonManager !== 'undefined') {
+                await LessonManager.init(EMBEDDED_VOCABULARY);
+                LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+            }
+            console.log('ℹ️ Using embedded vocabulary');
+            initBoard();
+        }
+        
+        function onLessonChange(lesson) {
+            // Reset and restart game
+            correctCount = 0;
+            wrongCount = 0;
+            currentTileIndex = null;
+            initBoard();
+        }
+
+        // Game state
+        let tiles = [];
+        let correctCount = 0;
+        let wrongCount = 0;
+        let currentTileIndex = null;
+
+        const encouragingMessages = [
+            "🎉 מצוין!",
+            "💪 כל הכבוד!",
+            "⭐ נהדר!",
+            "🌟 מעולה!",
+            "👏 יפה מאוד!",
+            "🔥 אש!",
+            "🚀 פצצה!",
+            "💎 מושלם!",
+            "🏆 אלוף!",
+            "✨ יפה!"
+        ];
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function generateQuestion(word) {
+            const wrongAnswers = vocabulary
+                .filter(w => w.hebrew !== word.hebrew)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3)
+                .map(w => w.hebrew);
+            
+            const allOptions = shuffleArray([word.hebrew, ...wrongAnswers]);
+            
+            return {
+                question: word.english,
+                correctAnswer: word.hebrew,
+                options: allOptions
+            };
+        }
+
+        function initBoard() {
+            if (typeof LessonManager !== 'undefined') {
+                vocabulary = LessonManager.getCurrentVocabulary();
+            }
+            
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            
+            // Shuffle vocabulary and create tiles
+            const shuffledVocab = shuffleArray([...vocabulary]);
+            tiles = shuffledVocab.map((word, index) => ({
+                id: index,
+                word: word,
+                status: 'unanswered', // unanswered, correct, wrong
+                question: generateQuestion(word)
+            }));
+
+            // Create tile elements
+            tiles.forEach((tile, index) => {
+                const tileElement = document.createElement('div');
+                tileElement.className = 'tile';
+                tileElement.innerHTML = `
+                    <span class="tile-number">#${index + 1}</span>
+                    <span>${index + 1}</span>
+                `;
+                tileElement.onclick = () => openQuiz(index);
+                board.appendChild(tileElement);
+            });
+
+            updateScoreboard();
+        }
+
+        function openQuiz(tileIndex) {
+            const tile = tiles[tileIndex];
+            
+            // Don't open if already answered
+            if (tile.status !== 'unanswered') return;
+            
+            currentTileIndex = tileIndex;
+            const modal = document.getElementById('quizModal');
+            const question = tile.question;
+
+            // Set question
+            document.getElementById('modalQuestion').textContent = question.question;
+            document.getElementById('modalFeedback').textContent = '';
+            document.getElementById('modalFeedback').className = 'feedback';
+
+            // Create options
+            const optionsContainer = document.getElementById('modalOptions');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option, button);
+                optionsContainer.appendChild(button);
+            });
+
+            modal.classList.add('active');
+        }
+
+        function checkAnswer(selectedAnswer, button) {
+            const tile = tiles[currentTileIndex];
+            const question = tile.question;
+            const feedback = document.getElementById('modalFeedback');
+            const allButtons = document.querySelectorAll('.option-btn');
+
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (selectedAnswer === question.correctAnswer) {
+                button.classList.add('correct');
+                correctCount++;
+                tile.status = 'correct';
+                
+                const randomMessage = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
+                feedback.textContent = randomMessage;
+                feedback.className = 'feedback correct';
+            } else {
+                button.classList.add('wrong');
+                wrongCount++;
+                tile.status = 'wrong';
+                
+                feedback.innerHTML = `❌ לא נכון<br><small style="font-size: 0.7em;">התשובה הנכונה: ${question.correctAnswer}</small>`;
+                feedback.className = 'feedback wrong';
+
+                // Highlight correct answer
+                allButtons.forEach(btn => {
+                    if (btn.textContent === question.correctAnswer) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            // Close modal and update board after delay
+            setTimeout(() => {
+                closeQuiz();
+                updateBoard();
+                updateScoreboard();
+                
+                // Check if all tiles answered
+                if (tiles.every(t => t.status !== 'unanswered')) {
+                    setTimeout(() => showCompleteScreen(), 500);
+                }
+            }, 1500);
+        }
+
+        function closeQuiz() {
+            document.getElementById('quizModal').classList.remove('active');
+        }
+
+        function updateBoard() {
+            const boardTiles = document.querySelectorAll('.tile');
+            tiles.forEach((tile, index) => {
+                const tileElement = boardTiles[index];
+                
+                if (tile.status === 'correct') {
+                    tileElement.classList.add('correct', 'answered');
+                    tileElement.innerHTML = `
+                        <span class="tile-number">#${index + 1}</span>
+                        <span class="tile-icon">✅</span>
+                    `;
+                } else if (tile.status === 'wrong') {
+                    tileElement.classList.add('wrong', 'answered');
+                    tileElement.innerHTML = `
+                        <span class="tile-number">#${index + 1}</span>
+                        <span class="tile-icon">❌</span>
+                    `;
+                }
+            });
+        }
+
+        function updateScoreboard() {
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('wrongCount').textContent = wrongCount;
+            document.getElementById('totalAnswered').textContent = `${correctCount + wrongCount}/${tiles.length}`;
+        }
+
+        function showCompleteScreen() {
+            document.getElementById('finalCorrect').textContent = correctCount;
+            document.getElementById('finalWrong').textContent = wrongCount;
+            const percentage = Math.round((correctCount / tiles.length) * 100);
+            document.getElementById('finalScore').textContent = `${percentage}%`;
+            document.getElementById('completeScreen').classList.add('active');
+        }
+
+        function restartGame() {
+            correctCount = 0;
+            wrongCount = 0;
+            currentTileIndex = null;
+            document.getElementById('completeScreen').classList.remove('active');
+            initBoard();
+        }
+
+        // Initialize game on load - automatically check for external JSON
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadVocabulary);
+        } else {
+            loadVocabulary();
+        }
+    </script>
+</body>
+</html>
