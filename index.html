@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>משחק תרגול כתיב - גרסה מתקדמת</title>
+    <title>Learning Games - משחקי למידה</title>
     <style>
         * {
             margin: 0;
@@ -21,911 +21,138 @@
             padding: 20px;
         }
 
-        .game-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 40px;
-            max-width: 700px;
-            width: 100%;
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
         }
 
         h1 {
-            text-align: center;
-            color: #764ba2;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* טאבים לבחירת מקור המילים */
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            background: #f7fafc;
-            border-radius: 10px;
-            padding: 5px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 12px;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            color: #718096;
-            transition: all 0.3s;
-            border-radius: 8px;
-        }
-
-        .tab.active {
-            background: white;
-            color: #667eea;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .tab-content {
-            display: none;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* בחירת קטגוריה */
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .category-btn {
-            padding: 15px 10px;
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .category-btn:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-        }
-
-        .category-btn.selected {
-            background: #667eea;
             color: white;
-            border-color: #667eea;
-        }
-
-        .category-icon {
-            font-size: 24px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .category-name {
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .category-count {
-            font-size: 10px;
-            opacity: 0.8;
-        }
-
-        /* העלאת קובץ */
-        .upload-area {
-            border: 3px dashed #cbd5e0;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .upload-area:hover {
-            border-color: #667eea;
-            background: #f7fafc;
-        }
-
-        .upload-area.dragover {
-            border-color: #667eea;
-            background: #ebf8ff;
-        }
-
-        .file-input {
-            display: none;
-        }
-
-        /* עריכת מילים */
-        .word-editor {
-            background: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .word-list {
-            min-height: 150px;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-            background: #f7fafc;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .word-tag {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            margin: 3px;
-            position: relative;
-            animation: fadeIn 0.3s;
-        }
-
-        .word-tag .remove {
-            margin-left: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.8); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .add-word-box {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .add-word-input {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        /* כפתורים */
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            font-size: 16px;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: #5a67d8;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-success {
-            background: #48bb78;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #38a169;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* אזור המשחק */
-        .game-area {
-            display: none;
-        }
-
-        .game-area.active {
-            display: block;
-        }
-
-        .score-container {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 30px;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        .score-box {
-            text-align: center;
-        }
-
-        .score-label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .score-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .card-container {
-            perspective: 1000px;
-            margin-bottom: 30px;
-            height: 200px;
-        }
-
-        .card {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s;
-            cursor: pointer;
-        }
-
-        .card.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card-face {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .card-front {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .card-back {
-            background: #f0f0f0;
-            transform: rotateY(180deg);
-        }
-
-        .word-display {
             font-size: 3em;
-            font-weight: bold;
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
 
-        .speaker-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(102, 126, 234, 0.1);
-            border: 2px solid #667eea;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            cursor: pointer;
-            font-size: 30px;
+        .subtitle {
+            color: white;
+            font-size: 1.3em;
+            margin-bottom: 50px;
+            opacity: 0.95;
         }
 
-        .speaker-button:hover {
-            background: rgba(102, 126, 234, 0.2);
-            transform: scale(1.1);
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
         }
 
-        .input-container {
-            margin-bottom: 20px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .input-container.show {
-            opacity: 1;
-        }
-
-        #wordInput {
-            width: 100%;
-            padding: 15px;
-            font-size: 1.5em;
-            text-align: center;
-            border: 3px solid #ddd;
-            border-radius: 10px;
-        }
-
-        .feedback {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 100px;
-            animation: feedbackPop 0.8s ease;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .feedback.success {
-            color: #48bb78;
-        }
-
-        .feedback.error {
-            color: #f56565;
-        }
-
-        @keyframes feedbackPop {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
-        }
-
-        .stats-info {
-            background: #ebf8ff;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            text-align: center;
-            color: #2c5282;
-        }
-
-        /* Export/Import buttons */
-        .data-controls {
+        .language-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .data-btn {
-            padding: 8px 16px;
-            background: #e2e8f0;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
+        .language-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .flag-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .language-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .language-subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .games-count {
+            font-size: 0.95em;
+            color: #999;
+            margin-bottom: 25px;
+        }
+
+        .enter-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1em;
             transition: all 0.3s;
         }
 
-        .data-btn:hover {
-            background: #cbd5e0;
+        .language-card:hover .enter-btn {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .language-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .flag-icon {
+                font-size: 4em;
+            }
+
+            .language-title {
+                font-size: 1.6em;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <h1>🎯 משחק תרגול כתיב 🎯</h1>
-        
-        <!-- Setup Area -->
-        <div id="setupArea">
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('builtin')">📚 מילים מובנות</button>
-                <button class="tab" onclick="switchTab('upload')">📁 העלה קובץ</button>
-                <button class="tab" onclick="switchTab('custom')">✏️ הוסף מילים</button>
-            </div>
+    <div class="container">
+        <h1>🎓 Learning Games</h1>
+        <p class="subtitle">Choose your language / בחר שפה</p>
 
-            <!-- Built-in Words Tab -->
-            <div id="builtin-tab" class="tab-content active">
-                <h3 style="margin-bottom: 15px;">בחר קטגוריות:</h3>
-                <div class="category-grid">
-                    <button class="category-btn" onclick="toggleCategory('animals')" data-category="animals">
-                        <span class="category-icon">🦁</span>
-                        <div class="category-name">חיות</div>
-                        <div class="category-count">30 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('colors')" data-category="colors">
-                        <span class="category-icon">🎨</span>
-                        <div class="category-name">צבעים</div>
-                        <div class="category-count">15 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('family')" data-category="family">
-                        <span class="category-icon">👨‍👩‍👧‍👦</span>
-                        <div class="category-name">משפחה</div>
-                        <div class="category-count">20 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('food')" data-category="food">
-                        <span class="category-icon">🍎</span>
-                        <div class="category-name">אוכל</div>
-                        <div class="category-count">40 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('body')" data-category="body">
-                        <span class="category-icon">👤</span>
-                        <div class="category-name">גוף</div>
-                        <div class="category-count">25 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('school')" data-category="school">
-                        <span class="category-icon">🎒</span>
-                        <div class="category-name">בית ספר</div>
-                        <div class="category-count">35 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('nature')" data-category="nature">
-                        <span class="category-icon">🌳</span>
-                        <div class="category-name">טבע</div>
-                        <div class="category-count">30 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('house')" data-category="house">
-                        <span class="category-icon">🏠</span>
-                        <div class="category-name">בית</div>
-                        <div class="category-count">40 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('vehicles')" data-category="vehicles">
-                        <span class="category-icon">🚗</span>
-                        <div class="category-name">כלי רכב</div>
-                        <div class="category-count">20 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('time')" data-category="time">
-                        <span class="category-icon">⏰</span>
-                        <div class="category-name">זמן</div>
-                        <div class="category-count">25 מילים</div>
-                    </button>
-                </div>
-                
-                <div style="text-align: center; margin-top: 15px;">
-                    <button class="btn btn-primary" onclick="startWithBuiltin()">התחל משחק</button>
-                </div>
-            </div>
+        <div class="language-grid">
+            <!-- English Games -->
+            <a href="english/index.html" class="language-card">
+                <div class="flag-icon">🇬🇧</div>
+                <div class="language-title">English</div>
+                <div class="language-subtitle">Learn Hebrew vocabulary</div>
+                <div class="games-count">4 Games Available</div>
+                <span class="enter-btn">Enter →</span>
+            </a>
 
-            <!-- Upload File Tab -->
-            <div id="upload-tab" class="tab-content">
-                <div class="upload-area" onclick="document.getElementById('fileInput').click()" 
-                     ondrop="handleDrop(event)" ondragover="handleDragOver(event)" 
-                     ondragleave="handleDragLeave(event)">
-                    <input type="file" id="fileInput" class="file-input" accept=".json,.txt" onchange="handleFileSelect(event)">
-                    <div style="font-size: 48px;">📁</div>
-                    <h3>גרור קובץ לכאן</h3>
-                    <p>או לחץ לבחירת קובץ</p>
-                    <small>תומך בקבצי JSON ו-TXT</small>
-                </div>
-                
-                <div style="margin-top: 15px; padding: 15px; background: #f7fafc; border-radius: 8px;">
-                    <strong>פורמט JSON:</strong>
-                    <pre style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 5px; margin-top: 5px;">
-{
-  "words": ["מילה1", "מילה2", "מילה3"]
-}</pre>
-                    <strong>פורמט TXT:</strong>
-                    <pre style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 5px; margin-top: 5px;">
-מילה1
-מילה2
-מילה3</pre>
-                </div>
-                
-                <div id="uploadStatus"></div>
-            </div>
-
-            <!-- Custom Words Tab -->
-            <div id="custom-tab" class="tab-content">
-                <div class="word-editor">
-                    <h3 style="margin-bottom: 10px;">המילים שלך:</h3>
-                    <div class="word-list" id="customWordsList">
-                        <p style="color: #718096; text-align: center;">עדיין לא הוספת מילים</p>
-                    </div>
-                    
-                    <div class="add-word-box">
-                        <input type="text" class="add-word-input" id="newWord" 
-                               placeholder="הקלד מילה חדשה..." 
-                               onkeypress="if(event.key==='Enter') addCustomWord()">
-                        <button class="btn btn-success" onclick="addCustomWord()">הוסף</button>
-                    </div>
-                    
-                    <div class="data-controls">
-                        <button class="data-btn" onclick="exportWords()">💾 ייצא מילים</button>
-                        <button class="data-btn" onclick="clearCustomWords()">🗑️ נקה הכל</button>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 15px;">
-                        <button class="btn btn-primary" onclick="startWithCustom()">התחל משחק</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Game Area -->
-        <div id="gameArea" class="game-area">
-            <div class="stats-info" id="statsInfo">
-                משחק עם <span id="totalWords">0</span> מילים
-            </div>
-            
-            <div class="score-container">
-                <div class="score-box">
-                    <div class="score-label">נכונות</div>
-                    <div class="score-value" id="correctScore">0</div>
-                </div>
-                <div class="score-box">
-                    <div class="score-label">שגיאות</div>
-                    <div class="score-value" id="wrongScore">0</div>
-                </div>
-                <div class="score-box">
-                    <div class="score-label">רצף</div>
-                    <div class="score-value" id="streakScore">0</div>
-                </div>
-            </div>
-
-            <div class="card-container">
-                <div class="card" id="card">
-                    <div class="card-face card-front">
-                        <div class="word-display" id="wordDisplay">לחץ להתחיל</div>
-                    </div>
-                    <div class="card-face card-back">
-                        <button class="speaker-button" onclick="speakWord()">🔊</button>
-                        <div style="font-size: 2em; color: #667eea;">זכור את המילה!</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-container" id="inputContainer">
-                <input type="text" id="wordInput" placeholder="כתוב את המילה כאן..." disabled>
-            </div>
-
-            <div style="text-align: center;">
-                <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()" style="display: none;">בדוק תשובה</button>
-                <button class="btn btn-success" onclick="newGame()">משחק חדש</button>
-            </div>
+            <!-- Hebrew Games -->
+            <a href="hebrew/index.html" class="language-card">
+                <div class="flag-icon">🇮🇱</div>
+                <div class="language-title">עברית</div>
+                <div class="language-subtitle">תרגול כתיב בעברית</div>
+                <div class="games-count">משחק אחד זמין</div>
+                <span class="enter-btn">כניסה ←</span>
+            </a>
         </div>
     </div>
-
-    <script>
-        // Word Banks
-        const wordCategories = {
-            animals: ['כלב', 'חתול', 'סוס', 'פרה', 'עז', 'כבש', 'תרנגול', 'תרנגולת', 'ברווז', 'אווז', 
-                     'אריה', 'נמר', 'פיל', 'קוף', 'דוב', 'זאב', 'שועל', 'ארנב', 'עכבר', 'חולדה',
-                     'צבי', 'ג\'ירפה', 'זברה', 'קרנף', 'היפופוטם', 'תנין', 'נחש', 'צפרדע', 'לטאה', 'כריש'],
-            
-            colors: ['אדום', 'כחול', 'ירוק', 'צהוב', 'סגול', 'כתום', 'ורוד', 'חום', 'שחור', 'לבן',
-                    'אפור', 'זהב', 'כסף', 'תכלת', 'בז\''],
-            
-            family: ['אמא', 'אבא', 'אח', 'אחות', 'סבא', 'סבתא', 'דוד', 'דודה', 'בן', 'בת',
-                    'נכד', 'נכדה', 'אחיין', 'אחיינית', 'גיס', 'גיסה', 'חתן', 'כלה', 'חמות', 'חם'],
-            
-            food: ['לחם', 'חלב', 'ביצה', 'גבינה', 'עגבנייה', 'מלפפון', 'תפוח', 'בננה', 'תפוז', 'ענבים',
-                  'אבטיח', 'מלון', 'תות', 'דובדבן', 'אפרסק', 'שזיף', 'אגס', 'לימון', 'גזר', 'בצל',
-                  'תפוח אדמה', 'חסה', 'כרוב', 'פלפל', 'שום', 'פטריות', 'אורז', 'פסטה', 'בשר', 'עוף',
-                  'דג', 'חמאה', 'שמן', 'סוכר', 'מלח', 'קמח', 'דבש', 'ריבה', 'שוקולד', 'עוגה'],
-            
-            body: ['ראש', 'עין', 'עיניים', 'אף', 'פה', 'אוזן', 'אוזניים', 'שיניים', 'לשון', 'שפתיים',
-                  'צוואר', 'כתף', 'כתפיים', 'זרוע', 'מרפק', 'יד', 'ידיים', 'אצבע', 'אצבעות', 'ציפורן',
-                  'חזה', 'בטן', 'גב', 'רגל', 'רגליים'],
-            
-            school: ['כיתה', 'לוח', 'גיר', 'מורה', 'תלמיד', 'תלמידה', 'ספר', 'מחברת', 'עפרון', 'עט',
-                    'מחק', 'סרגל', 'מספריים', 'דבק', 'תיק', 'קלמר', 'שיעור', 'הפסקה', 'חופש', 'בחינה',
-                    'ציון', 'תעודה', 'ספריה', 'מחשב', 'מעבדה', 'חדר מורים', 'מנהל', 'מנהלת', 'מזכירה', 'שומר',
-                    'חצר', 'מגרש', 'אולם ספורט', 'חדר אוכל', 'מועדון'],
-            
-            nature: ['עץ', 'עלה', 'ענף', 'שורש', 'גזע', 'פרח', 'ורד', 'חמנייה', 'פרפר', 'דבורה',
-                    'נמלה', 'חרק', 'ציפור', 'קן', 'ביצה', 'דשא', 'שיח', 'סלע', 'אבן', 'חול',
-                    'הר', 'גבעה', 'עמק', 'נהר', 'נחל', 'ים', 'אגם', 'בריכה', 'מדבר', 'יער'],
-            
-            house: ['בית', 'דירה', 'חדר', 'סלון', 'מטבח', 'חדר שינה', 'אמבטיה', 'שירותים', 'מקלחת', 'מרפסת',
-                   'גינה', 'חצר', 'גג', 'רצפה', 'תקרה', 'קיר', 'דלת', 'חלון', 'מיטה', 'שולחן',
-                   'כיסא', 'ספה', 'כורסה', 'ארון', 'מגירה', 'מקרר', 'תנור', 'כיריים', 'כיור', 'ברז',
-                   'מנורה', 'וילון', 'שטיח', 'תמונה', 'מראה', 'טלוויזיה', 'מחשב', 'מזגן', 'רדיאטור', 'מאוורר'],
-            
-            vehicles: ['מכונית', 'אוטו', 'רכב', 'אוטובוס', 'מונית', 'משאית', 'טרקטור', 'אופנוע', 'קטנוע', 'אופניים',
-                      'רכבת', 'קרון', 'מטוס', 'מסוק', 'ספינה', 'סירה', 'יאכטה', 'צוללת', 'רכב שטח', 'אמבולנס'],
-            
-            time: ['שנייה', 'דקה', 'שעה', 'יום', 'שבוע', 'חודש', 'שנה', 'בוקר', 'צהריים', 'אחר הצהריים',
-                  'ערב', 'לילה', 'חצות', 'שחר', 'זריחה', 'שקיעה', 'אתמול', 'היום', 'מחר', 'מחרתיים',
-                  'עבר', 'הווה', 'עתיד', 'תאריך', 'לוח שנה']
-        };
-
-        // Game State
-        let selectedCategories = [];
-        let gameWords = [];
-        let customWords = [];
-        let currentWord = '';
-        let correctCount = 0;
-        let wrongCount = 0;
-        let streakCount = 0;
-        let isPlaying = false;
-
-        // Tab Switching
-        function switchTab(tabName) {
-            // Update tab buttons
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-        }
-
-        // Category Selection
-        function toggleCategory(category) {
-            const btn = document.querySelector(`[data-category="${category}"]`);
-            btn.classList.toggle('selected');
-            
-            if (selectedCategories.includes(category)) {
-                selectedCategories = selectedCategories.filter(c => c !== category);
-            } else {
-                selectedCategories.push(category);
-            }
-        }
-
-        // File Upload
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                readFile(file);
-            }
-        }
-
-        function handleDrop(event) {
-            event.preventDefault();
-            event.target.classList.remove('dragover');
-            
-            const file = event.dataTransfer.files[0];
-            if (file) {
-                readFile(file);
-            }
-        }
-
-        function handleDragOver(event) {
-            event.preventDefault();
-            event.target.classList.add('dragover');
-        }
-
-        function handleDragLeave(event) {
-            event.target.classList.remove('dragover');
-        }
-
-        function readFile(file) {
-            const reader = new FileReader();
-            const uploadStatus = document.getElementById('uploadStatus');
-            
-            reader.onload = function(e) {
-                try {
-                    let words = [];
-                    const content = e.target.result;
-                    
-                    if (file.name.endsWith('.json')) {
-                        const data = JSON.parse(content);
-                        words = data.words || data;
-                    } else {
-                        words = content.split('\n').filter(word => word.trim());
-                    }
-                    
-                    if (words.length > 0) {
-                        gameWords = words;
-                        uploadStatus.innerHTML = `<div style="color: green; margin-top: 10px;">✅ נטענו ${words.length} מילים!</div>`;
-                        setTimeout(() => startGame(), 1000);
-                    }
-                } catch (error) {
-                    uploadStatus.innerHTML = `<div style="color: red; margin-top: 10px;">❌ שגיאה בקריאת הקובץ</div>`;
-                }
-            };
-            
-            reader.readAsText(file);
-        }
-
-        // Custom Words
-        function addCustomWord() {
-            const input = document.getElementById('newWord');
-            const word = input.value.trim();
-            
-            if (word && !customWords.includes(word)) {
-                customWords.push(word);
-                updateCustomWordsList();
-                input.value = '';
-            }
-        }
-
-        function updateCustomWordsList() {
-            const listEl = document.getElementById('customWordsList');
-            
-            if (customWords.length === 0) {
-                listEl.innerHTML = '<p style="color: #718096; text-align: center;">עדיין לא הוספת מילים</p>';
-            } else {
-                listEl.innerHTML = customWords.map(word => 
-                    `<span class="word-tag">${word}<span class="remove" onclick="removeCustomWord('${word}')">✕</span></span>`
-                ).join('');
-            }
-        }
-
-        function removeCustomWord(word) {
-            customWords = customWords.filter(w => w !== word);
-            updateCustomWordsList();
-        }
-
-        function clearCustomWords() {
-            if (confirm('למחוק את כל המילים?')) {
-                customWords = [];
-                updateCustomWordsList();
-            }
-        }
-
-        function exportWords() {
-            const dataStr = JSON.stringify({ words: customWords }, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportLink = document.createElement('a');
-            exportLink.setAttribute('href', dataUri);
-            exportLink.setAttribute('download', 'my-words.json');
-            exportLink.click();
-        }
-
-        // Game Start Functions
-        function startWithBuiltin() {
-            if (selectedCategories.length === 0) {
-                alert('נא לבחור לפחות קטגוריה אחת');
-                return;
-            }
-            
-            gameWords = [];
-            selectedCategories.forEach(cat => {
-                gameWords = gameWords.concat(wordCategories[cat]);
-            });
-            
-            startGame();
-        }
-
-        function startWithCustom() {
-            if (customWords.length === 0) {
-                alert('נא להוסיף לפחות מילה אחת');
-                return;
-            }
-            
-            gameWords = [...customWords];
-            startGame();
-        }
-
-        function startGame() {
-            if (gameWords.length === 0) {
-                alert('אין מילים במשחק');
-                return;
-            }
-            
-            // Reset scores
-            correctCount = 0;
-            wrongCount = 0;
-            streakCount = 0;
-            
-            // Update UI
-            document.getElementById('setupArea').style.display = 'none';
-            document.getElementById('gameArea').classList.add('active');
-            document.getElementById('totalWords').textContent = gameWords.length;
-            document.getElementById('correctScore').textContent = '0';
-            document.getElementById('wrongScore').textContent = '0';
-            document.getElementById('streakScore').textContent = '0';
-            
-            // Start game
-            isPlaying = true;
-            document.getElementById('checkBtn').style.display = 'inline-block';
-            document.getElementById('wordInput').disabled = false;
-            
-            showNewWord();
-        }
-
-        // Game Functions
-        function showNewWord() {
-            currentWord = gameWords[Math.floor(Math.random() * gameWords.length)];
-            const card = document.getElementById('card');
-            const wordDisplay = document.getElementById('wordDisplay');
-            const inputContainer = document.getElementById('inputContainer');
-            const wordInput = document.getElementById('wordInput');
-            
-            card.classList.remove('flipped');
-            wordDisplay.textContent = currentWord;
-            wordInput.value = '';
-            inputContainer.classList.remove('show');
-            document.getElementById('checkBtn').disabled = true;
-            wordInput.disabled = true;
-        }
-
-        // Card flip
-        document.getElementById('card').addEventListener('click', function() {
-            if (isPlaying && !this.classList.contains('flipped')) {
-                this.classList.add('flipped');
-                document.getElementById('inputContainer').classList.add('show');
-                document.getElementById('wordInput').disabled = false;
-                document.getElementById('checkBtn').disabled = false;
-                document.getElementById('wordInput').focus();
-            }
-        });
-
-        // Check answer
-        function checkAnswer() {
-            const userAnswer = document.getElementById('wordInput').value.trim();
-            
-            if (userAnswer === currentWord) {
-                correctCount++;
-                streakCount++;
-                document.getElementById('correctScore').textContent = correctCount;
-                document.getElementById('streakScore').textContent = streakCount;
-                showFeedback(true);
-                
-                if (streakCount % 5 === 0) {
-                    showCelebration();
-                }
-            } else {
-                wrongCount++;
-                streakCount = 0;
-                document.getElementById('wrongScore').textContent = wrongCount;
-                document.getElementById('streakScore').textContent = streakCount;
-                document.getElementById('wordDisplay').textContent = `הנכונה: ${currentWord}`;
-                document.getElementById('card').classList.remove('flipped');
-                showFeedback(false);
-            }
-            
-            setTimeout(() => showNewWord(), 2000);
-        }
-
-        // Speech
-        function speakWord() {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(currentWord);
-                utterance.lang = 'he-IL';
-                utterance.rate = 0.8;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        // Feedback
-        function showFeedback(isCorrect) {
-            const feedback = document.createElement('div');
-            feedback.className = `feedback ${isCorrect ? 'success' : 'error'}`;
-            feedback.textContent = isCorrect ? '✓' : '✗';
-            document.body.appendChild(feedback);
-            
-            setTimeout(() => feedback.remove(), 800);
-        }
-
-        function showCelebration() {
-            const celebration = document.createElement('div');
-            celebration.style.cssText = `
-                position: fixed; top: 50%; left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 60px; color: #ffd700;
-                animation: celebrate 1s ease; z-index: 2000;
-            `;
-            celebration.textContent = `🏆 רצף של ${streakCount}! 🏆`;
-            document.body.appendChild(celebration);
-            
-            setTimeout(() => celebration.remove(), 2000);
-        }
-
-        // New game
-        function newGame() {
-            document.getElementById('setupArea').style.display = 'block';
-            document.getElementById('gameArea').classList.remove('active');
-            isPlaying = false;
-        }
-
-        // Enter key support
-        document.getElementById('wordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !document.getElementById('checkBtn').disabled) {
-                checkAnswer();
-            }
-        });
-
-        // Add animation styles
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes celebrate {
-                0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
-                50% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
-                100% { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
 </body>
 </html>
