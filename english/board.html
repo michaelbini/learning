@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>לוח טריוויה - Board Game</title>
+    <script src="lesson-manager.js" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
     <style>
         * {
             margin: 0;
@@ -320,6 +321,8 @@
     <div class="container">
         <h1>🎮 לוח טריוויה - Board Game</h1>
         
+        <div id="lessonSelector" style="text-align: center; margin-bottom: 20px;"></div>
+        
         <div class="score-board">
             <div class="score-item">
                 <span>✅ נכונות</span>
@@ -437,6 +440,48 @@
 
         let vocabulary = EMBEDDED_VOCABULARY;
 
+        // ============================================
+        // טעינה אוטומטית עם תמיכה בשיעורים
+        // ============================================
+        async function loadVocabulary() {
+            // Check if LessonManager exists
+            if (typeof LessonManager !== 'undefined') {
+                await LessonManager.init(EMBEDDED_VOCABULARY);
+                LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                initBoard();
+            } else {
+                // Fallback: load directly without lesson support
+                try {
+                    const response = await fetch('vocabulary.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Check if new structure (with lessons array)
+                        if (data.lessons && Array.isArray(data.lessons)) {
+                            vocabulary = data.lessons.flatMap(lesson => lesson.words);
+                            console.log('✅ Vocabulary loaded from JSON (all lessons)');
+                        } else {
+                            vocabulary = data;
+                            console.log('✅ Vocabulary loaded from JSON');
+                        }
+                    } else {
+                        console.log('ℹ️ Using embedded vocabulary');
+                    }
+                } catch (error) {
+                    console.log('ℹ️ Using embedded vocabulary');
+                }
+                initBoard();
+            }
+        }
+        
+        function onLessonChange(lesson) {
+            // Reset and restart game
+            correctCount = 0;
+            wrongCount = 0;
+            currentTileIndex = null;
+            initBoard();
+        }
+
         // Game state
         let tiles = [];
         let correctCount = 0;
@@ -482,6 +527,10 @@
         }
 
         function initBoard() {
+            if (typeof LessonManager !== 'undefined') {
+                vocabulary = LessonManager.getCurrentVocabulary();
+            }
+            
             const board = document.getElementById('board');
             board.innerHTML = '';
             
@@ -631,11 +680,11 @@
             initBoard();
         }
 
-        // Initialize game on load
+        // Initialize game on load - automatically check for external JSON
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initBoard);
+            document.addEventListener('DOMContentLoaded', loadVocabulary);
         } else {
-            initBoard();
+            loadVocabulary();
         }
     </script>
 </body>
