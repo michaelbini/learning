@@ -2,7 +2,7 @@
   "lessons": [
     {
       "id": 1,
-      "name": "Unit 1 - Basic Vocabulary",
+      "name": "1-Basic_Vocabulary",
       "words": [
         { "english": "area", "hebrew": "אזור" },
         { "english": "accompany", "hebrew": "ללוות" },
@@ -67,8 +67,7 @@
         { "english": "by", "hebrew": "ליד, על ידי" },
         { "english": "local", "hebrew": "מקומי" },
         { "english": "open (v)", "hebrew": "לפתוח" },
-        { "english": "opportunity", "hebrew": "הזדמנות" },
-        { "english": "good", "hebrew": "טוב" },
+        { "english": "opportunity", "hebrew": "הזדמנות" }
       ]
     }
   ]
