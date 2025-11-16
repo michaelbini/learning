@@ -38,6 +38,63 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
+        /* Difficulty Selection */
+        .difficulty-section {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            padding: 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .difficulty-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .diff-emoji {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .diff-title {
+            display: block;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .diff-desc {
+            display: block;
+            font-size: 11px;
+            opacity: 0.8;
+            line-height: 1.3;
+        }
+
         /* טאבים לבחירת מקור המילים */
         .tabs {
             display: flex;
@@ -417,6 +474,33 @@
         
         <!-- Setup Area -->
         <div id="setupArea">
+            <!-- Difficulty Selection -->
+            <div class="difficulty-section">
+                <h3 style="text-align: center; margin-bottom: 15px; color: #4a5568;">בחר רמת קושי:</h3>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn" onclick="setDifficulty('easy')" data-level="easy">
+                        <span class="diff-emoji">😊</span>
+                        <span class="diff-title">קל</span>
+                        <span class="diff-desc">מילים בסיסיות<br>3-5 אותיות</span>
+                    </button>
+                    <button class="difficulty-btn active" onclick="setDifficulty('medium')" data-level="medium">
+                        <span class="diff-emoji">🎯</span>
+                        <span class="diff-title">בינוני</span>
+                        <span class="diff-desc">מילים יומיומיות<br>4-7 אותיות</span>
+                    </button>
+                    <button class="difficulty-btn" onclick="setDifficulty('hard')" data-level="hard">
+                        <span class="diff-emoji">💪</span>
+                        <span class="diff-title">קשה</span>
+                        <span class="diff-desc">מילים מורכבות<br>6-10 אותיות</span>
+                    </button>
+                    <button class="difficulty-btn" onclick="setDifficulty('expert')" data-level="expert">
+                        <span class="diff-emoji">🏆</span>
+                        <span class="diff-title">מומחה</span>
+                        <span class="diff-desc">מילים מאתגרות<br>8+ אותיות</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('builtin')">📚 מילים מובנות</button>
                 <button class="tab" onclick="switchTab('upload')">📁 העלה קובץ</button>
@@ -542,6 +626,7 @@
         <!-- Game Area -->
         <div id="gameArea" class="game-area">
             <div class="stats-info" id="statsInfo">
+                רמה: <span id="difficultyDisplay" style="font-weight: bold;"></span> | 
                 משחק עם <span id="totalWords">0</span> מילים
             </div>
             
@@ -584,48 +669,61 @@
     </div>
 
     <script>
-        // Word Banks
-        const wordCategories = {
-            animals: ['כלב', 'חתול', 'סוס', 'פרה', 'עז', 'כבש', 'תרנגול', 'תרנגולת', 'ברווז', 'אווז', 
-                     'אריה', 'נמר', 'פיל', 'קוף', 'דוב', 'זאב', 'שועל', 'ארנב', 'עכבר', 'חולדה',
-                     'צבי', 'ג\'ירפה', 'זברה', 'קרנף', 'היפופוטם', 'תנין', 'נחש', 'צפרדע', 'לטאה', 'כריש'],
-            
-            colors: ['אדום', 'כחול', 'ירוק', 'צהוב', 'סגול', 'כתום', 'ורוד', 'חום', 'שחור', 'לבן',
-                    'אפור', 'זהב', 'כסף', 'תכלת', 'בז\''],
-            
-            family: ['אמא', 'אבא', 'אח', 'אחות', 'סבא', 'סבתא', 'דוד', 'דודה', 'בן', 'בת',
-                    'נכד', 'נכדה', 'אחיין', 'אחיינית', 'גיס', 'גיסה', 'חתן', 'כלה', 'חמות', 'חם'],
-            
-            food: ['לחם', 'חלב', 'ביצה', 'גבינה', 'עגבנייה', 'מלפפון', 'תפוח', 'בננה', 'תפוז', 'ענבים',
-                  'אבטיח', 'מלון', 'תות', 'דובדבן', 'אפרסק', 'שזיף', 'אגס', 'לימון', 'גזר', 'בצל',
-                  'תפוח אדמה', 'חסה', 'כרוב', 'פלפל', 'שום', 'פטריות', 'אורז', 'פסטה', 'בשר', 'עוף',
-                  'דג', 'חמאה', 'שמן', 'סוכר', 'מלח', 'קמח', 'דבש', 'ריבה', 'שוקולד', 'עוגה'],
-            
-            body: ['ראש', 'עין', 'עיניים', 'אף', 'פה', 'אוזן', 'אוזניים', 'שיניים', 'לשון', 'שפתיים',
-                  'צוואר', 'כתף', 'כתפיים', 'זרוע', 'מרפק', 'יד', 'ידיים', 'אצבע', 'אצבעות', 'ציפורן',
-                  'חזה', 'בטן', 'גב', 'רגל', 'רגליים'],
-            
-            school: ['כיתה', 'לוח', 'גיר', 'מורה', 'תלמיד', 'תלמידה', 'ספר', 'מחברת', 'עפרון', 'עט',
-                    'מחק', 'סרגל', 'מספריים', 'דבק', 'תיק', 'קלמר', 'שיעור', 'הפסקה', 'חופש', 'בחינה',
-                    'ציון', 'תעודה', 'ספריה', 'מחשב', 'מעבדה', 'חדר מורים', 'מנהל', 'מנהלת', 'מזכירה', 'שומר',
-                    'חצר', 'מגרש', 'אולם ספורט', 'חדר אוכל', 'מועדון'],
-            
-            nature: ['עץ', 'עלה', 'ענף', 'שורש', 'גזע', 'פרח', 'ורד', 'חמנייה', 'פרפר', 'דבורה',
-                    'נמלה', 'חרק', 'ציפור', 'קן', 'ביצה', 'דשא', 'שיח', 'סלע', 'אבן', 'חול',
-                    'הר', 'גבעה', 'עמק', 'נהר', 'נחל', 'ים', 'אגם', 'בריכה', 'מדבר', 'יער'],
-            
-            house: ['בית', 'דירה', 'חדר', 'סלון', 'מטבח', 'חדר שינה', 'אמבטיה', 'שירותים', 'מקלחת', 'מרפסת',
-                   'גינה', 'חצר', 'גג', 'רצפה', 'תקרה', 'קיר', 'דלת', 'חלון', 'מיטה', 'שולחן',
-                   'כיסא', 'ספה', 'כורסה', 'ארון', 'מגירה', 'מקרר', 'תנור', 'כיריים', 'כיור', 'ברז',
-                   'מנורה', 'וילון', 'שטיח', 'תמונה', 'מראה', 'טלוויזיה', 'מחשב', 'מזגן', 'רדיאטור', 'מאוורר'],
-            
-            vehicles: ['מכונית', 'אוטו', 'רכב', 'אוטובוס', 'מונית', 'משאית', 'טרקטור', 'אופנוע', 'קטנוע', 'אופניים',
-                      'רכבת', 'קרון', 'מטוס', 'מסוק', 'ספינה', 'סירה', 'יאכטה', 'צוללת', 'רכב שטח', 'אמבולנס'],
-            
-            time: ['שנייה', 'דקה', 'שעה', 'יום', 'שבוע', 'חודש', 'שנה', 'בוקר', 'צהריים', 'אחר הצהריים',
-                  'ערב', 'לילה', 'חצות', 'שחר', 'זריחה', 'שקיעה', 'אתמול', 'היום', 'מחר', 'מחרתיים',
-                  'עבר', 'הווה', 'עתיד', 'תאריך', 'לוח שנה']
+        // Word Banks with Difficulty Levels
+        const wordsByDifficulty = {
+            easy: {
+                animals: ['כלב', 'חתול', 'סוס', 'פרה', 'עז', 'כבש', 'ארנב', 'עכבר', 'דג', 'קוף'],
+                colors: ['אדום', 'כחול', 'ירוק', 'צהוב', 'סגול', 'כתום', 'ורוד', 'חום', 'שחור', 'לבן'],
+                family: ['אמא', 'אבא', 'אח', 'אחות', 'בן', 'בת', 'דוד', 'דודה'],
+                food: ['לחם', 'חלב', 'ביצה', 'תפוח', 'מים', 'אורז', 'בשר', 'עוף', 'דג', 'לימון'],
+                body: ['ראש', 'עין', 'אף', 'פה', 'יד', 'רגל', 'בטן', 'גב'],
+                school: ['ספר', 'עט', 'תיק', 'לוח', 'כיתה', 'מורה'],
+                nature: ['עץ', 'פרח', 'ים', 'הר', 'נהר', 'שמש', 'ירח', 'ענן'],
+                house: ['בית', 'חדר', 'דלת', 'חלון', 'גג', 'קיר', 'רצפה'],
+                vehicles: ['אוטו', 'רכב', 'אופנוע', 'מטוס', 'רכבת'],
+                time: ['יום', 'לילה', 'בוקר', 'ערב', 'שעה', 'דקה']
+            },
+            medium: {
+                animals: ['תרנגול', 'תרנגולת', 'ברווז', 'אווז', 'אריה', 'נמר', 'פיל', 'זאב', 'שועל', 'צבי', 'ג\'ירפה', 'זברה', 'תנין', 'נחש', 'צפרדע'],
+                colors: ['תכלת', 'ארגמן', 'זהוב', 'כסוף', 'אפור', 'בהיר', 'כהה', 'שקוף', 'עכור'],
+                family: ['סבא', 'סבתא', 'נכד', 'נכדה', 'אחיין', 'אחיינית', 'גיס', 'גיסה', 'חתן', 'כלה'],
+                food: ['עגבנייה', 'מלפפון', 'בננה', 'תפוז', 'ענבים', 'אבטיח', 'גבינה', 'יוגורט', 'חמאה', 'ריבה', 'דבש', 'שוקולד'],
+                body: ['אוזן', 'אוזניים', 'עיניים', 'שיניים', 'לשון', 'שפתיים', 'צוואר', 'כתף', 'מרפק', 'אצבע', 'ציפורן'],
+                school: ['מחברת', 'עיפרון', 'מחק', 'סרגל', 'מספריים', 'תלמיד', 'תלמידה', 'שיעור', 'הפסקה', 'בחינה', 'ציון', 'תעודה'],
+                nature: ['שורש', 'ענף', 'עלה', 'גזע', 'פרפר', 'דבורה', 'נמלה', 'ציפור', 'שיח', 'סלע', 'מדבר', 'חורש'],
+                house: ['סלון', 'מטבח', 'אמבטיה', 'מרפסת', 'מדרגות', 'מעלית', 'חניה', 'מחסן', 'עליית גג'],
+                vehicles: ['אוטובוס', 'מונית', 'משאית', 'טרקטור', 'קטנוע', 'אופניים', 'ספינה', 'סירה'],
+                time: ['שבוע', 'חודש', 'שנה', 'עונה', 'חורף', 'קיץ', 'אביב', 'סתיו', 'תאריך', 'שנייה']
+            },
+            hard: {
+                animals: ['היפופוטם', 'קרנף', 'אורנגאוטן', 'שימפנזה', 'למור', 'איגואנה', 'זיקית', 'סלמנדרה', 'דולפין', 'לוויתן', 'תמנון', 'קיפוד', 'ארמדילו', 'עטלף', 'נמייה'],
+                colors: ['בורדו', 'טורקיז', 'אינדיגו', 'מג\'נטה', 'ברונזה', 'אמרלד', 'ספיר', 'רובי', 'קרמזון', 'לבנדר'],
+                family: ['משפחה', 'קרובים', 'צאצאים', 'דורות', 'שושלת', 'ייחוס', 'אילן יוחסין', 'בכורה', 'ירושה'],
+                food: ['ארטישוק', 'אספרגוס', 'ברוקולי', 'כרובית', 'קולרבי', 'אבוקדו', 'מנגו', 'פפאיה', 'פסיפלורה', 'רימון', 'חרובים', 'תמרים', 'משמשים', 'אפרסמון'],
+                body: ['שרירים', 'עצמות', 'מפרקים', 'גידים', 'עורקים', 'ורידים', 'ריאות', 'כבד', 'כליות', 'קיבה', 'מעיים', 'לבלב', 'טחול'],
+                school: ['אוניברסיטה', 'מכללה', 'פקולטה', 'סמסטר', 'תעודה', 'תואר', 'דיקן', 'פרופסור', 'מרצה', 'סטודנט', 'מלגה', 'סמינריון'],
+                nature: ['פוטוסינתזה', 'כלורופיל', 'אקולוגיה', 'ביולוגיה', 'גיאולוגיה', 'מטאורולוגיה', 'אקלים', 'אטמוספרה', 'סטרטוספרה'],
+                house: ['ארכיטקטורה', 'תשתית', 'קונסטרוקציה', 'בידוד', 'איטום', 'ניקוז', 'אינסטלציה', 'חשמל', 'תאורה'],
+                vehicles: ['הליקופטר', 'קטמרן', 'טרימרן', 'אמפיבי', 'ריחוף', 'מטוס סילון', 'צוללת', 'כדור פורח', 'צפלין'],
+                time: ['אלפיון', 'מילניום', 'עשור', 'יובל', 'כרונולוגיה', 'סינכרוני', 'אסינכרוני', 'פרדוקס', 'אנכרוניזם']
+            },
+            expert: {
+                animals: ['אכינודרמטה', 'ארתרופודה', 'קרוסטציאה', 'ארכנידה', 'מירפודה', 'הרפטיליה', 'אמפיביה', 'ממליה', 'פרימטים', 'מרסופיאליה', 'מונוטרמטה', 'צטציאה'],
+                colors: ['אולטרמרין', 'ורמיליון', 'צ\'רטרוז', 'אוקר', 'סיינה', 'אומברה', 'קדמיום', 'קובלט', 'מלכית', 'אזמרגד'],
+                family: ['גניאלוגיה', 'אנתרופולוגיה', 'סוציולוגיה', 'דמוגרפיה', 'אתנוגרפיה', 'פטריארכיה', 'מטריארכיה', 'פוליגמיה', 'מונוגמיה'],
+                food: ['גסטרונומיה', 'קולינריה', 'דיאטטיקה', 'נוטריציה', 'פרוביוטיקה', 'אנטיאוקסידנטים', 'פוליפנולים', 'פלבונואידים', 'קרוטנואידים', 'אלקלואידים'],
+                body: ['נוירולוגיה', 'קרדיולוגיה', 'אנדוקרינולוגיה', 'המטולוגיה', 'אימונולוגיה', 'פתולוגיה', 'אנטומיה', 'פיזיולוגיה', 'היסטולוגיה', 'ציטולוגיה'],
+                school: ['פדגוגיה', 'דידקטיקה', 'מתודולוגיה', 'אפיסטמולוגיה', 'הרמנויטיקה', 'סמיוטיקה', 'רטוריקה', 'דיאלקטיקה', 'סילבוס', 'קוריקולום'],
+                nature: ['ביודיברסיטי', 'אקוסיסטם', 'ביוספירה', 'הידרוספירה', 'ליתוספירה', 'טקטוניקה', 'סייסמולוגיה', 'וולקנולוגיה', 'מינרלוגיה', 'פטרולוגיה'],
+                house: ['אינפרסטרוקטורה', 'סופרסטרוקטורה', 'פרפבריקציה', 'מודולריות', 'ארגונומיה', 'אקוסטיקה', 'תרמודינמיקה', 'הידראוליקה', 'פנאומטיקה'],
+                vehicles: ['אווירודינמיקה', 'הידרודינמיקה', 'פרופולסיה', 'טורבולנציה', 'קוויטציה', 'סופרסוניק', 'היפרסוניק', 'טרנסוניק', 'סובסוניק'],
+                time: ['סינגולריות', 'קוונטיזציה', 'רלטיביסטיות', 'דילטציה', 'קונטרקציה', 'סימולטניות', 'פריודיסיות', 'אוסצילציה', 'פלוקטואציה']
+            }
         };
+
+        // Current word categories based on difficulty
+        let wordCategories = wordsByDifficulty.medium; // Default to medium
+        let currentDifficulty = 'medium';
 
         // Game State
         let selectedCategories = [];
@@ -636,6 +734,31 @@
         let wrongCount = 0;
         let streakCount = 0;
         let isPlaying = false;
+
+        // Difficulty Selection
+        function setDifficulty(level) {
+            currentDifficulty = level;
+            wordCategories = wordsByDifficulty[level];
+            
+            // Update UI
+            document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-level="${level}"]`).classList.add('active');
+            
+            // Update category counts
+            updateCategoryCounts();
+        }
+        
+        function updateCategoryCounts() {
+            const categories = ['animals', 'colors', 'family', 'food', 'body', 'school', 'nature', 'house', 'vehicles', 'time'];
+            categories.forEach(cat => {
+                const btn = document.querySelector(`[data-category="${cat}"]`);
+                if (btn && wordCategories[cat]) {
+                    btn.querySelector('.category-count').textContent = `${wordCategories[cat].length} מילים`;
+                }
+            });
+        }
 
         // Tab Switching
         function switchTab(tabName) {
@@ -806,6 +929,15 @@
             document.getElementById('wrongScore').textContent = '0';
             document.getElementById('streakScore').textContent = '0';
             
+            // Display difficulty level
+            const difficultyNames = {
+                'easy': 'קל 😊',
+                'medium': 'בינוני 🎯',
+                'hard': 'קשה 💪',
+                'expert': 'מומחה 🏆'
+            };
+            document.getElementById('difficultyDisplay').textContent = difficultyNames[currentDifficulty] || 'מותאם אישית';
+            
             // Start game
             isPlaying = true;
             document.getElementById('checkBtn').style.display = 'inline-block';
@@ -914,6 +1046,11 @@
             if (e.key === 'Enter' && !document.getElementById('checkBtn').disabled) {
                 checkAnswer();
             }
+        });
+        
+        // Initialize on load
+        window.addEventListener('load', function() {
+            updateCategoryCounts();
         });
 
         // Add animation styles
