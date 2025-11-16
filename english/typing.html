@@ -76,6 +76,43 @@
             padding: 40px;
             border-radius: 20px;
             margin-bottom: 30px;
+            position: relative;
+        }
+
+        .speaker-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.3);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .speaker-btn:hover {
+            background: rgba(255,255,255,0.5);
+            transform: scale(1.1);
+        }
+
+        .speaker-btn:active {
+            transform: scale(0.95);
+        }
+
+        .speaker-btn.playing {
+            animation: pulse 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
 
         .english-word {
@@ -313,6 +350,9 @@
 
         <div class="game-card" id="gameArea">
             <div class="word-display">
+                <button class="speaker-btn" id="speakerBtn" onclick="speakWord()" title="הקרא את המילה">
+                    🔊
+                </button>
                 <div class="english-word" id="englishWord">Loading...</div>
                 <div class="progress-text" id="progressText">מילה 1 מתוך 63</div>
             </div>
@@ -360,7 +400,7 @@
         </div>
 
         <div class="hint">
-            💡 הקלד את התרגום בעברית ולחץ Enter או על "בדוק תשובה"
+            💡 לחץ על 🔊 כדי לשמוע את המילה | הקלד את התרגום בעברית ולחץ Enter
         </div>
     </div>
 
@@ -470,6 +510,33 @@
         function normalizeHebrew(text) {
             // Remove extra spaces, trim, and normalize
             return text.trim().replace(/\s+/g, ' ').toLowerCase();
+        }
+
+        function speakWord() {
+            const word = words[currentIndex];
+            if (!word) return;
+            
+            // Check if speech synthesis is supported
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(word.english);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8; // Slower for learning
+                
+                // Add animation
+                const btn = document.getElementById('speakerBtn');
+                btn.classList.add('playing');
+                
+                utterance.onend = () => {
+                    btn.classList.remove('playing');
+                };
+                
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('הדפדפן שלך לא תומך בהקראת טקסט');
+            }
         }
 
         function isAnswerCorrect(userAnswer, correctAnswer) {
@@ -676,6 +743,7 @@
 
         function retryWrong() {
             words = shuffleArray([...wrongWords]);
+            wrongWords = []; // Reset wrong words for the new retry game
             currentIndex = 0;
             correctCount = 0;
             wrongCount = 0;
