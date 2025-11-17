@@ -1,38 +1,158 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>משחקי אוצר מילים - Hebrew Games</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body class="index-body">
-    <div class="container">
-        <h1>🎓 משחקי אוצר מילים</h1>
-        <p class="subtitle">בחר משחק ותתחיל ללמוד!</p>
+    <title>Learning Games - משחקי למידה</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        <div class="games-grid">
-            <!-- Spelling Game -->
-            <a href="spelling.html" class="game-card">
-                <span class="game-icon">🎯</span>
-                <div class="game-title">Spelling Game</div>
-                <div class="game-description">
-                    משחק תרגול כתיב - רואים מילה בעברית וצריך להקליד אותה נכון
-                </div>
-                <span class="play-btn">▶️ שחק עכשיו</span>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            color: white;
+            font-size: 1.3em;
+            margin-bottom: 50px;
+            opacity: 0.95;
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .language-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .language-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+        .flag-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .language-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .language-subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .games-count {
+            font-size: 0.95em;
+            color: #999;
+            margin-bottom: 25px;
+        }
+
+        .enter-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .language-card:hover .enter-btn {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .language-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .flag-icon {
+                font-size: 4em;
+            }
+
+            .language-title {
+                font-size: 1.6em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Learning Games</h1>
+        <p class="subtitle">Choose your language / בחר שפה</p>
+
+        <div class="language-grid">
+            <!-- English Games -->
+            <a href="english/index.html" class="language-card">
+                <div class="flag-icon">🇬🇧</div>
+                <div class="language-title">English</div>
+                <div class="language-subtitle">Learn Hebrew vocabulary</div>
+                <div class="games-count">4 Games Available</div>
+                <span class="enter-btn">Enter →</span>
             </a>
-        </div><div class="games-grid">
-            <!-- Spelling Game -->
-            <a href="spelling-compar.html" class="game-card">
-                <span class="game-icon">🎯</span>
-                <div class="game-title">Spelling Game</div>
-                <div class="game-description">
-                    משחק תרגול כתיב - רואים מילה בעברית וצריך להקליד אותה נכון
-                </div>
-                <span class="play-btn">▶️ שחק עכשיו</span>
+
+            <!-- Hebrew Games -->
+            <a href="hebrew/index.html" class="language-card">
+                <div class="flag-icon">🇮🇱</div>
+                <div class="language-title">עברית</div>
+                <div class="language-subtitle">תרגול כתיב בעברית</div>
+                <div class="games-count">משחק אחד זמין</div>
+                <span class="enter-btn">כניסה ←</span>
             </a>
         </div>
-
     </div>
 </body>
 </html>

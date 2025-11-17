@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק טריוויה - אוצר מילים</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="lesson-manager.js" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
+</head>
+<body class="quiz-body">
+    <div class="container">
+        <h1>🎯 משחק טריוויה</h1>
+        
+        <div id="lessonSelector" style="text-align: center; margin-bottom: 20px;"></div>
+        
+        <div class="score-board">
+            <div class="score-item">
+                <span>שאלה</span>
+                <span class="score-number" id="questionNumber">1/63</span>
+            </div>
+            <div class="score-item">
+                <span>✅ נכונות</span>
+                <span class="score-number" id="correctScore">0</span>
+            </div>
+            <div class="score-item">
+                <span>❌ טעויות</span>
+                <span class="score-number" id="wrongScore">0</span>
+            </div>
+        </div>
+
+        <div id="gameArea">
+            <div class="question-box">
+                <button class="speaker-btn" id="speakerBtn" onclick="speakWord()" title="הקרא את המילה">
+                    🔊
+                </button>
+                <div class="question" id="question"></div>
+            </div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="options" id="options"></div>
+
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()" disabled>
+                ➡️ שאלה הבאה
+            </button>
+        </div>
+
+        <div id="finalScore" style="display: none;">
+            <div class="final-score">
+                <h2>🎉 סיימת את המשחק!</h2>
+                <div class="big-score" id="finalScoreText"></div>
+                <p style="font-size: 1.3em; color: #666;" id="finalScoreSubtext">נכונות מתוך 63 שאלות</p>
+                <div style="margin-top: 20px;">
+                    <button class="restart-btn" onclick="restartGame()">🔄 שחק שוב (כל המילים)</button>
+                    <button class="restart-btn" id="retryBtn" onclick="retryWrongWords()" style="display: none; background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); margin-top: 10px;">
+                        💪 תרגל רק מילים שטעיתי בהן
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // JSON מוטמע (ברירת מחדל)
+        // ============================================
+        const EMBEDDED_VOCABULARY = [
+            { "english": "perfect", "hebrew": "מושלם", "lesson": 1 },
+            { "english": "inside", "hebrew": "בפנים", "lesson": 1 },
+            { "english": "area", "hebrew": "אזור", "lesson": 1 },
+            { "english": "bridge", "hebrew": "גשר", "lesson": 1 },
+            { "english": "danger", "hebrew": "סכנה", "lesson": 1 }
+        ];
+
+        let vocabulary = EMBEDDED_VOCABULARY;
+
+        // ============================================
+        // טעינה אוטומטית עם תמיכה בשיעורים
+        // ============================================
+        async function loadVocabulary() {
+            // Try to load from vocabulary.json first
+            try {
+                const response = await fetch('vocabulary.json');
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Check if LessonManager exists
+                    if (typeof LessonManager !== 'undefined') {
+                        await LessonManager.init(data.lessons && Array.isArray(data.lessons) ? data.lessons.flatMap(lesson => lesson.words) : data);
+                        LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                        console.log('✅ Vocabulary loaded from JSON with LessonManager');
+                    } else {
+                        // No LessonManager, load vocabulary directly
+                        if (data.lessons && Array.isArray(data.lessons)) {
+                            vocabulary = data.lessons.flatMap(lesson => lesson.words);
+                        } else {
+                            vocabulary = data;
+                        }
+                        console.log('✅ Vocabulary loaded from JSON');
+                    }
+                    initGame();
+                    return;
+                }
+            } catch (error) {
+                console.log('⚠️ Could not load vocabulary.json, using embedded vocabulary');
+            }
+
+            // Fallback to embedded vocabulary
+            if (typeof LessonManager !== 'undefined') {
+                await LessonManager.init(EMBEDDED_VOCABULARY);
+                LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+            }
+            console.log('ℹ️ Using embedded vocabulary');
+            initGame();
+        }
+        
+        function onLessonChange(lesson) {
+            // Reset and restart game
+            initGame(false);
+        }
+
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0;
+        let questions = [];
+        let hasAnswered = false;
+        let wrongWords = []; // Track words that were answered incorrectly
+        let isRetryMode = false; // Flag to track if we're in retry mode
+
+        const encouragingMessages = [
+            "🎉 מצוין!",
+            "💪 כל הכבוד!",
+            "⭐ נהדר!",
+            "🌟 מעולה!",
+            "👏 יפה מאוד!",
+            "🔥 אש!",
+            "🚀 פצצה!",
+            "💎 מושלם!",
+            "🏆 אלוף!",
+            "✨ יפה!"
+        ];
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function speakWord() {
+            const question = questions[currentQuestionIndex];
+            if (!question) return;
+            
+            // Check if speech synthesis is supported
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(question.question);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8; // Slower for learning
+                
+                // Add animation
+                const btn = document.getElementById('speakerBtn');
+                if (btn) {
+                    btn.classList.add('playing');
+                    utterance.onend = () => {
+                        btn.classList.remove('playing');
+                    };
+                }
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function generateQuestion(word) {
+            const wrongAnswers = vocabulary
+                .filter(w => w.hebrew !== word.hebrew)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3)
+                .map(w => w.hebrew);
+            
+            const allOptions = shuffleArray([word.hebrew, ...wrongAnswers]);
+            
+            return {
+                question: word.english,
+                correctAnswer: word.hebrew,
+                options: allOptions
+            };
+        }
+
+        function initGame(retryMode = false) {
+            isRetryMode = retryMode;
+            
+            if (typeof LessonManager !== 'undefined') {
+                vocabulary = LessonManager.getCurrentVocabulary();
+            }
+            
+            if (retryMode && wrongWords.length > 0) {
+                // Use only the words that were answered incorrectly
+                const wordsToRetry = [...wrongWords];
+                wrongWords = []; // Reset wrong words for the new retry game
+                questions = wordsToRetry.map(word => generateQuestion(word));
+                questions = shuffleArray(questions);
+            } else {
+                // Use all vocabulary words
+                questions = vocabulary.map(word => generateQuestion(word));
+                questions = shuffleArray(questions);
+                wrongWords = []; // Reset wrong words for new game
+            }
+            
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            wrongAnswers = 0;
+            hasAnswered = false;
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showFinalScore();
+                return;
+            }
+
+            hasAnswered = false;
+            const question = questions[currentQuestionIndex];
+            
+            document.getElementById('question').textContent = question.question;
+            document.getElementById('questionNumber').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('nextBtn').disabled = true;
+
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option, button);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedAnswer, button) {
+            if (hasAnswered) return;
+            
+            hasAnswered = true;
+            const question = questions[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            const allButtons = document.querySelectorAll('.option-btn');
+
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (selectedAnswer === question.correctAnswer) {
+                button.classList.add('correct');
+                correctAnswers++;
+                document.getElementById('correctScore').textContent = correctAnswers;
+                
+                const randomMessage = encouragingMessages[Math.floor(Math.random() * encouragingMessages.length)];
+                feedback.innerHTML = `<span class="celebration">${randomMessage}</span>`;
+                feedback.className = 'feedback correct';
+                
+                // Auto-advance to next question after 1 second when correct
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    displayQuestion();
+                }, 1000);
+            } else {
+                button.classList.add('wrong');
+                wrongAnswers++;
+                document.getElementById('wrongScore').textContent = wrongAnswers;
+                
+                // Track the wrong word for retry mode (find original vocabulary entry)
+                const wrongWord = vocabulary.find(w => w.english === question.question);
+                if (wrongWord && !wrongWords.find(w => w.english === wrongWord.english)) {
+                    wrongWords.push(wrongWord);
+                }
+                
+                feedback.innerHTML = `❌ לא נכון<br><small style="font-size: 0.7em;">התשובה הנכונה: ${question.correctAnswer}</small>`;
+                feedback.className = 'feedback wrong';
+
+                // Highlight correct answer
+                allButtons.forEach(btn => {
+                    if (btn.textContent === question.correctAnswer) {
+                        btn.classList.add('correct');
+                    }
+                });
+                
+                // Enable next button for wrong answers
+                document.getElementById('nextBtn').disabled = false;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            displayQuestion();
+        }
+
+        function showFinalScore() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('finalScore').style.display = 'block';
+            
+            const percentage = Math.round((correctAnswers / questions.length) * 100);
+            document.getElementById('finalScoreText').textContent = `${correctAnswers}`;
+            
+            // Update subtext based on mode
+            if (isRetryMode) {
+                document.getElementById('finalScoreSubtext').textContent = `נכונות מתוך ${questions.length} מילים שתרגלת`;
+            } else {
+                document.getElementById('finalScoreSubtext').textContent = `נכונות מתוך ${questions.length} שאלות`;
+            }
+            
+            if (percentage >= 90) {
+                document.getElementById('finalScoreText').innerHTML += '<br>🏆 מדהים!';
+            } else if (percentage >= 70) {
+                document.getElementById('finalScoreText').innerHTML += '<br>⭐ מצוין!';
+            } else if (percentage >= 50) {
+                document.getElementById('finalScoreText').innerHTML += '<br>👍 יפה!';
+            } else {
+                document.getElementById('finalScoreText').innerHTML += '<br>💪 כדאי לתרגל עוד';
+            }
+            
+            // Show retry button only if there are wrong answers and not already in retry mode
+            const retryBtn = document.getElementById('retryBtn');
+            if (wrongWords.length > 0 && !isRetryMode) {
+                retryBtn.style.display = 'block';
+                retryBtn.textContent = `💪 תרגל רק מילים שטעיתי בהן (${wrongWords.length} מילים)`;
+            } else {
+                retryBtn.style.display = 'none';
+            }
+        }
+
+        function restartGame() {
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('finalScore').style.display = 'none';
+            initGame(false); // Start fresh game with all words
+        }
+
+        function retryWrongWords() {
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('finalScore').style.display = 'none';
+            initGame(true); // Start retry mode with only wrong words
+        }
+
+        // Initialize game on load - automatically check for external JSON
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadVocabulary);
+        } else {
+            loadVocabulary();
+        }
+    </script>
+</body>
+</html>
