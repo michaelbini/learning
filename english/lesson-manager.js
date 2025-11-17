@@ -2,66 +2,56 @@
 // כלול קובץ זה בכל משחק כדי לתמוך בשיעורים
 
 const LessonManager = {
-    lessons: [],
     allVocabulary: [],
     currentLessonId: 'all',
-    
+
     // Initialize and load vocabulary
     async init(embeddedVocabulary) {
         try {
             const response = await fetch('vocabulary.json');
             if (response.ok) {
                 const data = await response.json();
-                
-                // Check if new structure (with lessons array)
-                if (data.lessons && Array.isArray(data.lessons)) {
-                    this.lessons = data.lessons;
-                    // Flatten all words from all lessons
-                    this.allVocabulary = data.lessons.flatMap(lesson => lesson.words);
-                    console.log('✅ Vocabulary loaded from external JSON file (lessons structure)');
+
+                // Check if new structure (with vocabulary array)
+                if (data.vocabulary && Array.isArray(data.vocabulary)) {
+                    this.allVocabulary = data.vocabulary;
+                    console.log('✅ Vocabulary loaded from external JSON file (normalized structure)');
+                } else if (data.lessons && Array.isArray(data.lessons)) {
+                    // Legacy lessons structure
+                    this.allVocabulary = data.lessons.flatMap(lesson =>
+                        lesson.words.map(word => ({...word, lesson: lesson.id}))
+                    );
+                    console.log('✅ Vocabulary loaded from external JSON file (legacy lessons structure)');
                 } else {
-                    // Old structure - array of words
-                    // Convert to new structure
-                    this.lessons = [{
-                        id: 1,
-                        name: "Unit 1",
-                        words: data
-                    }];
-                    this.allVocabulary = data;
-                    console.log('✅ Vocabulary loaded from external JSON file (legacy structure)');
+                    // Old structure - array of words without lesson property
+                    this.allVocabulary = data.map(word => ({...word, lesson: 1}));
+                    console.log('✅ Vocabulary loaded from external JSON file (legacy flat structure)');
                 }
             } else {
                 console.log('ℹ️ No external JSON found, using embedded vocabulary');
-                this.lessons = [{
-                    id: 1,
-                    name: "Unit 1",
-                    words: embeddedVocabulary
-                }];
                 this.allVocabulary = embeddedVocabulary;
             }
         } catch (error) {
             console.log('ℹ️ Using embedded vocabulary');
-            this.lessons = [{
-                id: 1,
-                name: "Unit 1",
-                words: embeddedVocabulary
-            }];
             this.allVocabulary = embeddedVocabulary;
         }
     },
     
-    // Get all lessons
+    // Get all lessons (extract unique lessons from vocabulary)
     getLessons() {
-        return this.lessons;
+        const lessonIds = [...new Set(this.allVocabulary.map(word => word.lesson))];
+        return lessonIds.sort().map(id => ({
+            id: id,
+            name: `Unit ${id}`
+        }));
     },
-    
+
     // Get vocabulary for specific lesson
     getVocabularyForLesson(lessonId) {
         if (lessonId === 'all') {
             return this.allVocabulary;
         }
-        const lesson = this.lessons.find(l => l.id === lessonId);
-        return lesson ? lesson.words : [];
+        return this.allVocabulary.filter(word => word.lesson === lessonId);
     },
     
     // Set current lesson

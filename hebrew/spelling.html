@@ -39,125 +39,10 @@
                 </div>
             </div>
 
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('builtin')">📚 מילים מובנות</button>
-                <button class="tab" onclick="switchTab('upload')">📁 העלה קובץ</button>
-                <button class="tab" onclick="switchTab('custom')">✏️ הוסף מילים</button>
-            </div>
-
-            <!-- Built-in Words Tab -->
-            <div id="builtin-tab" class="tab-content active">
-                <h3 style="margin-bottom: 15px;">בחר קטגוריות:</h3>
-                <div class="category-grid">
-                    <button class="category-btn" onclick="toggleCategory('animals')" data-category="animals">
-                        <span class="category-icon">🦁</span>
-                        <div class="category-name">חיות</div>
-                        <div class="category-count">30 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('colors')" data-category="colors">
-                        <span class="category-icon">🎨</span>
-                        <div class="category-name">צבעים</div>
-                        <div class="category-count">15 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('family')" data-category="family">
-                        <span class="category-icon">👨‍👩‍👧‍👦</span>
-                        <div class="category-name">משפחה</div>
-                        <div class="category-count">20 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('food')" data-category="food">
-                        <span class="category-icon">🍎</span>
-                        <div class="category-name">אוכל</div>
-                        <div class="category-count">40 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('body')" data-category="body">
-                        <span class="category-icon">👤</span>
-                        <div class="category-name">גוף</div>
-                        <div class="category-count">25 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('school')" data-category="school">
-                        <span class="category-icon">🎒</span>
-                        <div class="category-name">בית ספר</div>
-                        <div class="category-count">35 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('nature')" data-category="nature">
-                        <span class="category-icon">🌳</span>
-                        <div class="category-name">טבע</div>
-                        <div class="category-count">30 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('house')" data-category="house">
-                        <span class="category-icon">🏠</span>
-                        <div class="category-name">בית</div>
-                        <div class="category-count">40 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('vehicles')" data-category="vehicles">
-                        <span class="category-icon">🚗</span>
-                        <div class="category-name">כלי רכב</div>
-                        <div class="category-count">20 מילים</div>
-                    </button>
-                    <button class="category-btn" onclick="toggleCategory('time')" data-category="time">
-                        <span class="category-icon">⏰</span>
-                        <div class="category-name">זמן</div>
-                        <div class="category-count">25 מילים</div>
-                    </button>
-                </div>
-                
-                <div style="text-align: center; margin-top: 15px;">
-                    <button class="btn btn-primary" onclick="startWithBuiltin()">התחל משחק</button>
-                </div>
-            </div>
-
-            <!-- Upload File Tab -->
-            <div id="upload-tab" class="tab-content">
-                <div class="upload-area" onclick="document.getElementById('fileInput').click()" 
-                     ondrop="handleDrop(event)" ondragover="handleDragOver(event)" 
-                     ondragleave="handleDragLeave(event)">
-                    <input type="file" id="fileInput" class="file-input" accept=".json,.txt" onchange="handleFileSelect(event)">
-                    <div style="font-size: 48px;">📁</div>
-                    <h3>גרור קובץ לכאן</h3>
-                    <p>או לחץ לבחירת קובץ</p>
-                    <small>תומך בקבצי JSON ו-TXT</small>
-                </div>
-                
-                <div style="margin-top: 15px; padding: 15px; background: #f7fafc; border-radius: 8px;">
-                    <strong>פורמט JSON:</strong>
-                    <pre style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 5px; margin-top: 5px;">
-{
-  "words": ["מילה1", "מילה2", "מילה3"]
-}</pre>
-                    <strong>פורמט TXT:</strong>
-                    <pre style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 5px; margin-top: 5px;">
-מילה1
-מילה2
-מילה3</pre>
-                </div>
-                
-                <div id="uploadStatus"></div>
-            </div>
-
-            <!-- Custom Words Tab -->
-            <div id="custom-tab" class="tab-content">
-                <div class="word-editor">
-                    <h3 style="margin-bottom: 10px;">המילים שלך:</h3>
-                    <div class="word-list" id="customWordsList">
-                        <p style="color: #718096; text-align: center;">עדיין לא הוספת מילים</p>
-                    </div>
-                    
-                    <div class="add-word-box">
-                        <input type="text" class="add-word-input" id="newWord" 
-                               placeholder="הקלד מילה חדשה..." 
-                               onkeypress="if(event.key==='Enter') addCustomWord()">
-                        <button class="btn btn-success" onclick="addCustomWord()">הוסף</button>
-                    </div>
-                    
-                    <div class="data-controls">
-                        <button class="data-btn" onclick="exportWords()">💾 ייצא מילים</button>
-                        <button class="data-btn" onclick="clearCustomWords()">🗑️ נקה הכל</button>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 15px;">
-                        <button class="btn btn-primary" onclick="startWithCustom()">התחל משחק</button>
-                    </div>
-                </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="startGame()" style="font-size: 1.2em; padding: 1rem 2rem;">
+                    ▶️ התחל משחק
+                </button>
             </div>
         </div>
 
@@ -211,39 +96,65 @@
         // Embedded vocabulary (fallback)
         // ============================================
         const EMBEDDED_VOCABULARY = {
-            easy: {
-                animals: ['כלב', 'חתול', 'סוס'],
-                colors: ['אדום', 'כחול', 'ירוק'],
-                food: ['לחם', 'חלב', 'ביצה']
-            },
-            medium: {
-                animals: ['תרנגול', 'אריה', 'פיל'],
-                colors: ['תכלת', 'ארגמן', 'זהוב'],
-                food: ['עגבנייה', 'בננה', 'גבינה']
-            }
+            easy: ['כלב', 'חתול', 'סוס', 'דג', 'ציפור', 'אדום', 'כחול', 'ירוק', 'צהוב', 'שחור',
+                   'לחם', 'חלב', 'ביצה', 'מים', 'גבינה', 'אמא', 'אבא', 'סבא', 'סבתא', 'אח',
+                   'יד', 'רגל', 'עין', 'אף', 'פה', 'בית', 'ספר', 'יום', 'לילה', 'פרח'],
+            medium: ['תרנגול', 'אריה', 'פיל', 'נמר', 'דובה', 'תכלת', 'ארגמן', 'זהוב', 'כסוף', 'סגול',
+                     'עגבנייה', 'בננה', 'גבינה', 'תפוח', 'תפוז', 'משפחה', 'דוד', 'דודה', 'בן', 'בת',
+                     'תלמיד', 'מורה', 'כיתה', 'ספר', 'מחברת', 'שיעור', 'חופש', 'ארוחה', 'מחשב', 'טלפון'],
+            hard: ['היפופוטם', 'קנגורו', 'תרנגולת', 'דולפין', 'פינגווין', 'ורוד', 'חום', 'לבן', 'אפור', 'כתום',
+                   'מלפפון', 'אבטיח', 'ענבים', 'תות', 'אננס', 'אוניברסיטה', 'פרופסור', 'מתמטיקה', 'היסטוריה', 'גיאוגרפיה',
+                   'הליקופטר', 'אוטובוס', 'רכבת', 'מטוס', 'אופניים', 'טלוויזיה', 'ספרייה', 'תרנגול', 'צוללת', 'עיפרון'],
+            expert: ['קרנף', 'תמנון', 'דינוזאור', 'טרנטולה', 'כריש', 'ביולוגיה', 'פסיכולוגיה', 'ארכיאולוגיה', 'אנציקלופדיה', 'טכנולוגיה',
+                     'מיקרוסקופ', 'אלקטרוני', 'אוטומטי', 'דמוקרטיה', 'אסטרונומיה', 'פילוסופיה', 'אנתרופולוגיה', 'מתודולוגיה',
+                     'אפידמיולוגיה', 'סוציולוגיה', 'אוניברסיטה', 'פרופסור', 'מתמטיקה', 'היסטוריה', 'גיאוגרפיה']
         };
 
         // Word Banks with Difficulty Levels
         let wordsByDifficulty = EMBEDDED_VOCABULARY;
 
-        // Current word categories based on difficulty
-        let wordCategories = wordsByDifficulty.medium; // Default to medium
+        // Current words based on difficulty
+        let currentWords = wordsByDifficulty.medium; // Default to medium
         let currentDifficulty = 'medium';
 
         // ============================================
-        // Load vocabulary from external JSON
+        // Load vocabulary from vocabulary.json
         // ============================================
         async function loadVocabulary() {
             try {
                 const response = await fetch('vocabulary.json');
                 if (response.ok) {
                     const data = await response.json();
-                    wordsByDifficulty = data.wordsByDifficulty;
-                    wordCategories = wordsByDifficulty[currentDifficulty];
-                    console.log('✅ Vocabulary loaded from external JSON file');
-                    updateCategoryCounts();
+                    if (data.wordPairs && Array.isArray(data.wordPairs)) {
+                        // Convert word pairs array to difficulty-based structure
+                        wordsByDifficulty = {
+                            easy: [],
+                            medium: [],
+                            hard: [],
+                            expert: []
+                        };
+
+                        // Extract words grouped by difficulty
+                        data.wordPairs.forEach(pair => {
+                            if (pair.word && pair.difficulty) {
+                                if (wordsByDifficulty[pair.difficulty]) {
+                                    wordsByDifficulty[pair.difficulty].push(pair.word);
+                                } else if (pair.difficulty === 'hard') {
+                                    // Map 'hard' to 'expert' if needed
+                                    wordsByDifficulty.hard.push(pair.word);
+                                }
+                            }
+                        });
+
+                        // Add hard words to expert as well
+                        wordsByDifficulty.expert = [...wordsByDifficulty.hard];
+
+                        currentWords = wordsByDifficulty[currentDifficulty];
+                        console.log('✅ Vocabulary loaded from vocabulary.json');
+                        console.log(`Easy: ${wordsByDifficulty.easy.length}, Medium: ${wordsByDifficulty.medium.length}, Hard: ${wordsByDifficulty.hard.length}, Expert: ${wordsByDifficulty.expert.length}`);
+                    }
                 } else {
-                    console.log('ℹ️ No external JSON found, using embedded vocabulary');
+                    console.log('ℹ️ No vocabulary.json found, using embedded vocabulary');
                 }
             } catch (error) {
                 console.log('ℹ️ Using embedded vocabulary');
@@ -268,16 +179,13 @@
         // Difficulty Selection
         function setDifficulty(level) {
             currentDifficulty = level;
-            wordCategories = wordsByDifficulty[level];
-            
+            currentWords = wordsByDifficulty[level];
+
             // Update UI
             document.querySelectorAll('.difficulty-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             document.querySelector(`[data-level="${level}"]`).classList.add('active');
-            
-            // Update category counts
-            updateCategoryCounts();
         }
         
         function updateCategoryCounts() {
@@ -441,6 +349,9 @@
         }
 
         function startGame() {
+            // Load all words from current difficulty level
+            gameWords = [...currentWords];
+
             if (gameWords.length === 0) {
                 alert('אין מילים במשחק');
                 return;

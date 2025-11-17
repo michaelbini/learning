@@ -3,619 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>משחק זיהוי כתיב נכון - עם העיצוב שלך</title>
-    <style>
-        /* Your CSS from GitHub - hebrew/styles.css */
-        :root {
-            --primary-color: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary-color: #8b5cf6;
-            --success-color: #10b981;
-            --error-color: #ef4444;
-            --warning-color: #f59e0b;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --radius-sm: 0.375rem;
-            --radius: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-            background: var(--background);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        .container {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            max-width: 1000px;
-            width: 100%;
-            padding: 2rem;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .instructions {
-            background: linear-gradient(135deg, #f0f1ff, #faf5ff);
-            border-left: 4px solid var(--primary-color);
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius);
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-            line-height: 1.8;
-        }
-
-        .game-modes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .mode-btn {
-            padding: 1.5rem 1rem;
-            background: var(--surface);
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .mode-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-light);
-        }
-
-        .mode-btn.active {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .mode-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .score-board {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .score-item {
-            background: var(--surface);
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-            text-align: center;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .score-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--primary-light);
-        }
-
-        .score-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.25rem;
-        }
-
-        .score-value {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .progress-indicator {
-            text-align: center;
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-        }
-
-        .progress-bar {
-            height: 0.75rem;
-            background: var(--border-color);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            transition: width 0.5s ease;
-            border-radius: var(--radius);
-        }
-
-        .timer-bar {
-            height: 0.5rem;
-            background: var(--border-color);
-            border-radius: var(--radius);
-            overflow: hidden;
-            margin-bottom: 2rem;
-            display: none;
-        }
-
-        .timer-bar.active {
-            display: block;
-        }
-
-        .timer-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--success-color), #059669);
-            transition: width linear;
-            width: 100%;
-        }
-
-        .timer-fill.warning {
-            background: linear-gradient(90deg, var(--warning-color), #d97706);
-        }
-
-        .timer-fill.danger {
-            background: linear-gradient(90deg, var(--error-color), #dc2626);
-        }
-
-        .cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .word-card {
-            background: var(--surface);
-            border: 3px solid var(--border-color);
-            border-radius: var(--radius-xl);
-            padding: 3rem 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .word-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 0;
-        }
-
-        .word-card:hover:not(.disabled) {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: var(--shadow-xl);
-            border-color: var(--primary-color);
-        }
-
-        .word-card:hover:not(.disabled)::before {
-            opacity: 0.05;
-        }
-
-        .word-card.selected {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-
-        .word-card.selected::before {
-            opacity: 0.1;
-        }
-
-        .word-card.correct {
-            animation: correctPulse 0.6s ease;
-            border-color: var(--success-color);
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
-        }
-
-        .word-card.incorrect {
-            animation: shake 0.5s ease;
-            border-color: var(--error-color);
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
-        }
-
-        .word-card.disabled {
-            cursor: not-allowed;
-            opacity: 0.8;
-        }
-
-        @keyframes correctPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .card-number {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.25rem;
-            z-index: 1;
-        }
-
-        .word-text {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-            letter-spacing: 0.05em;
-        }
-
-        .hint-btn {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, var(--warning-color), #d97706);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: var(--transition);
-            z-index: 1;
-            box-shadow: var(--shadow-md);
-        }
-
-        .hint-btn:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .hint-text {
-            position: absolute;
-            bottom: 70px;
-            right: 1rem;
-            background: var(--text-primary);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-            font-size: 0.875rem;
-            display: none;
-            max-width: 200px;
-            z-index: 2;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .hint-text.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .feedback-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 5rem;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .feedback-icon.show-correct {
-            animation: showFeedback 1s ease;
-            color: var(--success-color);
-        }
-
-        .feedback-icon.show-incorrect {
-            animation: showFeedback 1s ease;
-            color: var(--error-color);
-        }
-
-        @keyframes showFeedback {
-            0% { 
-                opacity: 0; 
-                transform: translate(-50%, -50%) scale(0) rotate(0deg); 
-            }
-            50% { 
-                opacity: 1; 
-                transform: translate(-50%, -50%) scale(1.2) rotate(180deg); 
-            }
-            100% { 
-                opacity: 0; 
-                transform: translate(-50%, -50%) scale(0.8) rotate(360deg); 
-            }
-        }
-
-        .streak-indicator {
-            background: linear-gradient(135deg, var(--warning-color), #d97706);
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: var(--radius-xl);
-            display: inline-block;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            font-size: 1.25rem;
-            animation: glow 2s ease-in-out infinite;
-            box-shadow: var(--shadow-lg);
-        }
-
-        @keyframes glow {
-            0%, 100% { 
-                box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
-            }
-            50% { 
-                box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
-            }
-        }
-
-        .explanation {
-            background: linear-gradient(135deg, #fef2f2, #fff5f5);
-            border: 2px solid var(--error-color);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            margin-top: 2rem;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
-
-        .explanation.show {
-            display: block;
-        }
-
-        .explanation-title {
-            color: var(--error-color);
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            font-size: 1.25rem;
-        }
-
-        .btn {
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border: none;
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            box-shadow: var(--shadow);
-            margin: 0.5rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, var(--success-color), #059669);
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-skip {
-            background: linear-gradient(135deg, var(--warning-color), #d97706);
-            color: white;
-        }
-
-        .btn-skip:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .buttons-container {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            z-index: 999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.show {
-            display: flex;
-            animation: fadeIn 0.3s;
-        }
-
-        .modal-content {
-            background: var(--surface);
-            border-radius: var(--radius-xl);
-            padding: 2.5rem;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: var(--shadow-xl);
-            animation: slideDown 0.3s;
-            text-align: center;
-        }
-
-        @keyframes slideDown {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-content h2 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .medal {
-            font-size: 5rem;
-            margin: 1.5rem 0;
-            animation: bounce 0.5s ease;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .final-score {
-            font-size: 3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 1rem 0;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--primary-light), var(--secondary-color));
-            color: white;
-            margin: 0.25rem;
-            animation: badgePop 0.3s;
-        }
-
-        @keyframes badgePop {
-            0% { transform: scale(0); }
-            70% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .cards-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .word-text {
-                font-size: 2rem;
-            }
-            
-            .container {
-                padding: 1.5rem;
-            }
-        }
-    </style>
+    <title>משחק זיהוי כתיב נכון</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="word-pairs-manager.js" onerror="console.log('word-pairs-manager.js not found, using basic mode')"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="game-container">
         <h1>🎯 משחק זיהוי כתיב נכון 🎯</h1>
-        
+
         <!-- Game Setup -->
         <div id="gameSetup">
             <div class="instructions">
@@ -623,7 +18,7 @@
                 יופיעו שני כרטיסים עם מילים - אחת נכונה ואחת עם שגיאת כתיב.<br>
                 עליך לבחור בכרטיס עם המילה הכתובה נכון כדי לצבור נקודות!
             </div>
-            
+
             <div class="game-modes">
                 <button class="mode-btn active" onclick="selectMode('easy')">
                     <span class="mode-icon">😊</span>
@@ -642,7 +37,7 @@
                     <span>נגד הזמן</span>
                 </button>
             </div>
-            
+
             <div class="buttons-container">
                 <button class="btn btn-primary" onclick="startGame()">התחל משחק</button>
             </div>
@@ -653,21 +48,21 @@
             <div class="progress-indicator">
                 שאלה <span id="currentQuestion">1</span> מתוך <span id="totalQuestions">10</span>
             </div>
-            
+
             <div class="progress-bar">
                 <div class="progress-fill" id="progressBar" style="width: 0%"></div>
             </div>
-            
+
             <div id="streakContainer" style="text-align: center;">
                 <div class="streak-indicator" id="streakIndicator" style="display: none;">
                     🔥 רצף: <span id="streakCount">0</span>
                 </div>
             </div>
-            
+
             <div class="timer-bar" id="timerBar">
                 <div class="timer-fill" id="timerFill"></div>
             </div>
-            
+
             <div class="score-board">
                 <div class="score-item">
                     <div class="score-label">נכונות</div>
@@ -687,21 +82,23 @@
                 </div>
             </div>
 
+            <!-- Example Sentence -->
+            <div class="example-sentence" id="exampleSentence" style="text-align: center; font-size: 1.5em; font-weight: bold; padding: 1.5rem; background: rgba(255,255,255,0.95); border-radius: 15px; margin-bottom: 1.5rem; color: #2d3748; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div style="margin-bottom: 0.5rem; font-size: 0.85em; color: #667eea; font-weight: 600;">📝 השלם את המשפט:</div>
+                <div id="sentenceText" style="color: #2d3748; font-size: 1.1em;"></div>
+            </div>
+
             <div class="cards-container">
                 <div class="word-card" id="card1" onclick="selectCard(1)">
                     <div class="card-number">1</div>
                     <div class="word-text" id="word1"></div>
                     <div class="feedback-icon" id="feedback1"></div>
-                    <button class="hint-btn" onclick="showHint(1, event)">💡</button>
-                    <div class="hint-text" id="hint1"></div>
                 </div>
-                
+
                 <div class="word-card" id="card2" onclick="selectCard(2)">
                     <div class="card-number">2</div>
                     <div class="word-text" id="word2"></div>
                     <div class="feedback-icon" id="feedback2"></div>
-                    <button class="hint-btn" onclick="showHint(2, event)">💡</button>
-                    <div class="hint-text" id="hint2"></div>
                 </div>
             </div>
 
@@ -738,75 +135,77 @@
     </div>
 
     <script>
-        // Word pairs database - [correct, incorrect, explanation]
-        const wordPairs = {
-            easy: [
-                ['ילד', 'ילת', 'ילד נכתב עם ד בסוף'],
-                ['ילדה', 'ילדא', 'ילדה נכתב עם ה בסוף'],
-                ['כלב', 'כלוב', 'כלב - חיית מחמד'],
-                ['חתול', 'חטול', 'חתול נכתב עם ת'],
-                ['בית', 'באית', 'בית - מקום מגורים'],
-                ['ספר', 'סֵפר', 'ספר - חפץ לקריאה'],
-                ['מים', 'מיים', 'מים - עם י אחת'],
-                ['שמש', 'שמס', 'שמש נכתב עם ש בסוף'],
-                ['ירח', 'ירך', 'ירח - גוף שמיימי'],
-                ['עץ', 'אץ', 'עץ נכתב עם ע'],
-                ['פרח', 'פרך', 'פרח נכתב עם ח'],
-                ['דג', 'דק', 'דג - חיה שחיה במים'],
-                ['ציפור', 'צפור', 'ציפור נכתב עם י'],
-                ['אמא', 'אימא', 'אמא - הכתיב המקובל הוא ללא י'],
-                ['אבא', 'אבה', 'אבא נכתב עם א בסוף'],
-                ['סבא', 'סבה', 'סבא - זכר, נכתב עם א'],
-                ['סבתא', 'סבטא', 'סבתא נכתב עם ת'],
-                ['דוד', 'דור', 'דוד - אח של אמא או אבא'],
-                ['יום', 'יוים', 'יום - עם ו אחת בלבד'],
-                ['לילה', 'ליילה', 'לילה - עם י אחת']
-            ],
-            medium: [
-                ['תלמיד', 'תלמד', 'תלמיד נכתב עם י'],
-                ['מורה', 'מורא', 'מורה - מלמד בבית ספר'],
-                ['כיתה', 'כתה', 'כיתה נכתב עם י'],
-                ['שיעור', 'שעור', 'שיעור נכתב עם י'],
-                ['חופש', 'חופס', 'חופש נכתב עם ש'],
-                ['משפחה', 'משפכה', 'משפחה נכתב עם ח'],
-                ['ארוחה', 'אֲרוחה', 'ארוחה - ללא סימני ניקוד'],
-                ['עגבנייה', 'עגבניה', 'עגבנייה נכתב עם שתי י'],
-                ['מלפפון', 'מלפון', 'מלפפון נכתב עם שתי פ'],
-                ['תפוז', 'טפוז', 'תפוז נכתב עם ת'],
-                ['ענבים', 'אנבים', 'ענבים נכתב עם ע'],
-                ['אבטיח', 'אבתיח', 'אבטיח נכתב עם ט'],
-                ['עיפרון', 'עפרון', 'עיפרון נכתב עם י'],
-                ['מחברת', 'מחברט', 'מחברת נכתב עם ת בסוף'],
-                ['תיק', 'טיק', 'תיק נכתב עם ת'],
-                ['ספרייה', 'ספריה', 'ספרייה נכתב עם שתי י'],
-                ['מחשב', 'מכשב', 'מחשב נכתב עם ח'],
-                ['טלפון', 'תלפון', 'טלפון נכתב עם ט'],
-                ['טלוויזיה', 'טלויזיה', 'טלוויזיה נכתב עם ו אחת'],
-                ['אוטובוס', 'אוטבוס', 'אוטובוס נכתב עם ו']
-            ],
-            hard: [
-                ['אוניברסיטה', 'אוניברסיטא', 'אוניברסיטה נכתב עם ה'],
-                ['פרופסור', 'פרופיסור', 'פרופסור - ללא י'],
-                ['היסטוריה', 'הסטוריה', 'היסטוריה נכתב עם י'],
-                ['גיאוגרפיה', 'גאוגרפיה', 'גיאוגרפיה נכתב עם י'],
-                ['ביולוגיה', 'ביולוגייה', 'ביולוגיה - עם י אחת בסוף'],
-                ['מתמטיקה', 'מטמטיקה', 'מתמטיקה נכתב עם ת'],
-                ['פסיכולוגיה', 'פסיקולוגיה', 'פסיכולוגיה נכתב עם כ'],
-                ['ארכיאולוגיה', 'ארכאולוגיה', 'ארכיאולוגיה נכתב עם י'],
-                ['אנציקלופדיה', 'אנציקלופדייה', 'אנציקלופדיה - עם י אחת'],
-                ['דמוקרטיה', 'דמוקרטייה', 'דמוקרטיה - עם י אחת'],
-                ['טכנולוגיה', 'טקנולוגיה', 'טכנולוגיה נכתב עם כ'],
-                ['אסטרונומיה', 'אסתרונומיה', 'אסטרונומיה - ללא ת'],
-                ['פילוסופיה', 'פילוסופייה', 'פילוסופיה - עם י אחת'],
-                ['היפופוטם', 'היפופוטאם', 'היפופוטם נכתב עם ם סופית'],
-                ['תרנגול', 'תרנגל', 'תרנגול נכתב עם ו'],
-                ['צוללת', 'צולת', 'צוללת נכתב עם שתי ל'],
-                ['הליקופטר', 'הליקופתר', 'הליקופטר נכתב עם ט'],
-                ['אוטומטי', 'אוטומאטי', 'אוטומטי - ללא א'],
-                ['אלקטרוני', 'אלקטרני', 'אלקטרוני נכתב עם ו'],
-                ['מיקרוסקופ', 'מיקרסקופ', 'מיקרוסקופ נכתב עם ו']
-            ]
-        };
+        // ============================================
+        // Embedded word pairs (fallback)
+        // ============================================
+        const EMBEDDED_WORD_PAIRS = [
+            {word: 'ילד', typo: 'ילת', hint: 'ילד נכתב עם ד בסוף', example: 'ה_____ משחק בגן', difficulty: 'easy'},
+            {word: 'ילדה', typo: 'ילדא', hint: 'ילדה נכתב עם ה בסוף', example: 'ה_____ קוראת ספר', difficulty: 'easy'},
+            {word: 'כלב', typo: 'כלוב', hint: 'כלב - חיית מחמד', example: 'ה_____ נובח בחצר', difficulty: 'easy'},
+            {word: 'חתול', typo: 'חטול', hint: 'חתול נכתב עם ת', example: 'ה_____ ישן על הספה', difficulty: 'easy'},
+            {word: 'בית', typo: 'באית', hint: 'בית - מקום מגורים', example: 'אני גר ב_____ גדול', difficulty: 'easy'},
+            {word: 'ספר', typo: 'סֵפר', hint: 'ספר - חפץ לקריאה', example: 'קראתי _____ מעניין', difficulty: 'easy'},
+            {word: 'מים', typo: 'מיים', hint: 'מים - עם י אחת', example: 'אני שותה _____ קרים', difficulty: 'easy'},
+            {word: 'שמש', typo: 'שמס', hint: 'שמש נכתב עם ש בסוף', example: 'ה_____ זורחת בשמיים', difficulty: 'easy'},
+            {word: 'ירח', typo: 'ירך', hint: 'ירח - גוף שמיימי', example: 'ה_____ מלא הלילה', difficulty: 'easy'},
+            {word: 'עץ', typo: 'אץ', hint: 'עץ נכתב עם ע', example: 'ה_____ גדול ויפה', difficulty: 'easy'},
+            {word: 'תלמיד', typo: 'תלמד', hint: 'תלמיד נכתב עם י', example: 'ה_____ לומד במחברת', difficulty: 'medium'},
+            {word: 'מורה', typo: 'מורא', hint: 'מורה - מלמד בבית ספר', example: 'ה_____ מלמד מתמטיקה', difficulty: 'medium'},
+            {word: 'כיתה', typo: 'כתה', hint: 'כיתה נכתב עם י', example: 'ה_____ שלי גדולה', difficulty: 'medium'},
+            {word: 'שיעור', typo: 'שעור', hint: 'שיעור נכתב עם י', example: 'ה_____ התחיל בשמונה', difficulty: 'medium'},
+            {word: 'חופש', typo: 'חופס', hint: 'חופש נכתב עם ש', example: 'ב_____ אני נוסע לים', difficulty: 'medium'},
+            {word: 'משפחה', typo: 'משפכה', hint: 'משפחה נכתב עם ח', example: 'ה_____ שלי גדולה', difficulty: 'medium'},
+            {word: 'ארוחה', typo: 'אֲרוחה', hint: 'ארוחה - ללא סימני ניקוד', example: 'אכלנו _____ טעימה', difficulty: 'medium'},
+            {word: 'מחשב', typo: 'מכשב', hint: 'מחשב נכתב עם ח', example: 'ה_____ החדש מהיר מאוד', difficulty: 'medium'},
+            {word: 'טלפון', typo: 'תלפון', hint: 'טלפון נכתב עם ט', example: 'ה_____ שלי צלצל', difficulty: 'medium'},
+            {word: 'אוטובוס', typo: 'אוטבוס', hint: 'אוטובוס נכתב עם ו', example: 'ה_____ הגיע בזמן', difficulty: 'medium'},
+            {word: 'אוניברסיטה', typo: 'אוניברסיטא', hint: 'אוניברסיטה נכתב עם ה', example: 'למדתי ב_____ העברית', difficulty: 'hard'},
+            {word: 'פרופסור', typo: 'פרופיסור', hint: 'פרופסור - ללא י', example: 'ה_____ מלמד פיזיקה', difficulty: 'hard'},
+            {word: 'היסטוריה', typo: 'הסטוריה', hint: 'היסטוריה נכתב עם י', example: 'אני אוהב לקרוא _____', difficulty: 'hard'},
+            {word: 'גיאוגרפיה', typo: 'גאוגרפיה', hint: 'גיאוגרפיה נכתב עם י', example: 'למדנו _____ של ישראל', difficulty: 'hard'},
+            {word: 'ביולוגיה', typo: 'ביולוגייה', hint: 'ביולוגיה - עם י אחת בסוף', example: 'שיעור ה_____ היה מעניין', difficulty: 'hard'},
+            {word: 'מתמטיקה', typo: 'מטמטיקה', hint: 'מתמטיקה נכתב עם ת', example: 'ה_____ קשה לי', difficulty: 'hard'},
+            {word: 'טכנולוגיה', typo: 'טקנולוגיה', hint: 'טכנולוגיה נכתב עם כ', example: 'ה_____ משתנה במהירות', difficulty: 'hard'},
+            {word: 'דמוקרטיה', typo: 'דמוקרטייה', hint: 'דמוקרטיה - עם י אחת', example: 'ישראל היא מדינת _____', difficulty: 'hard'},
+            {word: 'הליקופטר', typo: 'הליקופתר', hint: 'הליקופטר נכתב עם ט', example: 'ה_____ עף מעל העיר', difficulty: 'hard'},
+            {word: 'אלקטרוני', typo: 'אלקטרני', hint: 'אלקטרוני נכתב עם ו', example: 'שלחתי מכתב _____', difficulty: 'hard'}
+        ];
+
+        // Word pairs database
+        let wordPairs = EMBEDDED_WORD_PAIRS;
+
+        // ============================================
+        // Load word pairs with WordPairsManager
+        // ============================================
+        async function loadWordPairs() {
+            // Check if WordPairsManager exists
+            if (typeof WordPairsManager !== 'undefined') {
+                await WordPairsManager.init(EMBEDDED_WORD_PAIRS);
+                // WordPairsManager.wordPairs is now the flat array from JSON
+                wordPairs = WordPairsManager.wordPairs;
+                console.log('✅ Word pairs loaded with WordPairsManager');
+            } else {
+                // Fallback to direct fetch if manager not available
+                try {
+                    const response = await fetch('vocabulary.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Get the wordPairs array from the JSON
+                        wordPairs = data.wordPairs || data;
+                        console.log('✅ Word pairs loaded from JSON');
+                    } else {
+                        console.log('ℹ️ Using embedded word pairs');
+                    }
+                } catch (error) {
+                    console.log('ℹ️ Using embedded word pairs');
+                }
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            loadWordPairs();
+        });
 
         // Game state
         let gameMode = 'easy';
@@ -832,7 +231,7 @@
                 btn.classList.remove('active');
             });
             event.target.closest('.mode-btn').classList.add('active');
-            
+
             if (mode === 'timed') {
                 totalQuestions = 20;
             } else {
@@ -851,7 +250,7 @@
             questionNumber = 1;
             hintsUsed = 0;
             hasAnswered = false;
-            
+
             // Update UI
             document.getElementById('gameSetup').style.display = 'none';
             document.getElementById('gameArea').style.display = 'block';
@@ -861,13 +260,13 @@
             document.getElementById('accuracy').textContent = '100';
             document.getElementById('currentQuestion').textContent = '1';
             document.getElementById('totalQuestions').textContent = totalQuestions;
-            
+
             // Prepare word pairs
             preparePairs();
-            
+
             // Show first question
             showQuestion();
-            
+
             // Start timer if timed mode
             if (gameMode === 'timed') {
                 document.getElementById('timerBar').classList.add('active');
@@ -878,8 +277,16 @@
         // Prepare word pairs for the game
         function preparePairs() {
             let difficulty = gameMode === 'timed' ? 'medium' : gameMode;
-            let availablePairs = [...wordPairs[difficulty]];
-            
+
+            // Filter by difficulty using WordPairsManager if available
+            let availablePairs;
+            if (typeof WordPairsManager !== 'undefined' && WordPairsManager.getWordPairs) {
+                availablePairs = [...WordPairsManager.getWordPairs(difficulty)];
+            } else {
+                // Direct filtering for new structure
+                availablePairs = wordPairs.filter(pair => pair.difficulty === difficulty);
+            }
+
             // Shuffle and select pairs
             availablePairs = shuffleArray(availablePairs);
             gamePairs = availablePairs.slice(0, totalQuestions);
@@ -891,10 +298,10 @@
                 endGame();
                 return;
             }
-            
+
             hasAnswered = false;
             const pair = gamePairs[questionNumber - 1];
-            
+
             // Clear previous state
             document.querySelectorAll('.word-card').forEach(card => {
                 card.classList.remove('correct', 'incorrect', 'selected', 'disabled');
@@ -907,23 +314,30 @@
             document.querySelectorAll('.hint-text').forEach(hint => {
                 hint.classList.remove('show');
             });
-            
+
+            // Display example sentence
+            if (pair.example) {
+                document.getElementById('sentenceText').textContent = pair.example;
+            } else {
+                document.getElementById('sentenceText').textContent = 'בחר את האיות הנכון';
+            }
+
             // Randomly position correct and incorrect words
             correctPosition = Math.random() < 0.5 ? 1 : 2;
-            
+
             if (correctPosition === 1) {
-                document.getElementById('word1').textContent = pair[0];
-                document.getElementById('word2').textContent = pair[1];
+                document.getElementById('word1').textContent = pair.word;
+                document.getElementById('word2').textContent = pair.typo;
             } else {
-                document.getElementById('word1').textContent = pair[1];
-                document.getElementById('word2').textContent = pair[0];
+                document.getElementById('word1').textContent = pair.typo;
+                document.getElementById('word2').textContent = pair.word;
             }
-            
+
             // Update progress
             document.getElementById('currentQuestion').textContent = questionNumber;
             const progress = ((questionNumber - 1) / totalQuestions) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
-            
+
             // Reset timer for timed mode
             if (gameMode === 'timed') {
                 resetTimer();
@@ -933,101 +347,105 @@
         // Handle card selection
         function selectCard(cardNumber) {
             if (hasAnswered) return;
-            
+
             hasAnswered = true;
             stopTimer();
-            
+
             const card = document.getElementById(`card${cardNumber}`);
             const otherCard = document.getElementById(`card${cardNumber === 1 ? 2 : 1}`);
             const feedback = document.getElementById(`feedback${cardNumber}`);
             const otherFeedback = document.getElementById(`feedback${cardNumber === 1 ? 2 : 1}`);
-            
+
             card.classList.add('selected');
             document.querySelectorAll('.word-card').forEach(c => c.classList.add('disabled'));
-            
+
             const isCorrect = cardNumber === correctPosition;
-            
+
             if (isCorrect) {
                 // Correct answer
                 correctScore++;
                 streak++;
                 totalScore += 10 + (streak * 2);
-                
+
                 card.classList.add('correct');
                 feedback.textContent = '✓';
                 feedback.className = 'feedback-icon show-correct';
-                
+
                 document.getElementById('correctScore').textContent = correctScore;
                 document.getElementById('totalScore').textContent = totalScore;
-                
+
                 if (streak > maxStreak) {
                     maxStreak = streak;
                 }
-                
+
                 if (streak >= 3) {
                     document.getElementById('streakIndicator').style.display = 'inline-block';
                     document.getElementById('streakCount').textContent = streak;
                 }
-                
+
             } else {
                 // Incorrect answer
                 wrongScore++;
                 streak = 0;
-                
+
                 card.classList.add('incorrect');
                 otherCard.classList.add('correct');
-                
+
                 feedback.textContent = '✗';
                 feedback.className = 'feedback-icon show-incorrect';
                 otherFeedback.textContent = '✓';
                 otherFeedback.className = 'feedback-icon show-correct';
-                
+
                 document.getElementById('wrongScore').textContent = wrongScore;
                 document.getElementById('streakIndicator').style.display = 'none';
-                
+
                 // Show explanation
                 const pair = gamePairs[questionNumber - 1];
-                document.getElementById('explanationText').textContent = pair[2];
+                document.getElementById('explanationText').textContent = pair.hint;
                 document.getElementById('explanation').classList.add('show');
             }
-            
+
             // Update accuracy
             const accuracy = Math.round((correctScore / questionNumber) * 100);
             document.getElementById('accuracy').textContent = accuracy;
-            
-            // Auto advance after delay
+
+            // Auto advance after delay (all modes)
+            // Give extra time if answer was wrong so user can read explanation
+            const delay = isCorrect ? 2000 : 3000;
             setTimeout(() => {
-                if (gameMode === 'timed' && questionNumber < totalQuestions) {
+                if (questionNumber < totalQuestions) {
                     nextQuestion();
+                } else {
+                    endGame();
                 }
-            }, 2000);
+            }, delay);
         }
 
         // Show hint
         function showHint(cardNumber, event) {
             event.stopPropagation();
-            
+
             if (hasAnswered) return;
-            
+
             const hintElement = document.getElementById(`hint${cardNumber}`);
             const word = document.getElementById(`word${cardNumber}`).textContent;
             const pair = gamePairs[questionNumber - 1];
-            
+
             // Generate hint based on word
             let hintText = '';
-            if (word === pair[0]) {
+            if (word === pair.word) {
                 hintText = 'זו המילה הנכונה! 👍';
             } else {
                 hintText = 'שים לב לאיות... 🤔';
             }
-            
+
             hintElement.textContent = hintText;
             hintElement.classList.add('show');
-            
+
             hintsUsed++;
             totalScore = Math.max(0, totalScore - 2);
             document.getElementById('totalScore').textContent = totalScore;
-            
+
             setTimeout(() => {
                 hintElement.classList.remove('show');
             }, 3000);
@@ -1054,11 +472,11 @@
         function startTimer() {
             timeLeft = 10;
             updateTimerDisplay();
-            
+
             timerInterval = setInterval(() => {
                 timeLeft--;
                 updateTimerDisplay();
-                
+
                 if (timeLeft <= 0) {
                     stopTimer();
                     if (!hasAnswered) {
@@ -1084,7 +502,7 @@
             const timerFill = document.getElementById('timerFill');
             const percentage = (timeLeft / 10) * 100;
             timerFill.style.width = percentage + '%';
-            
+
             if (timeLeft <= 3) {
                 timerFill.className = 'timer-fill danger';
             } else if (timeLeft <= 6) {
@@ -1097,10 +515,10 @@
         // End game
         function endGame() {
             stopTimer();
-            
+
             const accuracy = totalQuestions > 0 ? Math.round((correctScore / totalQuestions) * 100) : 0;
             let medal = '';
-            
+
             if (accuracy >= 90) {
                 medal = '🏆';
             } else if (accuracy >= 75) {
@@ -1112,14 +530,14 @@
             } else {
                 medal = '⭐';
             }
-            
+
             document.getElementById('medal').textContent = medal;
             document.getElementById('finalScore').textContent = totalScore;
             document.getElementById('finalCorrect').textContent = correctScore;
             document.getElementById('finalWrong').textContent = wrongScore;
             document.getElementById('finalAccuracy').textContent = accuracy;
             document.getElementById('maxStreak').textContent = maxStreak;
-            
+
             document.getElementById('gameOverModal').classList.add('show');
         }
 
