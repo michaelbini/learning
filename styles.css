@@ -1,0 +1,55 @@
+:root {
+  --light: #fefefe;
+  --grey: #cecbcb;
+  --dark: #222;
+  --accent: #ff9a00;
+  --shadow: rgba(0, 0, 0, 0.2);
+}
+
+body {
+  margin: 0;
+  color: var(--dark);
+  background-color: var(--light);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+  background-color: var(--accent);
+  padding: 1em;
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+header h1 {
+  margin: 0;
+  color: var(--light);
+  font-size: 1.8em;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1em;
+}
+
+nav ul li {
+  display: inline;
+}
+
+nav ul li a {
+  color: var(--light);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+main {
+  padding: 2em;
+}
+
+footer {
+  text-align: center;
+  padding: 1em;
+  background-color: var(--grey);
+  color: var(--dark);
+}
