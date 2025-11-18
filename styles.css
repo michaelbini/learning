@@ -1,55 +1,185 @@
-:root {
-  --light: #fefefe;
-  --grey: #cecbcb;
-  --dark: #222;
-  --accent: #ff9a00;
-  --shadow: rgba(0, 0, 0, 0.2);
+/* ============================================
+   GLOBAL STYLES - Common to all pages
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  color: var(--dark);
-  background-color: var(--light);
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
 }
 
-header {
-  background-color: var(--accent);
-  padding: 1em;
-  box-shadow: 0 2px 4px var(--shadow);
+/* ============================================
+   COMMON BUTTON STYLES
+   ============================================ */
+
+button {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-header h1 {
-  margin: 0;
-  color: var(--light);
-  font-size: 1.8em;
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
 }
 
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  gap: 1em;
+button:active {
+    transform: translateY(0);
 }
 
-nav ul li {
-  display: inline;
+/* ============================================
+   MAIN INDEX PAGE STYLES
+   ============================================ */
+
+.container {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
 }
 
-nav ul li a {
-  color: var(--light);
-  text-decoration: none;
-  font-weight: bold;
+h1 {
+    color: white;
+    font-size: 3em;
+    margin-bottom: 15px;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
 }
 
-main {
-  padding: 2em;
+.subtitle {
+    color: rgba(255,255,255,0.9);
+    font-size: 1.3em;
+    margin-bottom: 50px;
 }
 
-footer {
-  text-align: center;
-  padding: 1em;
-  background-color: var(--grey);
-  color: var(--dark);
+/* ============================================
+   LANGUAGE GRID
+   ============================================ */
+
+.language-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.language-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.language-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
+
+.flag-icon {
+    font-size: 5em;
+    margin-bottom: 20px;
+}
+
+.language-title {
+    font-size: 2em;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.language-subtitle {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.games-count {
+    font-size: 0.95em;
+    color: #999;
+    margin-bottom: 25px;
+}
+
+.enter-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: all 0.3s;
+}
+
+.language-card:hover .enter-btn {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    .subtitle {
+        font-size: 1em;
+    }
+
+    .language-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .flag-icon {
+        font-size: 4em;
+    }
+
+    .language-title {
+        font-size: 1.6em;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    h1 {
+        font-size: 1.6em;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        font-size: 0.95em;
+    }
 }

@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק סדרות וחוקיות - כיתה ה'</title>
+    <link rel="stylesheet" href="math-styles.css">
+    <style>
+        .pattern-hint {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 1.1em;
+            color: #92400e;
+            display: none;
+        }
+
+        .pattern-hint.show {
+            display: block;
+        }
+
+        .sequence-type-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: var(--info-color);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+
+        .input-sequence-item {
+            width: 80px;
+            height: 80px;
+            padding: 10px;
+            font-size: 1.3em;
+            text-align: center;
+            border: 3px solid var(--primary-color);
+            border-radius: 10px;
+        }
+
+        .sequence-operation {
+            font-size: 1.5em;
+            color: var(--primary-color);
+            font-weight: bold;
+            padding: 0 10px;
+        }
+
+        .rule-reveal {
+            background: var(--background);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed var(--primary-color);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin: 20px 0;
+        }
+
+        .rule-reveal:hover {
+            background: var(--surface);
+        }
+
+        .rule-reveal.revealed {
+            background: var(--surface);
+            border-style: solid;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔢 משחק סדרות וחוקיות 🔢</h1>
+        
+        <div class="main-card">
+            <!-- בחירת רמה -->
+            <div class="level-selector">
+                <button class="level-btn active" onclick="selectLevel(1, this)">
+                    רמה 1
+                    <span class="level-stars">⭐</span>
+                </button>
+                <button class="level-btn" onclick="selectLevel(2, this)">
+                    רמה 2
+                    <span class="level-stars">⭐⭐</span>
+                </button>
+                <button class="level-btn" onclick="selectLevel(3, this)">
+                    רמה 3
+                    <span class="level-stars">⭐⭐⭐</span>
+                </button>
+                <button class="level-btn" onclick="selectLevel(4, this)">
+                    רמה 4
+                    <span class="level-stars">⭐⭐⭐⭐</span>
+                </button>
+                <button class="level-btn" onclick="selectLevel(5, this)">
+                    רמה 5
+                    <span class="level-stars">⭐⭐⭐⭐⭐</span>
+                </button>
+            </div>
+
+            <!-- לוח ניקוד -->
+            <div class="score-board">
+                <div class="score-item">
+                    <div class="score-label">נקודות</div>
+                    <div class="score-value" id="score">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">רמה</div>
+                    <div class="score-value" id="currentLevel">1</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">דיוק</div>
+                    <div class="score-value"><span id="accuracy">100</span>%</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">רצף</div>
+                    <div class="score-value" id="streak">0</div>
+                </div>
+            </div>
+
+            <!-- שאלה -->
+            <div class="question-display">
+                השלם את הסדרה:
+                <span class="sequence-type-badge" id="sequenceType">סדרה חשבונית</span>
+            </div>
+
+            <!-- הסדרה -->
+            <div class="sequence-container">
+                <div class="sequence" id="sequenceDisplay">
+                    <!-- תיווצר דינמית -->
+                </div>
+            </div>
+
+            <!-- רמז לדפוס -->
+            <div class="pattern-hint" id="patternHint">
+                💡 חפש דפוס בהפרשים בין המספרים
+            </div>
+
+            <!-- גילוי החוק -->
+            <div class="rule-reveal" id="ruleReveal" onclick="revealRule()">
+                🔍 לחץ לגילוי החוק (-10 נקודות)
+                <div id="ruleText" style="display: none; margin-top: 10px; font-weight: bold;"></div>
+            </div>
+
+            <!-- אפשרויות תשובה -->
+            <div class="options-grid" id="optionsGrid">
+                <!-- ייווצרו דינמית -->
+            </div>
+
+            <!-- כפתורים -->
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-primary" onclick="checkAnswer()">בדוק תשובה</button>
+                <button class="btn btn-warning" onclick="showHint()">💡 רמז (-5 נק')</button>
+                <button class="btn btn-info" onclick="showPattern()">📊 הצג דפוס (-7 נק')</button>
+                <button class="btn btn-success" onclick="newSequence()">סדרה חדשה</button>
+            </div>
+
+            <!-- משוב -->
+            <div class="feedback" id="feedback"></div>
+
+            <!-- התקדמות -->
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">0/10</div>
+            </div>
+        </div>
+
+        <!-- חזרה לעמוד הראשי -->
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="math-index.html" class="btn btn-secondary">↩️ חזרה לעמוד הראשי</a>
+        </div>
+    </div>
+
+    <script>
+        // משתני משחק
+        let currentLevel = 1;
+        let score = 0;
+        let streak = 0;
+        let totalQuestions = 0;
+        let correctAnswers = 0;
+        let questionsInLevel = 0;
+        
+        // משתני סדרה
+        let currentSequence = [];
+        let missingIndices = [];
+        let sequenceRule = '';
+        let sequenceType = '';
+        let userAnswers = {};
+        let correctAnswersMap = {};
+        
+        // אתחול
+        window.addEventListener('load', () => {
+            initGame();
+            loadProgress();
+        });
+
+        function initGame() {
+            newSequence();
+        }
+
+        function selectLevel(level, button) {
+            currentLevel = level;
+            questionsInLevel = 0;
+            
+            // עדכון כפתורים
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            // עדכון תצוגה
+            document.getElementById('currentLevel').textContent = level;
+            
+            // סדרה חדשה
+            newSequence();
+        }
+
+        function newSequence() {
+            // איפוס
+            userAnswers = {};
+            correctAnswersMap = {};
+            document.getElementById('ruleReveal').classList.remove('revealed');
+            document.getElementById('ruleText').style.display = 'none';
+            document.getElementById('patternHint').classList.remove('show');
+            
+            // יצירת סדרה לפי רמה
+            switch(currentLevel) {
+                case 1:
+                    createLevel1Sequence();
+                    break;
+                case 2:
+                    createLevel2Sequence();
+                    break;
+                case 3:
+                    createLevel3Sequence();
+                    break;
+                case 4:
+                    createLevel4Sequence();
+                    break;
+                case 5:
+                    createLevel5Sequence();
+                    break;
+            }
+            
+            // הצג סדרה
+            displaySequence();
+            createOptions();
+            
+            // עדכון תג סוג
+            document.getElementById('sequenceType').textContent = sequenceType;
+        }
+
+        function createLevel1Sequence() {
+            // רמה 1: סדרות חשבוניות פשוטות (הוספה/חיסור קבוע)
+            const start = Math.floor(Math.random() * 20) + 1;
+            const diff = Math.floor(Math.random() * 5) + 1;
+            const direction = Math.random() < 0.7 ? 1 : -1; // 70% עולה, 30% יורדת
+            
+            currentSequence = [];
+            for (let i = 0; i < 8; i++) {
+                currentSequence.push(start + (i * diff * direction));
+            }
+            
+            sequenceRule = direction > 0 ? 
+                `כל מספר גדול ב-${diff} מהקודם` : 
+                `כל מספר קטן ב-${diff} מהקודם`;
+            sequenceType = 'סדרה חשבונית';
+            
+            // החסר 2 מספרים
+            missingIndices = [4, 6];
+        }
+
+        function createLevel2Sequence() {
+            // רמה 2: סדרות כפל או סדרות עם קפיצות גדלות
+            const type = Math.random();
+            
+            if (type < 0.5) {
+                // כפל קבוע
+                const start = Math.floor(Math.random() * 3) + 2;
+                const mult = Math.floor(Math.random() * 2) + 2;
+                
+                currentSequence = [start];
+                for (let i = 1; i < 7; i++) {
+                    currentSequence.push(currentSequence[i-1] * mult);
+                }
+                
+                sequenceRule = `כל מספר כפול ${mult} מהקודם`;
+                sequenceType = 'סדרה הנדסית';
+            } else {
+                // הפרש גדל
+                const start = Math.floor(Math.random() * 5) + 1;
+                let diff = 2;
+                
+                currentSequence = [start];
+                for (let i = 1; i < 8; i++) {
+                    currentSequence.push(currentSequence[i-1] + diff);
+                    diff += 2;
+                }
+                
+                sequenceRule = 'ההפרש גדל ב-2 כל פעם';
+                sequenceType = 'סדרה עם הפרש משתנה';
+            }
+            
+            missingIndices = [3, 5, 7];
+        }
+
+        function createLevel3Sequence() {
+            // רמה 3: סדרות יורדות, חילוק, או דפוס מורכב
+            const type = Math.floor(Math.random() * 3);
+            
+            if (type === 0) {
+                // סדרה יורדת עם כפל
+                const start = 100;
+                currentSequence = [start];
+                for (let i = 1; i < 7; i++) {
+                    currentSequence.push(Math.floor(currentSequence[i-1] / 2));
+                }
+                sequenceRule = 'כל מספר הוא חצי מהקודם';
+                sequenceType = 'סדרה יורדת';
+            } else if (type === 1) {
+                // סדרת ריבועים
+                currentSequence = [];
+                for (let i = 1; i <= 8; i++) {
+                    currentSequence.push(i * i);
+                }
+                sequenceRule = 'סדרת ריבועים: 1², 2², 3²...';
+                sequenceType = 'סדרת חזקות';
+            } else {
+                // סדרה עם תבנית +3, -1
+                const start = 5;
+                currentSequence = [start];
+                for (let i = 1; i < 8; i++) {
+                    if (i % 2 === 1) {
+                        currentSequence.push(currentSequence[i-1] + 3);
+                    } else {
+                        currentSequence.push(currentSequence[i-1] - 1);
+                    }
+                }
+                sequenceRule = 'לסירוגין: +3, -1';
+                sequenceType = 'סדרה מחזורית';
+            }
+            
+            missingIndices = [2, 4, 6];
+        }
+
+        function createLevel4Sequence() {
+            // רמה 4: פיבונאצ'י, סדרות עם חוקיות דינמית
+            const type = Math.floor(Math.random() * 3);
+            
+            if (type === 0) {
+                // פיבונאצ'י
+                currentSequence = [1, 1];
+                for (let i = 2; i < 8; i++) {
+                    currentSequence.push(currentSequence[i-1] + currentSequence[i-2]);
+                }
+                sequenceRule = 'כל מספר = סכום שני הקודמים';
+                sequenceType = 'סדרת פיבונאצ'י';
+            } else if (type === 1) {
+                // הפרש גדל באופן דינמי: +1, +2, +3, +4...
+                currentSequence = [2];
+                let diff = 1;
+                for (let i = 1; i < 8; i++) {
+                    currentSequence.push(currentSequence[i-1] + diff);
+                    diff++;
+                }
+                sequenceRule = 'ההפרש גדל ב-1 כל פעם: +1, +2, +3...';
+                sequenceType = 'סדרה משולשת';
+            } else {
+                // כפל וחיבור לסירוגין
+                currentSequence = [2];
+                for (let i = 1; i < 8; i++) {
+                    if (i % 2 === 1) {
+                        currentSequence.push(currentSequence[i-1] * 2);
+                    } else {
+                        currentSequence.push(currentSequence[i-1] + 3);
+                    }
+                }
+                sequenceRule = 'לסירוגין: ×2, +3';
+                sequenceType = 'סדרה משולבת';
+            }
+            
+            missingIndices = [3, 5, 6, 7];
+        }
+
+        function createLevel5Sequence() {
+            // רמה 5: סדרות מורכבות מאוד
+            const type = Math.floor(Math.random() * 3);
+            
+            if (type === 0) {
+                // סדרת ראשוניים
+                const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+                currentSequence = primes.slice(0, 8);
+                sequenceRule = 'סדרת מספרים ראשוניים';
+                sequenceType = 'מספרים ראשוניים';
+            } else if (type === 1) {
+                // סדרה עם חוק משתנה: +1, +2, +4, +8...
+                currentSequence = [1];
+                let diff = 1;
+                for (let i = 1; i < 8; i++) {
+                    currentSequence.push(currentSequence[i-1] + diff);
+                    diff *= 2;
+                }
+                sequenceRule = 'ההפרש מוכפל: +1, +2, +4, +8...';
+                sequenceType = 'סדרה מעריכית';
+            } else {
+                // סדרת טריבונאצ'י (סכום 3 קודמים)
+                currentSequence = [1, 1, 2];
+                for (let i = 3; i < 8; i++) {
+                    currentSequence.push(
+                        currentSequence[i-1] + 
+                        currentSequence[i-2] + 
+                        currentSequence[i-3]
+                    );
+                }
+                sequenceRule = 'כל מספר = סכום שלושת הקודמים';
+                sequenceType = 'סדרת טריבונאצ'י';
+            }
+            
+            missingIndices = [2, 4, 5, 6, 7];
+        }
+
+        function displaySequence() {
+            const container = document.getElementById('sequenceDisplay');
+            container.innerHTML = '';
+            
+            currentSequence.forEach((num, index) => {
+                if (index > 0) {
+                    // הוסף סימן פעולה
+                    const arrow = document.createElement('span');
+                    arrow.className = 'sequence-arrow';
+                    arrow.textContent = '←';
+                    container.appendChild(arrow);
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'sequence-item';
+                
+                if (missingIndices.includes(index)) {
+                    // תא ריק
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'input-sequence-item';
+                    input.id = `input-${index}`;
+                    input.placeholder = '?';
+                    
+                    input.addEventListener('change', (e) => {
+                        userAnswers[index] = parseInt(e.target.value);
+                    });
+                    
+                    item.appendChild(input);
+                    correctAnswersMap[index] = num;
+                } else {
+                    // תא מלא
+                    item.className += ' filled';
+                    item.textContent = num;
+                }
+                
+                container.appendChild(item);
+            });
+        }
+
+        function createOptions() {
+            const container = document.getElementById('optionsGrid');
+            container.innerHTML = '';
+            
+            // אם רמה נמוכה, הצג אפשרויות
+            if (currentLevel <= 2) {
+                const options = new Set();
+                
+                // הוסף תשובות נכונות
+                missingIndices.forEach(index => {
+                    options.add(currentSequence[index]);
+                });
+                
+                // הוסף מסיחים
+                while (options.size < 8) {
+                    const distractor = currentSequence[0] + Math.floor(Math.random() * 50);
+                    options.add(distractor);
+                }
+                
+                // צור כפתורים
+                Array.from(options).sort((a, b) => a - b).forEach(option => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = option;
+                    btn.onclick = () => fillNext(option, btn);
+                    container.appendChild(btn);
+                });
+            }
+        }
+
+        function fillNext(value, button) {
+            // מצא את השדה הריק הבא
+            for (let index of missingIndices) {
+                const input = document.getElementById(`input-${index}`);
+                if (input && !input.value) {
+                    input.value = value;
+                    userAnswers[index] = value;
+                    button.classList.add('selected');
+                    button.disabled = true;
+                    break;
+                }
+            }
+        }
+
+        function checkAnswer() {
+            totalQuestions++;
+            questionsInLevel++;
+            
+            let allCorrect = true;
+            let correctCount = 0;
+            
+            missingIndices.forEach(index => {
+                const input = document.getElementById(`input-${index}`);
+                const userAnswer = parseInt(input.value);
+                const correctAnswer = correctAnswersMap[index];
+                
+                if (userAnswer === correctAnswer) {
+                    input.style.background = '#d4edda';
+                    correctCount++;
+                } else {
+                    input.style.background = '#f8d7da';
+                    input.value = correctAnswer;
+                    allCorrect = false;
+                }
+            });
+            
+            if (allCorrect) {
+                correctAnswers++;
+                streak++;
+                let points = 15 * currentLevel;
+                
+                // בונוס רצף
+                if (streak >= 3) {
+                    points += streak * 3;
+                }
+                
+                score += points;
+                showFeedback(`🎊 מצוין! גילית את החוק! +${points} נקודות`, 'correct');
+                
+                // המשך
+                setTimeout(() => {
+                    if (questionsInLevel >= 10) {
+                        levelComplete();
+                    } else {
+                        newSequence();
+                    }
+                }, 2000);
+            } else {
+                streak = 0;
+                const partial = correctCount > 0 ? ` (${correctCount}/${missingIndices.length} נכונים)` : '';
+                showFeedback(`❌ לא מדויק${partial}. החוק: ${sequenceRule}`, 'incorrect');
+            }
+            
+            updateStats();
+            updateProgress();
+        }
+
+        function showHint() {
+            score = Math.max(0, score - 5);
+            updateStats();
+            
+            document.getElementById('patternHint').classList.add('show');
+            
+            // רמז ספציפי לסוג הסדרה
+            let hint = '';
+            if (sequenceType.includes('חשבונית')) {
+                hint = '💡 בדוק את ההפרש בין מספרים עוקבים';
+            } else if (sequenceType.includes('הנדסית')) {
+                hint = '💡 בדוק את היחס בין מספרים עוקבים';
+            } else if (sequenceType.includes('פיבונאצ\'י')) {
+                hint = '💡 כל מספר קשור לקודמים לו';
+            } else {
+                hint = '💡 חפש תבנית חוזרת או חוק משתנה';
+            }
+            
+            document.getElementById('patternHint').textContent = hint;
+        }
+
+        function showPattern() {
+            score = Math.max(0, score - 7);
+            updateStats();
+            
+            // חשב והצג הפרשים
+            const differences = [];
+            for (let i = 1; i < currentSequence.length; i++) {
+                if (!missingIndices.includes(i) && !missingIndices.includes(i-1)) {
+                    differences.push(currentSequence[i] - currentSequence[i-1]);
+                }
+            }
+            
+            showFeedback(`📊 הפרשים: ${differences.join(', ')}`, 'correct');
+        }
+
+        function revealRule() {
+            if (document.getElementById('ruleReveal').classList.contains('revealed')) {
+                return;
+            }
+            
+            score = Math.max(0, score - 10);
+            updateStats();
+            
+            document.getElementById('ruleReveal').classList.add('revealed');
+            document.getElementById('ruleText').style.display = 'block';
+            document.getElementById('ruleText').textContent = sequenceRule;
+        }
+
+        function levelComplete() {
+            showFeedback(`🎊 סיימת רמה ${currentLevel}! עובר לרמה ${currentLevel + 1}`, 'correct');
+            
+            if (currentLevel < 5) {
+                currentLevel++;
+                questionsInLevel = 0;
+                
+                // עדכון כפתור רמה
+                document.querySelectorAll('.level-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.level-btn')[currentLevel - 1].classList.add('active');
+                
+                setTimeout(() => newSequence(), 2000);
+            } else {
+                gameComplete();
+            }
+        }
+
+        function gameComplete() {
+            const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal show';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>🏆 כל הכבוד! 🏆</h2>
+                    <p>סיימת את כל הרמות!</p>
+                    <div class="grade-circle excellent">${score}</div>
+                    <p>דיוק: ${accuracy}%</p>
+                    <button class="btn btn-primary" onclick="location.reload()">שחק שוב</button>
+                    <button class="btn btn-secondary" onclick="location.href='math-index.html'">חזרה לעמוד הראשי</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            saveProgress();
+        }
+
+        function showFeedback(message, type) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = message;
+            feedback.className = `feedback show ${type}`;
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('currentLevel').textContent = currentLevel;
+            document.getElementById('streak').textContent = streak;
+            
+            const accuracy = totalQuestions > 0 ? 
+                Math.round((correctAnswers / totalQuestions) * 100) : 100;
+            document.getElementById('accuracy').textContent = accuracy;
+        }
+
+        function updateProgress() {
+            const progress = (questionsInLevel / 10) * 100;
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            progressBar.textContent = `${questionsInLevel}/10`;
+        }
+
+        function saveProgress() {
+            localStorage.setItem('sequences_score', score);
+            localStorage.setItem('sequences_level', currentLevel);
+            localStorage.setItem('sequences_accuracy', 
+                Math.round((correctAnswers / totalQuestions) * 100));
+        }
+
+        function loadProgress() {
+            const savedScore = localStorage.getItem('sequences_score');
+            if (savedScore) {
+                score = parseInt(savedScore);
+                updateStats();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -4,130 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learning Games - משחקי למידה</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        h1 {
-            color: white;
-            font-size: 3em;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .subtitle {
-            color: white;
-            font-size: 1.3em;
-            margin-bottom: 50px;
-            opacity: 0.95;
-        }
-
-        .language-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .language-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            text-decoration: none;
-            color: #333;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .language-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-        }
-
-        .flag-icon {
-            font-size: 5em;
-            margin-bottom: 20px;
-        }
-
-        .language-title {
-            font-size: 2em;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .language-subtitle {
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .games-count {
-            font-size: 0.95em;
-            color: #999;
-            margin-bottom: 25px;
-        }
-
-        .enter-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 1.1em;
-            transition: all 0.3s;
-        }
-
-        .language-card:hover .enter-btn {
-            transform: scale(1.1);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            .subtitle {
-                font-size: 1em;
-            }
-
-            .language-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .flag-icon {
-                font-size: 4em;
-            }
-
-            .language-title {
-                font-size: 1.6em;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -149,8 +26,17 @@
                 <div class="flag-icon">🇮🇱</div>
                 <div class="language-title">עברית</div>
                 <div class="language-subtitle">תרגול כתיב בעברית</div>
-                <div class="games-count">משחק אחד זמין</div>
+                <div class="games-count">2 משחקים זמינים</div>
                 <span class="enter-btn">כניסה ←</span>
+            </a>
+
+            <!-- Math Games -->
+            <a href="math/index.html" class="language-card">
+                <div class="flag-icon">🔢</div>
+                <div class="language-title">Math - מתמטיקה</div>
+                <div class="language-subtitle">כיתה ה' - Grade 5</div>
+                <div class="games-count">6 Games Available</div>
+                <span class="enter-btn">Enter →</span>
             </a>
         </div>
     </div>

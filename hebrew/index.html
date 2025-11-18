@@ -1,44 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Games - משחקי למידה</title>
+    <title>משחקי אוצר מילים - Hebrew Games</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="index-body">
     <div class="container">
-        <h1>🎓 Learning Games</h1>
-        <p class="subtitle">Choose your language / בחר שפה</p>
+        <h1>🎓 משחקי אוצר מילים</h1>
+        <p class="subtitle">בחר משחק ותתחיל ללמוד!</p>
 
-        <div class="language-grid">
-            <!-- English Games -->
-            <a href="english/index.html" class="language-card">
-                <div class="flag-icon">🇬🇧</div>
-                <div class="language-title">English</div>
-                <div class="language-subtitle">Learn Hebrew vocabulary</div>
-                <div class="games-count">4 Games Available</div>
-                <span class="enter-btn">Enter →</span>
+        <div class="games-grid">
+            <!-- Spelling Typing Game -->
+            <a href="spelling.html" class="game-card">
+                <span class="game-icon">⌨️</span>
+                <div class="game-title">משחק הקלדה</div>
+                <div class="game-description">
+                    רואים מילה בעברית וצריך להקליד אותה נכון
+                </div>
+                <span class="play-btn">▶️ שחק עכשיו</span>
             </a>
 
-            <!-- Hebrew Games -->
-            <a href="hebrew/index.html" class="language-card">
-                <div class="flag-icon">🇮🇱</div>
-                <div class="language-title">עברית</div>
-                <div class="language-subtitle">תרגול כתיב בעברית</div>
-                <div class="games-count">2 משחקים זמינים</div>
-                <span class="enter-btn">כניסה ←</span>
-            </a>
-
-            <!-- Math Games -->
-            <a href="math/index.html" class="language-card">
-                <div class="flag-icon">🔢</div>
-                <div class="language-title">Math - מתמטיקה</div>
-                <div class="language-subtitle">כיתה ה' - Grade 5</div>
-                <div class="games-count">6 Games Available</div>
-                <span class="enter-btn">Enter →</span>
+            <!-- Spelling Comparison Game -->
+            <a href="spelling-compar.html" class="game-card">
+                <span class="game-icon">🎯</span>
+                <div class="game-title">משחק זיהוי כתיב</div>
+                <div class="game-description">
+                    בחר את האיות הנכון מבין שתי אפשרויות - תרגול טעויות נפוצות
+                </div>
+                <span class="play-btn">▶️ שחק עכשיו</span>
             </a>
         </div>
+
     </div>
 </body>
 </html>
