@@ -6,166 +6,67 @@
     <title>העולם המתמטי - כיתה ה'</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="index-body">
     <div class="container">
-        <div class="hero-section">
-            <div class="hero-title">🌟 העולם המתמטי 🌟</div>
-            <div class="hero-subtitle">לימוד מתמטיקה לכיתה ה' בכיף ובהנאה</div>
-            
-            <div class="stats-overview">
-                <div class="stat-card">
-                    <div class="stat-value">6</div>
-                    <div class="stat-label">משחקים</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">15</div>
-                    <div class="stat-label">רמות קושי</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">∞</div>
-                    <div class="stat-label">תרגילים</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="totalScore">0</div>
-                    <div class="stat-label">נקודות כולל</div>
-                </div>
-            </div>
-        </div>
+        <h1>🔢 משחקי מתמטיקה</h1>
+        <p class="subtitle">בחר משחק ותתחיל ללמוד!</p>
 
         <div class="games-grid">
             <a href="number-line.html" class="game-card">
-                <div class="game-icon">📏</div>
+                <span class="game-icon">📏</span>
                 <div class="game-title">ציר המספרים</div>
                 <div class="game-description">
                     מיקום מספרים, שברים ועשרוניים על הציר
                 </div>
+                <span class="play-btn">▶️ שחק עכשיו</span>
             </a>
 
             <a href="sequences.html" class="game-card">
-                <div class="game-icon">🔢</div>
+                <span class="game-icon">🔢</span>
                 <div class="game-title">סדרות וחוקיות</div>
                 <div class="game-description">
                     גילוי חוקים והשלמת סדרות מתמטיות
                 </div>
+                <span class="play-btn">▶️ שחק עכשיו</span>
             </a>
 
             <a href="fractions.html" class="game-card">
-                <div class="game-icon">🍕</div>
+                <span class="game-icon">🍕</span>
                 <div class="game-title">פיצה שברים</div>
                 <div class="game-description">
                     למידת שברים בצורה ויזואלית ומהנה
                 </div>
+                <span class="play-btn">▶️ שחק עכשיו</span>
             </a>
 
             <a href="shop.html" class="game-card">
-                <div class="game-icon">🏪</div>
+                <span class="game-icon">🏪</span>
                 <div class="game-title">חנות המתמטיקה</div>
                 <div class="game-description">
                     תרגול חישובי כסף ועשרוניים
                 </div>
+                <span class="play-btn">▶️ שחק עכשיו</span>
             </a>
 
             <a href="multiplication.html" class="game-card">
-                <div class="game-icon">🏎️</div>
+                <span class="game-icon">🏎️</span>
                 <div class="game-title">מרוץ הכפל</div>
                 <div class="game-description">
                     תרגול כפל וחילוק במהירות
                 </div>
+                <span class="play-btn">▶️ שחק עכשיו</span>
             </a>
 
             <a href="geometry.html" class="game-card">
-                <div class="game-icon">📐</div>
+                <span class="game-icon">📐</span>
                 <div class="game-title">בונה הגיאומטריה</div>
                 <div class="game-description">
                     חישוב שטח, היקף וזיהוי צורות
                 </div>
+                <span class="play-btn">▶️ שחק עכשיו</span>
             </a>
         </div>
 
-        <div class="exam-card" onclick="location.href='exam.html'">
-            <div class="exam-icon">📝</div>
-            <h2>מבחן אתגר</h2>
-            <p>10 שאלות אקראיות מכל הנושאים - בדוק את עצמך!</p>
-            <button class="btn btn-large" style="background: white; color: #f5576c;">התחל מבחן</button>
-        </div>
-
-        <div class="features-section">
-            <h2 style="color: var(--primary-color);">✨ מה תמצאו כאן?</h2>
-            
-            <div class="feature-item">
-                <span class="feature-icon">🎯</span>
-                <div>
-                    <strong>רמות קושי מותאמות</strong> - מתחילים עד מתקדמים
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <span class="feature-icon">🏆</span>
-                <div>
-                    <strong>מערכת ניקוד ותגמולים</strong> - צברו נקודות והישגים
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <span class="feature-icon">📊</span>
-                <div>
-                    <strong>מעקב התקדמות</strong> - ראו את השיפור שלכם
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <span class="feature-icon">🎮</span>
-                <div>
-                    <strong>למידה משחקית</strong> - כיף ללמוד מתמטיקה
-                </div>
-            </div>
-            
-            <div class="feature-item">
-                <span class="feature-icon">📱</span>
-                <div>
-                    <strong>עובד בכל מכשיר</strong> - מחשב, טאבלט או טלפון
-                </div>
-            </div>
-        </div>
     </div>
-
-    <script>
-        // טען ניקוד כולל מ-localStorage
-        function loadTotalScore() {
-            let totalScore = 0;
-            const games = ['numberline', 'sequences', 'fractions', 'shop', 'multiplication', 'geometry'];
-            
-            games.forEach(game => {
-                const gameScore = localStorage.getItem(`${game}_score`);
-                if (gameScore) {
-                    totalScore += parseInt(gameScore);
-                }
-            });
-            
-            document.getElementById('totalScore').textContent = totalScore;
-        }
-
-        // אנימציות כניסה
-        window.addEventListener('load', () => {
-            loadTotalScore();
-            
-            // אנימציות כניסה לכרטיסים
-            const cards = document.querySelectorAll('.game-card');
-            cards.forEach((card, index) => {
-                setTimeout(() => {
-                    card.style.animation = 'slideUp 0.5s ease forwards';
-                }, index * 100);
-            });
-        });
-
-        // שמירת העדפות משתמש
-        function saveUserPreference(key, value) {
-            localStorage.setItem(key, value);
-        }
-
-        function getUserPreference(key) {
-            return localStorage.getItem(key);
-        }
-    </script>
 </body>
 </html>

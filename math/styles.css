@@ -151,7 +151,6 @@ h3 {
 .game-icon {
     font-size: 3em;
     margin-bottom: 15px;
-    animation: bounce 2s infinite;
 }
 
 .game-title {
@@ -165,6 +164,22 @@ h3 {
     color: var(--text-secondary);
     font-size: 0.95em;
     line-height: 1.5;
+}
+
+.play-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 0.95em;
+    margin-top: auto;
+    transition: all 0.3s;
+}
+
+.game-card:hover .play-btn {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 /* Level Selector */
@@ -947,4 +962,490 @@ h3 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+}
+
+/* ============================================
+   NUMBER LINE GAME SPECIFIC STYLES
+   ============================================ */
+
+.fraction-display {
+    font-size: 2em;
+    display: inline-block;
+    text-align: center;
+    margin: 0 10px;
+}
+
+.fraction-numerator {
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 5px;
+}
+
+.fraction-denominator {
+    padding-top: 5px;
+}
+
+.number-type-selector {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.type-btn {
+    padding: 10px 20px;
+    background: var(--surface);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-small);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.type-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.hint-arrow {
+    position: absolute;
+    top: 20%;
+    font-size: 2em;
+    color: var(--warning-color);
+    animation: bounce 1s infinite;
+    display: none;
+}
+
+.hint-arrow.show {
+    display: block;
+}
+
+.target-marker {
+    position: absolute;
+    top: 50%;
+    width: 3px;
+    height: 40px;
+    background: var(--success-color);
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.target-marker.show {
+    display: block;
+}
+
+/* ============================================
+   SEQUENCES GAME SPECIFIC STYLES
+   ============================================ */
+
+.pattern-hint {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    text-align: center;
+    font-size: 1.1em;
+    color: #92400e;
+    display: none;
+}
+
+.pattern-hint.show {
+    display: block;
+}
+
+.sequence-type-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    background: var(--info-color);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin: 10px 0;
+}
+
+.input-sequence-item {
+    width: 80px;
+    height: 80px;
+    padding: 10px;
+    font-size: 1.3em;
+    text-align: center;
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
+}
+
+.sequence-operation {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    font-weight: bold;
+    padding: 0 10px;
+}
+
+.rule-reveal {
+    background: var(--background);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px dashed var(--primary-color);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    margin: 20px 0;
+}
+
+.rule-reveal:hover {
+    background: var(--surface);
+}
+
+.rule-reveal.revealed {
+    background: var(--surface);
+    border-style: solid;
+    cursor: default;
+}
+
+/* ============================================
+   SHOP GAME SPECIFIC STYLES
+   ============================================ */
+
+.shop-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.shop-item {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border: 2px solid var(--border-color);
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.shop-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
+}
+
+.shop-item.in-cart {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border-color: var(--success-color);
+}
+
+.shop-item.in-cart::after {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: var(--success-color);
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.item-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.item-name {
+    font-weight: 600;
+    margin: 5px 0;
+    color: var(--text-primary);
+}
+
+.item-price {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.item-discount {
+    background: var(--error-color);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    transform: rotate(-15deg);
+}
+
+.cart-container {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 30px 0;
+}
+
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.cart-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.cart-items {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 100px;
+    margin-bottom: 15px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-total {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 15px 0;
+}
+
+.wallet-display {
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.wallet-amount {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: var(--warning-color);
+}
+
+.change-input {
+    width: 150px;
+    padding: 10px;
+    font-size: 1.3em;
+    text-align: center;
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
+}
+
+.receipt {
+    background: white;
+    border: 2px dashed var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    font-family: 'Courier New', monospace;
+}
+
+.receipt-header {
+    text-align: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.receipt-line {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.receipt-total {
+    border-top: 2px solid var(--border-color);
+    margin-top: 10px;
+    padding-top: 10px;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--primary-color);
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.quantity-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.quantity-display {
+    font-size: 1.2em;
+    font-weight: bold;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* ============================================
+   FRACTIONS GAME SPECIFIC STYLES
+   ============================================ */
+
+.pizza-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 40px 0;
+    min-height: 400px;
+}
+
+.pizza {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: #f4a460;
+    border: 8px solid #d2691e;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.pizza-slice {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 0;
+    background: #ff6347;
+    border: 2px solid #8b4513;
+    cursor: pointer;
+    transition: all 0.3s;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+.pizza-slice:hover {
+    filter: brightness(1.2);
+    transform: scale(1.05);
+}
+
+.pizza-slice.selected {
+    background: #32cd32;
+    border-color: #228b22;
+    filter: brightness(1.1);
+}
+
+/* ============================================
+   MULTIPLICATION GAME SPECIFIC STYLES
+   ============================================ */
+
+.race-track {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(to right,
+        #90ee90 0%,
+        #98fb98 20%,
+        #90ee90 40%,
+        #98fb98 60%,
+        #90ee90 80%,
+        #98fb98 100%);
+    border: 3px solid #333;
+    border-radius: 15px;
+    margin: 30px 0;
+    overflow: hidden;
+}
+
+.car {
+    position: absolute;
+    font-size: 3em;
+    transition: left 0.5s ease;
+    z-index: 10;
+}
+
+.player-car {
+    bottom: 120px;
+}
+
+.computer-car {
+    bottom: 40px;
+}
+
+.finish-line {
+    position: absolute;
+    right: 20px;
+    top: 0;
+    bottom: 0;
+    width: 40px;
+    background: repeating-linear-gradient(
+        45deg,
+        #000,
+        #000 10px,
+        #fff 10px,
+        #fff 20px
+    );
+    border: 2px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+}
+
+/* ============================================
+   GEOMETRY GAME SPECIFIC STYLES
+   ============================================ */
+
+.geometry-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 2px;
+    max-width: 500px;
+    margin: 30px auto;
+    background: var(--border-color);
+    padding: 2px;
+    border-radius: 10px;
+}
+
+.grid-cell {
+    aspect-ratio: 1;
+    background: white;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.grid-cell:hover {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+.grid-cell.selected {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-color: var(--primary-color);
 }
