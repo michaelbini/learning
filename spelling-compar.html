@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק זיהוי כתיב נכון</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="word-pairs-manager.js" onerror="console.log('word-pairs-manager.js not found, using basic mode')"></script>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎯 משחק זיהוי כתיב נכון 🎯</h1>
+
+        <!-- Game Setup -->
+        <div id="gameSetup">
+            <div class="instructions">
+                <strong>📖 הוראות המשחק:</strong><br>
+                יופיעו שני כרטיסים עם מילים - אחת נכונה ואחת עם שגיאת כתיב.<br>
+                עליך לבחור בכרטיס עם המילה הכתובה נכון כדי לצבור נקודות!
+            </div>
+
+            <div class="game-modes">
+                <button class="mode-btn active" onclick="selectMode('easy')">
+                    <span class="mode-icon">😊</span>
+                    <span>קל</span>
+                </button>
+                <button class="mode-btn" onclick="selectMode('medium')">
+                    <span class="mode-icon">🎯</span>
+                    <span>בינוני</span>
+                </button>
+                <button class="mode-btn" onclick="selectMode('hard')">
+                    <span class="mode-icon">💪</span>
+                    <span>קשה</span>
+                </button>
+                <button class="mode-btn" onclick="selectMode('timed')">
+                    <span class="mode-icon">⏱️</span>
+                    <span>נגד הזמן</span>
+                </button>
+            </div>
+
+            <div class="buttons-container">
+                <button class="btn btn-primary" onclick="startGame()">התחל משחק</button>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div id="gameArea" style="display: none;">
+            <div class="progress-indicator">
+                שאלה <span id="currentQuestion">1</span> מתוך <span id="totalQuestions">10</span>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+            </div>
+
+            <div id="streakContainer" style="text-align: center;">
+                <div class="streak-indicator" id="streakIndicator" style="display: none;">
+                    🔥 רצף: <span id="streakCount">0</span>
+                </div>
+            </div>
+
+            <div class="timer-bar" id="timerBar">
+                <div class="timer-fill" id="timerFill"></div>
+            </div>
+
+            <div class="score-board">
+                <div class="score-item">
+                    <div class="score-label">נכונות</div>
+                    <div class="score-value" id="correctScore">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">שגיאות</div>
+                    <div class="score-value" id="wrongScore">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">ניקוד</div>
+                    <div class="score-value" id="totalScore">0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">דיוק</div>
+                    <div class="score-value"><span id="accuracy">100</span>%</div>
+                </div>
+            </div>
+
+            <!-- Example Sentence -->
+            <div class="example-sentence" id="exampleSentence" style="text-align: center; font-size: 1.5em; font-weight: bold; padding: 1.5rem; background: rgba(255,255,255,0.95); border-radius: 15px; margin-bottom: 1.5rem; color: #2d3748; backdrop-filter: blur(10px); box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                <div style="margin-bottom: 0.5rem; font-size: 0.85em; color: #667eea; font-weight: 600;">📝 השלם את המשפט:</div>
+                <div id="sentenceText" style="color: #2d3748; font-size: 1.1em;"></div>
+            </div>
+
+            <div class="cards-container">
+                <div class="word-card" id="card1" onclick="selectCard(1)">
+                    <div class="card-number">1</div>
+                    <div class="word-text" id="word1"></div>
+                    <div class="feedback-icon" id="feedback1"></div>
+                </div>
+
+                <div class="word-card" id="card2" onclick="selectCard(2)">
+                    <div class="card-number">2</div>
+                    <div class="word-text" id="word2"></div>
+                    <div class="feedback-icon" id="feedback2"></div>
+                </div>
+            </div>
+
+            <div class="explanation" id="explanation">
+                <div class="explanation-title">📝 הסבר:</div>
+                <div id="explanationText"></div>
+            </div>
+
+            <div class="buttons-container">
+                <button class="btn btn-secondary" onclick="nextQuestion()">השאלה הבאה</button>
+                <button class="btn btn-skip" onclick="skipQuestion()">דלג</button>
+                <button class="btn btn-primary" onclick="newGame()">משחק חדש</button>
+            </div>
+        </div>
+
+        <!-- Game Over Modal -->
+        <div class="modal" id="gameOverModal">
+            <div class="modal-content">
+                <h2>🎉 סיום המשחק! 🎉</h2>
+                <div class="medal" id="medal"></div>
+                <div class="final-score" id="finalScore"></div>
+                <div style="margin: 1.5rem 0;">
+                    <span class="badge">נכונות: <span id="finalCorrect"></span></span>
+                    <span class="badge">שגיאות: <span id="finalWrong"></span></span>
+                    <span class="badge">דיוק: <span id="finalAccuracy"></span>%</span>
+                    <span class="badge">רצף מרבי: <span id="maxStreak"></span></span>
+                </div>
+                <div class="buttons-container">
+                    <button class="btn btn-primary" onclick="playAgain()">שחק שוב</button>
+                    <button class="btn btn-secondary" onclick="newGame()">משחק חדש</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // Embedded word pairs (fallback)
+        // ============================================
+        const EMBEDDED_WORD_PAIRS = [
+            {word: 'ילד', typo: 'ילת', hint: 'ילד נכתב עם ד בסוף', example: 'ה_____ משחק בגן', difficulty: 'easy'},
+            {word: 'ילדה', typo: 'ילדא', hint: 'ילדה נכתב עם ה בסוף', example: 'ה_____ קוראת ספר', difficulty: 'easy'},
+            {word: 'כלב', typo: 'כלוב', hint: 'כלב - חיית מחמד', example: 'ה_____ נובח בחצר', difficulty: 'easy'},
+            {word: 'חתול', typo: 'חטול', hint: 'חתול נכתב עם ת', example: 'ה_____ ישן על הספה', difficulty: 'easy'},
+            {word: 'בית', typo: 'באית', hint: 'בית - מקום מגורים', example: 'אני גר ב_____ גדול', difficulty: 'easy'},
+            {word: 'ספר', typo: 'סֵפר', hint: 'ספר - חפץ לקריאה', example: 'קראתי _____ מעניין', difficulty: 'easy'},
+            {word: 'מים', typo: 'מיים', hint: 'מים - עם י אחת', example: 'אני שותה _____ קרים', difficulty: 'easy'},
+            {word: 'שמש', typo: 'שמס', hint: 'שמש נכתב עם ש בסוף', example: 'ה_____ זורחת בשמיים', difficulty: 'easy'},
+            {word: 'ירח', typo: 'ירך', hint: 'ירח - גוף שמיימי', example: 'ה_____ מלא הלילה', difficulty: 'easy'},
+            {word: 'עץ', typo: 'אץ', hint: 'עץ נכתב עם ע', example: 'ה_____ גדול ויפה', difficulty: 'easy'},
+            {word: 'תלמיד', typo: 'תלמד', hint: 'תלמיד נכתב עם י', example: 'ה_____ לומד במחברת', difficulty: 'medium'},
+            {word: 'מורה', typo: 'מורא', hint: 'מורה - מלמד בבית ספר', example: 'ה_____ מלמד מתמטיקה', difficulty: 'medium'},
+            {word: 'כיתה', typo: 'כתה', hint: 'כיתה נכתב עם י', example: 'ה_____ שלי גדולה', difficulty: 'medium'},
+            {word: 'שיעור', typo: 'שעור', hint: 'שיעור נכתב עם י', example: 'ה_____ התחיל בשמונה', difficulty: 'medium'},
+            {word: 'חופש', typo: 'חופס', hint: 'חופש נכתב עם ש', example: 'ב_____ אני נוסע לים', difficulty: 'medium'},
+            {word: 'משפחה', typo: 'משפכה', hint: 'משפחה נכתב עם ח', example: 'ה_____ שלי גדולה', difficulty: 'medium'},
+            {word: 'ארוחה', typo: 'אֲרוחה', hint: 'ארוחה - ללא סימני ניקוד', example: 'אכלנו _____ טעימה', difficulty: 'medium'},
+            {word: 'מחשב', typo: 'מכשב', hint: 'מחשב נכתב עם ח', example: 'ה_____ החדש מהיר מאוד', difficulty: 'medium'},
+            {word: 'טלפון', typo: 'תלפון', hint: 'טלפון נכתב עם ט', example: 'ה_____ שלי צלצל', difficulty: 'medium'},
+            {word: 'אוטובוס', typo: 'אוטבוס', hint: 'אוטובוס נכתב עם ו', example: 'ה_____ הגיע בזמן', difficulty: 'medium'},
+            {word: 'אוניברסיטה', typo: 'אוניברסיטא', hint: 'אוניברסיטה נכתב עם ה', example: 'למדתי ב_____ העברית', difficulty: 'hard'},
+            {word: 'פרופסור', typo: 'פרופיסור', hint: 'פרופסור - ללא י', example: 'ה_____ מלמד פיזיקה', difficulty: 'hard'},
+            {word: 'היסטוריה', typo: 'הסטוריה', hint: 'היסטוריה נכתב עם י', example: 'אני אוהב לקרוא _____', difficulty: 'hard'},
+            {word: 'גיאוגרפיה', typo: 'גאוגרפיה', hint: 'גיאוגרפיה נכתב עם י', example: 'למדנו _____ של ישראל', difficulty: 'hard'},
+            {word: 'ביולוגיה', typo: 'ביולוגייה', hint: 'ביולוגיה - עם י אחת בסוף', example: 'שיעור ה_____ היה מעניין', difficulty: 'hard'},
+            {word: 'מתמטיקה', typo: 'מטמטיקה', hint: 'מתמטיקה נכתב עם ת', example: 'ה_____ קשה לי', difficulty: 'hard'},
+            {word: 'טכנולוגיה', typo: 'טקנולוגיה', hint: 'טכנולוגיה נכתב עם כ', example: 'ה_____ משתנה במהירות', difficulty: 'hard'},
+            {word: 'דמוקרטיה', typo: 'דמוקרטייה', hint: 'דמוקרטיה - עם י אחת', example: 'ישראל היא מדינת _____', difficulty: 'hard'},
+            {word: 'הליקופטר', typo: 'הליקופתר', hint: 'הליקופטר נכתב עם ט', example: 'ה_____ עף מעל העיר', difficulty: 'hard'},
+            {word: 'אלקטרוני', typo: 'אלקטרני', hint: 'אלקטרוני נכתב עם ו', example: 'שלחתי מכתב _____', difficulty: 'hard'}
+        ];
+
+        // Word pairs database
+        let wordPairs = EMBEDDED_WORD_PAIRS;
+
+        // ============================================
+        // Load word pairs with WordPairsManager
+        // ============================================
+        async function loadWordPairs() {
+            // Check if WordPairsManager exists
+            if (typeof WordPairsManager !== 'undefined') {
+                await WordPairsManager.init(EMBEDDED_WORD_PAIRS);
+                // WordPairsManager.wordPairs is now the flat array from JSON
+                wordPairs = WordPairsManager.wordPairs;
+                console.log('✅ Word pairs loaded with WordPairsManager');
+            } else {
+                // Fallback to direct fetch if manager not available
+                try {
+                    const response = await fetch('vocabulary.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Get the wordPairs array from the JSON
+                        wordPairs = data.wordPairs || data;
+                        console.log('✅ Word pairs loaded from JSON');
+                    } else {
+                        console.log('ℹ️ Using embedded word pairs');
+                    }
+                } catch (error) {
+                    console.log('ℹ️ Using embedded word pairs');
+                }
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            loadWordPairs();
+        });
+
+        // Game state
+        let gameMode = 'easy';
+        let currentPairIndex = 0;
+        let correctScore = 0;
+        let wrongScore = 0;
+        let totalScore = 0;
+        let streak = 0;
+        let maxStreak = 0;
+        let questionNumber = 1;
+        let totalQuestions = 10;
+        let gamePairs = [];
+        let correctPosition = 1;
+        let hasAnswered = false;
+        let timerInterval = null;
+        let timeLeft = 10;
+        let hintsUsed = 0;
+
+        // Select game mode
+        function selectMode(mode) {
+            gameMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.mode-btn').classList.add('active');
+
+            if (mode === 'timed') {
+                totalQuestions = 20;
+            } else {
+                totalQuestions = 10;
+            }
+        }
+
+        // Start game
+        function startGame() {
+            // Reset state
+            correctScore = 0;
+            wrongScore = 0;
+            totalScore = 0;
+            streak = 0;
+            maxStreak = 0;
+            questionNumber = 1;
+            hintsUsed = 0;
+            hasAnswered = false;
+
+            // Update UI
+            document.getElementById('gameSetup').style.display = 'none';
+            document.getElementById('gameArea').style.display = 'block';
+            document.getElementById('correctScore').textContent = '0';
+            document.getElementById('wrongScore').textContent = '0';
+            document.getElementById('totalScore').textContent = '0';
+            document.getElementById('accuracy').textContent = '100';
+            document.getElementById('currentQuestion').textContent = '1';
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+
+            // Prepare word pairs
+            preparePairs();
+
+            // Show first question
+            showQuestion();
+
+            // Start timer if timed mode
+            if (gameMode === 'timed') {
+                document.getElementById('timerBar').classList.add('active');
+                startTimer();
+            }
+        }
+
+        // Prepare word pairs for the game
+        function preparePairs() {
+            let difficulty = gameMode === 'timed' ? 'medium' : gameMode;
+
+            // Filter by difficulty using WordPairsManager if available
+            let availablePairs;
+            if (typeof WordPairsManager !== 'undefined' && WordPairsManager.getWordPairs) {
+                availablePairs = [...WordPairsManager.getWordPairs(difficulty)];
+            } else {
+                // Direct filtering for new structure
+                availablePairs = wordPairs.filter(pair => pair.difficulty === difficulty);
+            }
+
+            // Shuffle and select pairs
+            availablePairs = shuffleArray(availablePairs);
+            gamePairs = availablePairs.slice(0, totalQuestions);
+        }
+
+        // Show current question
+        function showQuestion() {
+            if (questionNumber > totalQuestions) {
+                endGame();
+                return;
+            }
+
+            hasAnswered = false;
+            const pair = gamePairs[questionNumber - 1];
+
+            // Clear previous state
+            document.querySelectorAll('.word-card').forEach(card => {
+                card.classList.remove('correct', 'incorrect', 'selected', 'disabled');
+            });
+            document.querySelectorAll('.feedback-icon').forEach(icon => {
+                icon.className = 'feedback-icon';
+                icon.textContent = '';
+            });
+            document.getElementById('explanation').classList.remove('show');
+            document.querySelectorAll('.hint-text').forEach(hint => {
+                hint.classList.remove('show');
+            });
+
+            // Display example sentence
+            if (pair.example) {
+                document.getElementById('sentenceText').textContent = pair.example;
+            } else {
+                document.getElementById('sentenceText').textContent = 'בחר את האיות הנכון';
+            }
+
+            // Randomly position correct and incorrect words
+            correctPosition = Math.random() < 0.5 ? 1 : 2;
+
+            if (correctPosition === 1) {
+                document.getElementById('word1').textContent = pair.word;
+                document.getElementById('word2').textContent = pair.typo;
+            } else {
+                document.getElementById('word1').textContent = pair.typo;
+                document.getElementById('word2').textContent = pair.word;
+            }
+
+            // Update progress
+            document.getElementById('currentQuestion').textContent = questionNumber;
+            const progress = ((questionNumber - 1) / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // Reset timer for timed mode
+            if (gameMode === 'timed') {
+                resetTimer();
+            }
+        }
+
+        // Handle card selection
+        function selectCard(cardNumber) {
+            if (hasAnswered) return;
+
+            hasAnswered = true;
+            stopTimer();
+
+            const card = document.getElementById(`card${cardNumber}`);
+            const otherCard = document.getElementById(`card${cardNumber === 1 ? 2 : 1}`);
+            const feedback = document.getElementById(`feedback${cardNumber}`);
+            const otherFeedback = document.getElementById(`feedback${cardNumber === 1 ? 2 : 1}`);
+
+            card.classList.add('selected');
+            document.querySelectorAll('.word-card').forEach(c => c.classList.add('disabled'));
+
+            const isCorrect = cardNumber === correctPosition;
+
+            if (isCorrect) {
+                // Correct answer
+                correctScore++;
+                streak++;
+                totalScore += 10 + (streak * 2);
+
+                card.classList.add('correct');
+                feedback.textContent = '✓';
+                feedback.className = 'feedback-icon show-correct';
+
+                document.getElementById('correctScore').textContent = correctScore;
+                document.getElementById('totalScore').textContent = totalScore;
+
+                if (streak > maxStreak) {
+                    maxStreak = streak;
+                }
+
+                if (streak >= 3) {
+                    document.getElementById('streakIndicator').style.display = 'inline-block';
+                    document.getElementById('streakCount').textContent = streak;
+                }
+
+            } else {
+                // Incorrect answer
+                wrongScore++;
+                streak = 0;
+
+                card.classList.add('incorrect');
+                otherCard.classList.add('correct');
+
+                feedback.textContent = '✗';
+                feedback.className = 'feedback-icon show-incorrect';
+                otherFeedback.textContent = '✓';
+                otherFeedback.className = 'feedback-icon show-correct';
+
+                document.getElementById('wrongScore').textContent = wrongScore;
+                document.getElementById('streakIndicator').style.display = 'none';
+
+                // Show explanation
+                const pair = gamePairs[questionNumber - 1];
+                document.getElementById('explanationText').textContent = pair.hint;
+                document.getElementById('explanation').classList.add('show');
+            }
+
+            // Update accuracy
+            const accuracy = Math.round((correctScore / questionNumber) * 100);
+            document.getElementById('accuracy').textContent = accuracy;
+
+            // Auto advance after delay (all modes)
+            // Give extra time if answer was wrong so user can read explanation
+            const delay = isCorrect ? 2000 : 3000;
+            setTimeout(() => {
+                if (questionNumber < totalQuestions) {
+                    nextQuestion();
+                } else {
+                    endGame();
+                }
+            }, delay);
+        }
+
+        // Show hint
+        function showHint(cardNumber, event) {
+            event.stopPropagation();
+
+            if (hasAnswered) return;
+
+            const hintElement = document.getElementById(`hint${cardNumber}`);
+            const word = document.getElementById(`word${cardNumber}`).textContent;
+            const pair = gamePairs[questionNumber - 1];
+
+            // Generate hint based on word
+            let hintText = '';
+            if (word === pair.word) {
+                hintText = 'זו המילה הנכונה! 👍';
+            } else {
+                hintText = 'שים לב לאיות... 🤔';
+            }
+
+            hintElement.textContent = hintText;
+            hintElement.classList.add('show');
+
+            hintsUsed++;
+            totalScore = Math.max(0, totalScore - 2);
+            document.getElementById('totalScore').textContent = totalScore;
+
+            setTimeout(() => {
+                hintElement.classList.remove('show');
+            }, 3000);
+        }
+
+        // Next question
+        function nextQuestion() {
+            questionNumber++;
+            showQuestion();
+        }
+
+        // Skip question
+        function skipQuestion() {
+            if (hasAnswered) {
+                nextQuestion();
+            } else {
+                wrongScore++;
+                document.getElementById('wrongScore').textContent = wrongScore;
+                nextQuestion();
+            }
+        }
+
+        // Timer functions
+        function startTimer() {
+            timeLeft = 10;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    stopTimer();
+                    if (!hasAnswered) {
+                        skipQuestion();
+                    }
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            stopTimer();
+            startTimer();
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            const timerFill = document.getElementById('timerFill');
+            const percentage = (timeLeft / 10) * 100;
+            timerFill.style.width = percentage + '%';
+
+            if (timeLeft <= 3) {
+                timerFill.className = 'timer-fill danger';
+            } else if (timeLeft <= 6) {
+                timerFill.className = 'timer-fill warning';
+            } else {
+                timerFill.className = 'timer-fill';
+            }
+        }
+
+        // End game
+        function endGame() {
+            stopTimer();
+
+            const accuracy = totalQuestions > 0 ? Math.round((correctScore / totalQuestions) * 100) : 0;
+            let medal = '';
+
+            if (accuracy >= 90) {
+                medal = '🏆';
+            } else if (accuracy >= 75) {
+                medal = '🥇';
+            } else if (accuracy >= 60) {
+                medal = '🥈';
+            } else if (accuracy >= 40) {
+                medal = '🥉';
+            } else {
+                medal = '⭐';
+            }
+
+            document.getElementById('medal').textContent = medal;
+            document.getElementById('finalScore').textContent = totalScore;
+            document.getElementById('finalCorrect').textContent = correctScore;
+            document.getElementById('finalWrong').textContent = wrongScore;
+            document.getElementById('finalAccuracy').textContent = accuracy;
+            document.getElementById('maxStreak').textContent = maxStreak;
+
+            document.getElementById('gameOverModal').classList.add('show');
+        }
+
+        // New game
+        function newGame() {
+            document.getElementById('gameArea').style.display = 'none';
+            document.getElementById('gameSetup').style.display = 'block';
+            document.getElementById('gameOverModal').classList.remove('show');
+            stopTimer();
+        }
+
+        // Play again
+        function playAgain() {
+            document.getElementById('gameOverModal').classList.remove('show');
+            startGame();
+        }
+
+        // Utility function to shuffle array
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+    </script>
+</body>
+</html>
