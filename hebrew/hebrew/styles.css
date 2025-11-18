@@ -1,8 +1,7 @@
 /* ============================================
-   Hebrew Games Styles
+   GLOBAL STYLES - Common to all pages
    ============================================ */
 
-/* Global Styles */
 * {
     margin: 0;
     padding: 0;
@@ -20,6 +19,30 @@ body {
 }
 
 /* ============================================
+   COMMON BUTTON STYLES
+   ============================================ */
+
+button {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* ============================================
    Index Page Styles
    ============================================ */
 
@@ -28,7 +51,8 @@ body {
 }
 
 .index-body .container {
-    max-width: 900px;
+    max-width: 1000px;
+    width: 100%;
     margin: 0 auto;
     text-align: center;
 }
@@ -36,15 +60,14 @@ body {
 .index-body h1 {
     color: white;
     font-size: 2.5em;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    margin-bottom: 15px;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
 }
 
 .subtitle {
-    color: white;
+    color: rgba(255,255,255,0.9);
     font-size: 1.1em;
     margin-bottom: 40px;
-    opacity: 0.95;
 }
 
 .games-grid {
@@ -61,7 +84,7 @@ body {
     text-decoration: none;
     color: #333;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -69,7 +92,7 @@ body {
 
 .game-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
 }
 
 .game-icon {
