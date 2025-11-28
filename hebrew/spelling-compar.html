@@ -171,39 +171,57 @@
             {word: 'אלקטרוני', typo: 'אלקטרני', hint: 'אלקטרוני נכתב עם ו', example: 'שלחתי מכתב _____', difficulty: 'hard'}
         ];
 
-        // Word pairs database
-        let wordPairs = EMBEDDED_WORD_PAIRS;
+        // Word pairs database - add type field to embedded pairs
+        let wordPairs = EMBEDDED_WORD_PAIRS.map(pair => ({...pair, type: 'words'}));
 
         // ============================================
         // Load word pairs with WordPairsManager
         // ============================================
         async function loadWordPairs() {
-            // Check if WordPairsManager exists
-            if (typeof WordPairsManager !== 'undefined') {
-                await WordPairsManager.init(EMBEDDED_WORD_PAIRS);
-                // WordPairsManager.wordPairs is now the flat array from JSON
-                wordPairs = WordPairsManager.wordPairs;
-                console.log('✅ Word pairs loaded with WordPairsManager');
-            } else {
-                // Fallback to direct fetch if manager not available
-                try {
-                    const response = await fetch('vocabulary.json');
-                    if (response.ok) {
-                        const data = await response.json();
-                        // Get the wordPairs array from the JSON
-                        wordPairs = data.wordPairs || data;
-                        console.log('✅ Word pairs loaded from JSON');
-                    } else {
-                        console.log('ℹ️ Using embedded word pairs');
-                    }
-                } catch (error) {
-                    console.log('ℹ️ Using embedded word pairs');
+            // Always load directly from vocabulary.json (bypass WordPairsManager for type support)
+            try {
+                // Add cache busting parameter
+                const cacheBuster = '?v=' + Date.now();
+                const response = await fetch('vocabulary.json' + cacheBuster);
+                if (response.ok) {
+                    const data = await response.json();
+                    // Get the wordPairs array from the JSON
+                    wordPairs = data.wordPairs || data;
+                    console.log('✅ Word pairs loaded from vocabulary.json');
+                    console.log('📊 Total pairs loaded:', wordPairs.length);
+                    console.log('📊 Sample pair:', wordPairs[0]);
+                    console.log('📊 Sample pair stringified:', JSON.stringify(wordPairs[0]));
+                    console.log('📊 Has type field?', 'type' in wordPairs[0]);
+                    console.log('📊 Type value:', wordPairs[0].type);
+                } else {
+                    console.log('ℹ️ Failed to load vocabulary.json, using embedded word pairs');
+                    wordPairs = EMBEDDED_WORD_PAIRS.map(pair => ({...pair, type: 'words'}));
                 }
+            } catch (error) {
+                console.log('❌ Error loading vocabulary.json:', error.message);
+                console.log('ℹ️ Using embedded word pairs');
+                wordPairs = EMBEDDED_WORD_PAIRS.map(pair => ({...pair, type: 'words'}));
             }
+        }
+
+        // Update title based on game type
+        function updateTitle() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameType = urlParams.get('type') || 'words';
+
+            const titles = {
+                'words': 'משחק זיהוי כתיב',
+                'numbers': 'משחק כתיב מספרים'
+            };
+
+            const title = titles[gameType] || 'משחק זיהוי כתיב נכון';
+            document.querySelector('h1').textContent = '🎯 ' + title + ' 🎯';
+            document.title = title;
         }
 
         // Initialize on page load
         window.addEventListener('load', function() {
+            updateTitle();
             loadWordPairs();
         });
 
@@ -241,6 +259,15 @@
 
         // Start game
         function startGame() {
+            // Check if word pairs are loaded
+            if (!wordPairs || wordPairs.length === 0) {
+                alert('אנא המתן, המילים עדיין נטענות...');
+                console.error('❌ Cannot start game - wordPairs not loaded yet');
+                return;
+            }
+
+            console.log('🎮 Starting game with', wordPairs.length, 'word pairs available');
+
             // Reset state
             correctScore = 0;
             wrongScore = 0;
@@ -264,6 +291,17 @@
             // Prepare word pairs
             preparePairs();
 
+            // Check if we got any pairs
+            if (!gamePairs || gamePairs.length === 0) {
+                alert('לא נמצאו מילים מתאימות לרמת הקושי שנבחרה. אנא נסה רמה אחרת.');
+                document.getElementById('gameSetup').style.display = 'block';
+                document.getElementById('gameArea').style.display = 'none';
+                console.error('❌ No game pairs found after preparePairs()');
+                return;
+            }
+
+            console.log('🎮 Game starting with', gamePairs.length, 'pairs');
+
             // Show first question
             showQuestion();
 
@@ -276,20 +314,41 @@
 
         // Prepare word pairs for the game
         function preparePairs() {
+            // Get game type from URL parameter (default: 'words')
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameType = urlParams.get('type') || 'words';
+
             let difficulty = gameMode === 'timed' ? 'medium' : gameMode;
 
-            // Filter by difficulty using WordPairsManager if available
+            console.log(`📊 Preparing pairs - Type: ${gameType}, Difficulty: ${difficulty}`);
+            console.log(`📊 Total wordPairs available: ${wordPairs.length}`);
+
+            // Filter by BOTH type and difficulty
             let availablePairs;
             if (typeof WordPairsManager !== 'undefined' && WordPairsManager.getWordPairs) {
                 availablePairs = [...WordPairsManager.getWordPairs(difficulty)];
+                // Further filter by type
+                availablePairs = availablePairs.filter(pair => pair.type === gameType);
             } else {
                 // Direct filtering for new structure
-                availablePairs = wordPairs.filter(pair => pair.difficulty === difficulty);
+                availablePairs = wordPairs.filter(pair =>
+                    pair.difficulty === difficulty && pair.type === gameType
+                );
+            }
+
+            console.log(`📊 Available pairs after filtering: ${availablePairs.length}`);
+
+            // If not enough pairs for this difficulty, use all pairs of this type
+            if (availablePairs.length < totalQuestions) {
+                console.log('⚠️ Not enough pairs for selected difficulty, using all available pairs for this type');
+                availablePairs = wordPairs.filter(pair => pair.type === gameType);
             }
 
             // Shuffle and select pairs
             availablePairs = shuffleArray(availablePairs);
             gamePairs = availablePairs.slice(0, totalQuestions);
+
+            console.log(`✅ Selected ${gamePairs.length} pairs for the game`);
         }
 
         // Show current question
@@ -301,6 +360,14 @@
 
             hasAnswered = false;
             const pair = gamePairs[questionNumber - 1];
+
+            // Safety check
+            if (!pair) {
+                console.error('❌ No word pair found for question', questionNumber);
+                console.error('gamePairs:', gamePairs);
+                alert('שגיאה: לא נמצאו מילים למשחק. נסה לרענן את הדף.');
+                return;
+            }
 
             // Clear previous state
             document.querySelectorAll('.word-card').forEach(card => {

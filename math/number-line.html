@@ -7,36 +7,54 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <div class="game-container">
         <h1>📏 משחק ציר המספרים 📏</h1>
-        
-        <div class="main-card">
-            <!-- בחירת רמה -->
-            <div class="level-selector">
-                <button class="level-btn active" onclick="selectLevel(1, this)">
-                    רמה 1
-                    <span class="level-stars">⭐</span>
+
+        <!-- Game Setup -->
+        <div id="gameSetup">
+            <div class="instructions">
+                <strong>📖 הוראות המשחק:</strong><br>
+                מקם מספרים על ציר המספרים במיקום הנכון.<br>
+                בחר רמת קושי והתחל לשחק!
+            </div>
+
+            <div class="game-modes">
+                <button class="mode-btn active" onclick="selectLevel(1)">
+                    <span class="mode-icon">😊</span>
+                    <span>רמה 1</span>
+                    
                 </button>
-                <button class="level-btn" onclick="selectLevel(2, this)">
-                    רמה 2
-                    <span class="level-stars">⭐⭐</span>
+                <button class="mode-btn" onclick="selectLevel(2)">
+                    <span class="mode-icon">🎯</span>
+                    <span>רמה 2</span>
+                    
                 </button>
-                <button class="level-btn" onclick="selectLevel(3, this)">
-                    רמה 3
-                    <span class="level-stars">⭐⭐⭐</span>
+                <button class="mode-btn" onclick="selectLevel(3)">
+                    <span class="mode-icon">💪</span>
+                    <span>רמה 3</span>
+                    
                 </button>
-                <button class="level-btn" onclick="selectLevel(4, this)">
-                    רמה 4
-                    <span class="level-stars">⭐⭐⭐⭐</span>
+                <button class="mode-btn" onclick="selectLevel(4)">
+                    <span class="mode-icon">🔥</span>
+                    <span>רמה 4</span>
+                    
                 </button>
-                <button class="level-btn" onclick="selectLevel(5, this)">
-                    רמה 5
-                    <span class="level-stars">⭐⭐⭐⭐⭐</span>
+                <button class="mode-btn" onclick="selectLevel(5)">
+                    <span class="mode-icon">🚀</span>
+                    <span>רמה 5</span>
+                    
                 </button>
             </div>
 
-            <!-- לוח ניקוד -->
-            <div class="score-board">
+            <div class="buttons-container">
+                <button class="btn btn-primary" onclick="startGame()">התחל משחק</button>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div id="gameArea" style="display: none;">
+                <!-- לוח ניקוד -->
+                <div class="score-board">
                 <div class="score-item">
                     <div class="score-label">נקודות</div>
                     <div class="score-value" id="score">0</div>
@@ -85,12 +103,12 @@
             <div class="progress-bar-container">
                 <div class="progress-bar" id="progressBar" style="width: 0%">0/10</div>
             </div>
+        
+        <div class="buttons-container" style="margin-top: 2rem;">
+            <button class="btn btn-primary" onclick="newGame()">משחק חדש</button>
+            <a href="index.html" class="btn btn-secondary" style="margin-right: 10px;">↩️ חזרה לתפריט</a>
         </div>
-
-        <!-- חזרה לעמוד הראשי -->
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="index.html" class="btn btn-secondary">↩️ חזרה לעמוד הראשי</a>
-        </div>
+    </div>
     </div>
 
     <script>
@@ -112,32 +130,51 @@
         
         // אתחול
         window.addEventListener('load', () => {
-            initGame();
             loadProgress();
         });
 
-        function initGame() {
-            createNumberLine();
-            newQuestion();
-        }
-
-        function selectLevel(level, button) {
+        function selectLevel(level) {
             currentLevel = level;
-            questionsInLevel = 0;
-            
+
             // עדכון כפתורים
-            document.querySelectorAll('.level-btn').forEach(btn => {
+            document.querySelectorAll('.mode-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            button.classList.add('active');
-            
+            event.target.closest('.mode-btn').classList.add('active');
+        }
+
+        function startGame() {
+            // הסתר מסך הגדרות והצג את המשחק
+            document.getElementById('gameSetup').style.display = 'none';
+            document.getElementById('gameArea').style.display = 'block';
+
+            // אפס משחק
+            score = 0;
+            streak = 0;
+            totalQuestions = 0;
+            correctAnswers = 0;
+            questionsInLevel = 0;
+
             // עדכון תצוגה
-            document.getElementById('currentLevel').textContent = level;
-            
+            document.getElementById('score').textContent = score;
+            document.getElementById('currentLevel').textContent = currentLevel;
+            document.getElementById('streak').textContent = streak;
+            document.getElementById('accuracy').textContent = '100';
+
             // קבע טווח לפי רמה
             setRangeByLevel();
-            
-            // שאלה חדשה
+
+            // התחל משחק
+            initGame();
+        }
+
+        function newGame() {
+            document.getElementById('gameSetup').style.display = 'block';
+            document.getElementById('gameArea').style.display = 'none';
+        }
+
+        function initGame() {
+            createNumberLine();
             newQuestion();
         }
 
@@ -460,8 +497,8 @@
                     <p>סיימת את כל הרמות!</p>
                     <div class="grade-circle excellent">${score}</div>
                     <p>דיוק: ${accuracy}%</p>
-                    <button class="btn btn-primary" onclick="location.reload()">שחק שוב</button>
-                    <button class="btn btn-secondary" onclick="location.href='math-index.html'">חזרה לעמוד הראשי</button>
+                    
+                    
                 </div>
             `;
             document.body.appendChild(modal);

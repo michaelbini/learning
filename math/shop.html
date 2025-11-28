@@ -7,35 +7,53 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>🏪 חנות המתמטיקה 🏪</h1>
+    <div class="game-container">
+        <h1>🛒 משחק החנות 🛒</h1>
         
-        <div class="main-card">
-            <!-- בחירת רמה -->
-            <div class="level-selector">
-                <button class="level-btn active" onclick="selectLevel(1, this)">
-                    רמה 1
-                    <span class="level-stars">⭐</span>
+        
+        <!-- Game Setup -->
+        <div id="gameSetup">
+            <div class="instructions">
+                <strong>📖 הוראות המשחק:</strong><br>
+                נהל חנות וחשב כסף ועודף.<br>בחר רמת קושי והתחל לשחק!
+            </div>
+
+            <div class="game-modes">
+
+                <button class="mode-btn active" onclick="selectLevel(1)">
+                    <span class="mode-icon">😊</span>
+                    <span>רמה 1</span>
+                    
                 </button>
-                <button class="level-btn" onclick="selectLevel(2, this)">
-                    רמה 2
-                    <span class="level-stars">⭐⭐</span>
+                <button class="mode-btn " onclick="selectLevel(2)">
+                    <span class="mode-icon">🎯</span>
+                    <span>רמה 2</span>
+                    
                 </button>
-                <button class="level-btn" onclick="selectLevel(3, this)">
-                    רמה 3
-                    <span class="level-stars">⭐⭐⭐</span>
+                <button class="mode-btn " onclick="selectLevel(3)">
+                    <span class="mode-icon">💪</span>
+                    <span>רמה 3</span>
+                    
                 </button>
-                <button class="level-btn" onclick="selectLevel(4, this)">
-                    רמה 4
-                    <span class="level-stars">⭐⭐⭐⭐</span>
+                <button class="mode-btn " onclick="selectLevel(4)">
+                    <span class="mode-icon">🔥</span>
+                    <span>רמה 4</span>
+                    
                 </button>
-                <button class="level-btn" onclick="selectLevel(5, this)">
-                    רמה 5
-                    <span class="level-stars">⭐⭐⭐⭐⭐</span>
+                <button class="mode-btn " onclick="selectLevel(5)">
+                    <span class="mode-icon">🚀</span>
+                    <span>רמה 5</span>
+                    
                 </button>
             </div>
 
-            <!-- לוח ניקוד -->
+            <div class="buttons-container">
+                <button class="btn btn-primary" onclick="startGame()">התחל משחק</button>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div id="gameArea" style="display: none;"><!-- לוח ניקוד -->
             <div class="score-board">
                 <div class="score-item">
                     <div class="score-label">נקודות</div>
@@ -115,11 +133,10 @@
             </div>
         </div>
 
-        <!-- חזרה לעמוד הראשי -->
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="index.html" class="btn btn-secondary">↩️ חזרה לעמוד הראשי</a>
-        </div>
     </div>
+
+        
+        
 
     <script>
         // מוצרים לחנות
@@ -163,7 +180,6 @@
         
         // אתחול
         window.addEventListener('load', () => {
-            initGame();
             loadProgress();
         });
 
@@ -525,7 +541,7 @@
                     <p>סיימת את כל הרמות!</p>
                     <div class="grade-circle excellent">${score}</div>
                     <p>דיוק: ${accuracy}%</p>
-                    <button class="btn btn-primary" onclick="location.reload()">שחק שוב</button>
+                    
                     <button class="btn btn-secondary" onclick="location.href='index.html'">חזרה לעמוד הראשי</button>
                 </div>
             `;
