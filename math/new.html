@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק מתמטיקה - כיתה ז׳</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 550px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #764ba2;
+            margin-bottom: 5px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            padding: 12px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #764ba2;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .topic-select {
+            margin: 15px 0;
+        }
+        
+        .topic-select select {
+            padding: 10px 15px;
+            font-size: 15px;
+            border: 2px solid #764ba2;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .question-area {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 15px 0;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .question-type {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .hint {
+            font-size: 14px;
+            margin-top: 10px;
+            opacity: 0.85;
+        }
+        
+        .answer-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 22px;
+            text-align: center;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+            margin: 10px 0;
+            transition: border-color 0.3s;
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(118, 75, 162, 0.4);
+        }
+        
+        .btn-small {
+            padding: 8px 15px;
+            font-size: 14px;
+            background: #999;
+        }
+        
+        .feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin: 12px 0;
+            font-size: 16px;
+            font-weight: bold;
+            min-height: 45px;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .feedback.empty {
+            background: transparent;
+        }
+        
+        .streak {
+            font-size: 14px;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        .streak.hot {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .explanation {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: right;
+            display: none;
+        }
+        
+        .explanation.show {
+            display: block;
+        }
+        
+        .topics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        
+        .topic-btn {
+            padding: 10px;
+            border: 2px solid #764ba2;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .topic-btn:hover, .topic-btn.active {
+            background: #764ba2;
+            color: white;
+        }
+        
+        .difficulty {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .difficulty label {
+            margin: 0 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🧮 משחק מתמטיקה</h1>
+        <p class="subtitle">כיתה ז׳ - תוכנית לימודים מלאה</p>
+        
+        <div class="topics-grid">
+            <button class="topic-btn active" onclick="selectTopic('all')">כל הנושאים</button>
+            <button class="topic-btn" onclick="selectTopic('equations')">משוואות</button>
+            <button class="topic-btn" onclick="selectTopic('signed')">מספרים מכוונים</button>
+            <button class="topic-btn" onclick="selectTopic('powers')">חזקות</button>
+            <button class="topic-btn" onclick="selectTopic('fractions')">שברים</button>
+            <button class="topic-btn" onclick="selectTopic('percent')">אחוזים</button>
+            <button class="topic-btn" onclick="selectTopic('angles')">זוויות</button>
+            <button class="topic-btn" onclick="selectTopic('area')">שטח והיקף</button>
+            <button class="topic-btn" onclick="selectTopic('algebra')">ביטויים אלגבריים</button>
+            <button class="topic-btn" onclick="selectTopic('order')">סדר פעולות</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">ניקוד</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="correct">0</div>
+                <div class="stat-label">נכונות</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="total">0</div>
+                <div class="stat-label">סה״כ</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="percent">0%</div>
+                <div class="stat-label">אחוז הצלחה</div>
+            </div>
+        </div>
+        
+        <div class="question-area">
+            <div class="question-type" id="questionType">משוואה</div>
+            <div class="question" id="question">3x + 5 = 14</div>
+            <div class="hint" id="hint">מצא את x</div>
+        </div>
+        
+        <input type="text" class="answer-input" id="answer" placeholder="הקלד תשובה..." onkeypress="handleKeyPress(event)">
+        
+        <div>
+            <button class="btn" onclick="checkAnswer()">בדוק ✓</button>
+            <button class="btn" onclick="newQuestion()">שאלה חדשה ⟳</button>
+            <button class="btn btn-small" onclick="showHint()">רמז 💡</button>
+        </div>
+        
+        <div class="feedback empty" id="feedback"></div>
+        <div class="explanation" id="explanation"></div>
+        <div class="streak" id="streak"></div>
+    </div>
+
+    <script>
+        let score = 0;
+        let correctCount = 0;
+        let totalCount = 0;
+        let currentAnswer = 0;
+        let currentExplanation = '';
+        let streak = 0;
+        let selectedTopic = 'all';
+        
+        const topics = {
+            equations: {
+                name: 'משוואות',
+                generate: function() {
+                    const type = randomInt(1, 3);
+                    if (type === 1) {
+                        // ax + b = c
+                        const a = randomInt(2, 8);
+                        const x = randomInt(1, 12);
+                        const b = randomInt(1, 15);
+                        const result = a * x + b;
+                        return {
+                            question: `${a}x + ${b} = ${result}`,
+                            answer: x,
+                            hint: 'מצא את x',
+                            explanation: `${a}x = ${result} - ${b} = ${result - b}, אז x = ${result - b} ÷ ${a} = ${x}`
+                        };
+                    } else if (type === 2) {
+                        // ax - b = c
+                        const a = randomInt(2, 6);
+                        const x = randomInt(3, 10);
+                        const b = randomInt(1, 10);
+                        const result = a * x - b;
+                        return {
+                            question: `${a}x - ${b} = ${result}`,
+                            answer: x,
+                            hint: 'מצא את x',
+                            explanation: `${a}x = ${result} + ${b} = ${result + b}, אז x = ${result + b} ÷ ${a} = ${x}`
+                        };
+                    } else {
+                        // ax + b = cx + d
+                        const x = randomInt(2, 8);
+                        const a = randomInt(3, 7);
+                        const c = randomInt(1, a - 1);
+                        const b = randomInt(1, 10);
+                        const d = (a - c) * x + b;
+                        return {
+                            question: `${a}x + ${b} = ${c}x + ${d}`,
+                            answer: x,
+                            hint: 'מצא את x (העבר איברים)',
+                            explanation: `${a}x - ${c}x = ${d} - ${b}, אז ${a-c}x = ${d-b}, x = ${x}`
+                        };
+                    }
+                }
+            },
+            signed: {
+                name: 'מספרים מכוונים',
+                generate: function() {
+                    const type = randomInt(1, 4);
+                    if (type === 1) {
+                        // חיבור
+                        const a = randomInt(-15, 15);
+                        const b = randomInt(-15, 15);
+                        const result = a + b;
+                        const aStr = a < 0 ? `(${a})` : a;
+                        const bStr = b < 0 ? `(${b})` : b;
+                        return {
+                            question: `${aStr} + ${bStr} = ?`,
+                            answer: result,
+                            hint: 'חשב את התוצאה',
+                            explanation: `כשמחברים ${a} ו-${b} מקבלים ${result}`
+                        };
+                    } else if (type === 2) {
+                        // חיסור
+                        const a = randomInt(-12, 12);
+                        const b = randomInt(-12, 12);
+                        const result = a - b;
+                        const aStr = a < 0 ? `(${a})` : a;
+                        const bStr = b < 0 ? `(${b})` : b;
+                        return {
+                            question: `${aStr} - ${bStr} = ?`,
+                            answer: result,
+                            hint: 'זכור: חיסור = חיבור ההופכי',
+                            explanation: `${a} - ${b} = ${a} + (${-b}) = ${result}`
+                        };
+                    } else if (type === 3) {
+                        // כפל
+                        const a = randomInt(-8, 8);
+                        const b = randomInt(-8, 8);
+                        if (a === 0 || b === 0) return this.generate();
+                        const result = a * b;
+                        const aStr = a < 0 ? `(${a})` : a;
+                        const bStr = b < 0 ? `(${b})` : b;
+                        return {
+                            question: `${aStr} × ${bStr} = ?`,
+                            answer: result,
+                            hint: 'שלילי × שלילי = חיובי',
+                            explanation: `${a} × ${b} = ${result} (${a < 0 && b < 0 ? 'שני שליליים = חיובי' : a < 0 || b < 0 ? 'סימנים שונים = שלילי' : 'שני חיוביים = חיובי'})`
+                        };
+                    } else {
+                        // חילוק
+                        const b = randomInt(-8, 8);
+                        if (b === 0) return this.generate();
+                        const result = randomInt(-8, 8);
+                        if (result === 0) return this.generate();
+                        const a = b * result;
+                        const aStr = a < 0 ? `(${a})` : a;
+                        const bStr = b < 0 ? `(${b})` : b;
+                        return {
+                            question: `${aStr} ÷ ${bStr} = ?`,
+                            answer: result,
+                            hint: 'שלילי ÷ שלילי = חיובי',
+                            explanation: `${a} ÷ ${b} = ${result}`
+                        };
+                    }
+                }
+            },
+            powers: {
+                name: 'חזקות',
+                generate: function() {
+                    const type = randomInt(1, 3);
+                    if (type === 1) {
+                        const base = randomInt(2, 7);
+                        const exp = randomInt(2, 4);
+                        const result = Math.pow(base, exp);
+                        return {
+                            question: `${base}<sup>${exp}</sup> = ?`,
+                            answer: result,
+                            hint: `כפול ${base} בעצמו ${exp} פעמים`,
+                            explanation: `${base}^${exp} = ${Array(exp).fill(base).join(' × ')} = ${result}`
+                        };
+                    } else if (type === 2) {
+                        // חזקה של מספר שלילי
+                        const base = randomInt(2, 4);
+                        const exp = randomInt(2, 3);
+                        const result = Math.pow(-base, exp);
+                        return {
+                            question: `(${-base})<sup>${exp}</sup> = ?`,
+                            answer: result,
+                            hint: exp % 2 === 0 ? 'חזקה זוגית של שלילי = חיובי' : 'חזקה אי-זוגית של שלילי = שלילי',
+                            explanation: `(${-base})^${exp} = ${result}`
+                        };
+                    } else {
+                        // כפל חזקות עם אותו בסיס
+                        const base = randomInt(2, 5);
+                        const exp1 = randomInt(1, 3);
+                        const exp2 = randomInt(1, 3);
+                        const result = exp1 + exp2;
+                        return {
+                            question: `${base}<sup>${exp1}</sup> × ${base}<sup>${exp2}</sup> = ${base}<sup>?</sup>`,
+                            answer: result,
+                            hint: 'בכפל חזקות עם אותו בסיס - מחברים מעריכים',
+                            explanation: `${base}^${exp1} × ${base}^${exp2} = ${base}^(${exp1}+${exp2}) = ${base}^${result}`
+                        };
+                    }
+                }
+            },
+            fractions: {
+                name: 'שברים',
+                generate: function() {
+                    const type = randomInt(1, 4);
+                    if (type === 1) {
+                        // חיבור עם מכנה משותף
+                        const d = randomInt(3, 10);
+                        const n1 = randomInt(1, d - 1);
+                        const n2 = randomInt(1, d - n1);
+                        const sum = n1 + n2;
+                        return {
+                            question: `${n1}/${d} + ${n2}/${d} = ?/${d}`,
+                            answer: sum,
+                            hint: 'מכנה משותף - מחברים מונים',
+                            explanation: `${n1}/${d} + ${n2}/${d} = (${n1}+${n2})/${d} = ${sum}/${d}`
+                        };
+                    } else if (type === 2) {
+                        // הכפלה
+                        const n1 = randomInt(1, 5);
+                        const d1 = randomInt(2, 6);
+                        const n2 = randomInt(1, 5);
+                        const d2 = randomInt(2, 6);
+                        const resultN = n1 * n2;
+                        const resultD = d1 * d2;
+                        return {
+                            question: `${n1}/${d1} × ${n2}/${d2} = ?/${resultD}`,
+                            answer: resultN,
+                            hint: 'מונה × מונה, מכנה × מכנה',
+                            explanation: `(${n1}×${n2})/(${d1}×${d2}) = ${resultN}/${resultD}`
+                        };
+                    } else if (type === 3) {
+                        // חילוק
+                        const n1 = randomInt(1, 6);
+                        const d1 = randomInt(2, 6);
+                        const n2 = randomInt(1, 4);
+                        const d2 = randomInt(2, 5);
+                        const resultN = n1 * d2;
+                        const resultD = d1 * n2;
+                        return {
+                            question: `${n1}/${d1} ÷ ${n2}/${d2} = ?/${resultD}`,
+                            answer: resultN,
+                            hint: 'חילוק = כפל בהופכי',
+                            explanation: `${n1}/${d1} × ${d2}/${n2} = ${resultN}/${resultD}`
+                        };
+                    } else {
+                        // המרה לעשרוני
+                        const pairs = [[1,2,0.5], [1,4,0.25], [3,4,0.75], [1,5,0.2], [2,5,0.4], [3,5,0.6]];
+                        const [n, d, result] = pairs[randomInt(0, pairs.length - 1)];
+                        return {
+                            question: `${n}/${d} = ? (עשרוני)`,
+                            answer: result,
+                            hint: 'חלק מונה במכנה',
+                            explanation: `${n} ÷ ${d} = ${result}`
+                        };
+                    }
+                }
+            },
+            percent: {
+                name: 'אחוזים',
+                generate: function() {
+                    const type = randomInt(1, 3);
+                    if (type === 1) {
+                        const percent = [10, 20, 25, 30, 40, 50, 75][randomInt(0, 6)];
+                        const number = randomInt(2, 20) * 10;
+                        const result = (percent / 100) * number;
+                        return {
+                            question: `${percent}% מתוך ${number} = ?`,
+                            answer: result,
+                            hint: `${percent}% = ${percent}/100`,
+                            explanation: `${percent}/100 × ${number} = ${result}`
+                        };
+                    } else if (type === 2) {
+                        // מהו האחוז
+                        const percent = [10, 20, 25, 50][randomInt(0, 3)];
+                        const number = randomInt(2, 10) * 20;
+                        const part = (percent / 100) * number;
+                        return {
+                            question: `${part} מתוך ${number} זה כמה אחוז?`,
+                            answer: percent,
+                            hint: 'חלק ÷ שלם × 100',
+                            explanation: `${part}/${number} × 100 = ${percent}%`
+                        };
+                    } else {
+                        // מהו המספר המקורי
+                        const percent = [10, 20, 25, 50][randomInt(0, 3)];
+                        const number = randomInt(2, 10) * 20;
+                        const part = (percent / 100) * number;
+                        return {
+                            question: `${part} הם ${percent}% ממספר. מהו המספר?`,
+                            answer: number,
+                            hint: 'חלק ÷ אחוז × 100',
+                            explanation: `${part} ÷ ${percent} × 100 = ${number}`
+                        };
+                    }
+                }
+            },
+            angles: {
+                name: 'זוויות',
+                generate: function() {
+                    const type = randomInt(1, 5);
+                    if (type === 1) {
+                        // זוויות משלימות ל-180
+                        const a = randomInt(30, 150);
+                        const b = 180 - a;
+                        return {
+                            question: `שתי זוויות צמודות. אחת ${a}°. מהי השנייה?`,
+                            answer: b,
+                            hint: 'זוויות צמודות = 180°',
+                            explanation: `180° - ${a}° = ${b}°`
+                        };
+                    } else if (type === 2) {
+                        // זוויות קודקודיות
+                        const a = randomInt(20, 160);
+                        return {
+                            question: `שתי זוויות קודקודיות. אחת ${a}°. מהי השנייה?`,
+                            answer: a,
+                            hint: 'זוויות קודקודיות שוות',
+                            explanation: `זוויות קודקודיות שוות: ${a}°`
+                        };
+                    } else if (type === 3) {
+                        // סכום זוויות במשולש
+                        const a = randomInt(30, 80);
+                        const b = randomInt(30, 80);
+                        const c = 180 - a - b;
+                        return {
+                            question: `במשולש: זווית א׳=${a}°, זווית ב׳=${b}°. זווית ג׳=?`,
+                            answer: c,
+                            hint: 'סכום זוויות במשולש = 180°',
+                            explanation: `180° - ${a}° - ${b}° = ${c}°`
+                        };
+                    } else if (type === 4) {
+                        // זוויות מתחלפות
+                        const a = randomInt(40, 140);
+                        return {
+                            question: `שני ישרים מקבילים וחותך. זווית מתחלפת ל-${a}° היא?`,
+                            answer: a,
+                            hint: 'זוויות מתחלפות בין מקבילים שוות',
+                            explanation: `זוויות מתחלפות שוות: ${a}°`
+                        };
+                    } else {
+                        // סכום זוויות במרובע
+                        const a = randomInt(60, 100);
+                        const b = randomInt(60, 100);
+                        const c = randomInt(60, 100);
+                        const d = 360 - a - b - c;
+                        return {
+                            question: `במרובע: ${a}°, ${b}°, ${c}°. הזווית הרביעית?`,
+                            answer: d,
+                            hint: 'סכום זוויות במרובע = 360°',
+                            explanation: `360° - ${a}° - ${b}° - ${c}° = ${d}°`
+                        };
+                    }
+                }
+            },
+            area: {
+                name: 'שטח והיקף',
+                generate: function() {
+                    const type = randomInt(1, 5);
+                    if (type === 1) {
+                        // שטח מלבן
+                        const a = randomInt(3, 12);
+                        const b = randomInt(3, 12);
+                        const area = a * b;
+                        return {
+                            question: `שטח מלבן: אורך ${a}, רוחב ${b}`,
+                            answer: area,
+                            hint: 'שטח מלבן = אורך × רוחב',
+                            explanation: `${a} × ${b} = ${area}`
+                        };
+                    } else if (type === 2) {
+                        // היקף מלבן
+                        const a = randomInt(3, 10);
+                        const b = randomInt(3, 10);
+                        const perimeter = 2 * (a + b);
+                        return {
+                            question: `היקף מלבן: אורך ${a}, רוחב ${b}`,
+                            answer: perimeter,
+                            hint: 'היקף מלבן = 2×(אורך+רוחב)',
+                            explanation: `2 × (${a} + ${b}) = ${perimeter}`
+                        };
+                    } else if (type === 3) {
+                        // שטח משולש
+                        const base = randomInt(4, 12);
+                        const height = randomInt(2, 10) * 2; // מספר זוגי
+                        const area = (base * height) / 2;
+                        return {
+                            question: `שטח משולש: בסיס ${base}, גובה ${height}`,
+                            answer: area,
+                            hint: 'שטח משולש = (בסיס × גובה) ÷ 2',
+                            explanation: `(${base} × ${height}) ÷ 2 = ${area}`
+                        };
+                    } else if (type === 4) {
+                        // שטח ריבוע
+                        const side = randomInt(3, 12);
+                        const area = side * side;
+                        return {
+                            question: `שטח ריבוע עם צלע ${side}`,
+                            answer: area,
+                            hint: 'שטח ריבוע = צלע²',
+                            explanation: `${side}² = ${area}`
+                        };
+                    } else {
+                        // היקף מעגל (מעוגל)
+                        const r = randomInt(2, 10);
+                        const circumference = Math.round(2 * Math.PI * r);
+                        return {
+                            question: `היקף מעגל עם רדיוס ${r} (עגל לשלם, π≈3.14)`,
+                            answer: circumference,
+                            hint: 'היקף מעגל = 2πr',
+                            explanation: `2 × 3.14 × ${r} ≈ ${circumference}`
+                        };
+                    }
+                }
+            },
+            algebra: {
+                name: 'ביטויים אלגבריים',
+                generate: function() {
+                    const type = randomInt(1, 3);
+                    if (type === 1) {
+                        // הצבה בביטוי
+                        const a = randomInt(2, 5);
+                        const b = randomInt(1, 10);
+                        const x = randomInt(2, 8);
+                        const result = a * x + b;
+                        return {
+                            question: `אם x=${x}, מהו הערך של ${a}x + ${b}?`,
+                            answer: result,
+                            hint: 'הצב את הערך במקום x',
+                            explanation: `${a}×${x} + ${b} = ${a*x} + ${b} = ${result}`
+                        };
+                    } else if (type === 2) {
+                        // כינוס איברים דומים
+                        const a = randomInt(2, 8);
+                        const b = randomInt(1, 6);
+                        const result = a + b;
+                        return {
+                            question: `${a}x + ${b}x = ?x`,
+                            answer: result,
+                            hint: 'כנס איברים דומים',
+                            explanation: `${a}x + ${b}x = (${a}+${b})x = ${result}x`
+                        };
+                    } else {
+                        // הצבה בביטוי עם שני משתנים
+                        const a = randomInt(1, 4);
+                        const b = randomInt(1, 4);
+                        const x = randomInt(2, 5);
+                        const y = randomInt(2, 5);
+                        const result = a * x + b * y;
+                        return {
+                            question: `אם x=${x}, y=${y}, מהו ${a}x + ${b}y?`,
+                            answer: result,
+                            hint: 'הצב את שני הערכים',
+                            explanation: `${a}×${x} + ${b}×${y} = ${a*x} + ${b*y} = ${result}`
+                        };
+                    }
+                }
+            },
+            order: {
+                name: 'סדר פעולות',
+                generate: function() {
+                    const type = randomInt(1, 4);
+                    if (type === 1) {
+                        const a = randomInt(2, 8);
+                        const b = randomInt(2, 5);
+                        const c = randomInt(1, 10);
+                        const result = a + b * c;
+                        return {
+                            question: `${a} + ${b} × ${c} = ?`,
+                            answer: result,
+                            hint: 'כפל לפני חיבור',
+                            explanation: `${a} + (${b}×${c}) = ${a} + ${b*c} = ${result}`
+                        };
+                    } else if (type === 2) {
+                        const a = randomInt(2, 6);
+                        const b = randomInt(2, 6);
+                        const c = randomInt(2, 5);
+                        const result = (a + b) * c;
+                        return {
+                            question: `(${a} + ${b}) × ${c} = ?`,
+                            answer: result,
+                            hint: 'סוגריים קודם',
+                            explanation: `(${a+b}) × ${c} = ${result}`
+                        };
+                    } else if (type === 3) {
+                        const a = randomInt(10, 30);
+                        const b = randomInt(2, 5);
+                        const c = randomInt(2, 4);
+                        const result = a - b * c;
+                        return {
+                            question: `${a} - ${b} × ${c} = ?`,
+                            answer: result,
+                            hint: 'כפל לפני חיסור',
+                            explanation: `${a} - (${b}×${c}) = ${a} - ${b*c} = ${result}`
+                        };
+                    } else {
+                        const a = randomInt(2, 5);
+                        const b = randomInt(2, 4);
+                        const c = randomInt(1, 5);
+                        const result = Math.pow(a, b) + c;
+                        return {
+                            question: `${a}<sup>${b}</sup> + ${c} = ?`,
+                            answer: result,
+                            hint: 'חזקה קודם לחיבור',
+                            explanation: `${Math.pow(a,b)} + ${c} = ${result}`
+                        };
+                    }
+                }
+            }
+        };
+        
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        function selectTopic(topic) {
+            selectedTopic = topic;
+            document.querySelectorAll('.topic-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            newQuestion();
+        }
+        
+        function getRandomTopic() {
+            if (selectedTopic === 'all') {
+                const keys = Object.keys(topics);
+                return keys[randomInt(0, keys.length - 1)];
+            }
+            return selectedTopic;
+        }
+        
+        function newQuestion() {
+            const topicKey = getRandomTopic();
+            const topic = topics[topicKey];
+            const q = topic.generate();
+            
+            document.getElementById('questionType').textContent = topic.name;
+            document.getElementById('question').innerHTML = q.question;
+            document.getElementById('hint').textContent = q.hint;
+            
+            currentAnswer = q.answer;
+            currentExplanation = q.explanation;
+            
+            document.getElementById('answer').value = '';
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback empty';
+            document.getElementById('explanation').className = 'explanation';
+            document.getElementById('explanation').textContent = '';
+            document.getElementById('answer').focus();
+        }
+        
+        function showHint() {
+            const explanation = document.getElementById('explanation');
+            explanation.textContent = '💡 רמז: ' + document.getElementById('hint').textContent;
+            explanation.className = 'explanation show';
+        }
+        
+        function checkAnswer() {
+            const userAnswer = parseFloat(document.getElementById('answer').value);
+            const feedback = document.getElementById('feedback');
+            const explanation = document.getElementById('explanation');
+            
+            if (isNaN(userAnswer)) {
+                feedback.textContent = '⚠️ הקלד מספר';
+                feedback.className = 'feedback wrong';
+                return;
+            }
+            
+            totalCount++;
+            
+            if (Math.abs(userAnswer - currentAnswer) < 0.01) {
+                correctCount++;
+                streak++;
+                const points = 10 + (streak > 3 ? (streak - 3) * 5 : 0);
+                score += points;
+                
+                feedback.textContent = `✓ נכון! +${points} נקודות`;
+                feedback.className = 'feedback correct';
+                explanation.className = 'explanation';
+                
+                if (streak >= 3) {
+                    document.getElementById('streak').textContent = `🔥 רצף של ${streak} תשובות נכונות!`;
+                    document.getElementById('streak').className = 'streak hot';
+                } else {
+                    document.getElementById('streak').textContent = '';
+                }
+                
+                setTimeout(newQuestion, 1500);
+            } else {
+                streak = 0;
+                feedback.textContent = `✗ לא נכון. התשובה: ${currentAnswer}`;
+                feedback.className = 'feedback wrong';
+                explanation.textContent = '📝 הסבר: ' + currentExplanation;
+                explanation.className = 'explanation show';
+                document.getElementById('streak').textContent = '';
+                document.getElementById('streak').className = 'streak';
+            }
+            
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('correct').textContent = correctCount;
+            document.getElementById('total').textContent = totalCount;
+            const pct = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+            document.getElementById('percent').textContent = pct + '%';
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+        
+        // התחל עם שאלה ראשונה
+        newQuestion();
+    </script>
+</body>
+</html>
