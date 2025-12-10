@@ -65,6 +65,27 @@
     { "english": "open (v)", "hebrew": "לפתוח", "lesson": 1 },
     { "english": "opportunity", "hebrew": "הזדמנות", "lesson": 1 },
     { "english": "perfect", "hebrew": "מושלם", "lesson": 1 },
-    { "english": "inside", "hebrew": "בפנים", "lesson": 1 }
+    { "english": "inside", "hebrew": "בפנים", "lesson": 1 },
+    { "english": "guide", "hebrew": "מדריך", "lesson": 2 },
+    { "english": "go abroad", "hebrew": "לנסוע לחו\"ל", "lesson": 2 },
+    { "english": "flight", "hebrew": "טיסה", "lesson": 2 },
+    { "english": "exit", "hebrew": "יציאה", "lesson": 2 },
+    { "english": "culture", "hebrew": "תרבות", "lesson": 2 },
+    { "english": "amazing", "hebrew": "מדהים", "lesson": 2 },
+    { "english": "accident", "hebrew": "תאונה", "lesson": 2 },
+    { "english": "library", "hebrew": "ספרייה", "lesson": 2 },
+    { "english": "post", "hebrew": "לפרסם", "lesson": 2 },
+    { "english": "quite", "hebrew": "די, למדי", "lesson": 2 },
+    { "english": "recording", "hebrew": "הקלטה", "lesson": 2 },
+    { "english": "silent", "hebrew": "שקט", "lesson": 2 },
+    { "english": "sound like", "hebrew": "נשמע כמו", "lesson": 2 },
+    { "english": "sunrise", "hebrew": "זריחה", "lesson": 2 },
+    { "english": "surprising", "hebrew": "מפתיע", "lesson": 2 },
+    { "english": "the sights", "hebrew": "האטרקציות", "lesson": 2 },
+    { "english": "topic", "hebrew": "נושא", "lesson": 2 },
+    { "english": "tour", "hebrew": "סיור", "lesson": 2 },
+    { "english": "tourist", "hebrew": "תייר", "lesson": 2 },
+    { "english": "used to", "hebrew": "היה רגיל ל", "lesson": 2 },
+    { "english": "wedding", "hebrew": "חתונה", "lesson": 2 }
   ]
 }
