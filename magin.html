@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
 <title>🎡 רולטה משותפת</title>
-
 <style>
 body {
   font-family: Arial;
@@ -19,13 +18,14 @@ input, button {
 }
 
 #wheel {
-  margin: 30px auto;
+  margin: 20px auto;
   width: 300px;
   height: 300px;
   border-radius: 50%;
   border: 5px solid #333;
   position: relative;
   transition: transform 3s ease-out;
+  overflow: hidden;
 }
 
 .slice {
@@ -38,15 +38,15 @@ input, button {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #e0e0e0;
   border: 1px solid #ccc;
   font-size: 14px;
+  word-break: break-word;
 }
 
 #pointer {
   width: 0;
   height: 0;
-  margin: auto;
+  margin: 20px auto;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-bottom: 20px solid red;
@@ -57,6 +57,11 @@ input, button {
   margin-top: 10px;
   font-weight: bold;
 }
+
+#list {
+  margin-top: 10px;
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -64,10 +69,11 @@ input, button {
 
 <h2>🎡 רולטה משותפת (Firebase)</h2>
 
-<input id="nameInput" placeholder="הכנס שם" />
+<input id="nameInput" placeholder="הכנס שם">
 <button onclick="addName()">הוסף</button>
 <button onclick="reset()">נקה</button>
 
+<div id="list">משתתפים: אין</div>
 <div id="pointer"></div>
 <div id="wheel"></div>
 
@@ -78,7 +84,7 @@ input, button {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-/* 🔴 Firebase שלך 🔴 */
+// 🔴 Firebase שלך 🔴
 const firebaseConfig = {
   apiKey: "AIzaSyBWc81acgd-9tVi4wLlAw_PXdEgR0n81qU",
   authDomain: "trip-9506c.firebaseapp.com",
@@ -95,7 +101,7 @@ const namesRef = ref(db, "names");
 let names = [];
 let rotation = 0;
 
-/* Sync בזמן אמת */
+// Sync בזמן אמת
 onValue(namesRef, snap => {
   const data = snap.val();
   names = data ? Object.values(data) : [];
@@ -117,8 +123,11 @@ window.reset = function() {
 
 function render() {
   const wheel = document.getElementById("wheel");
-  wheel.innerHTML = "";
+  const listDiv = document.getElementById("list");
 
+  listDiv.innerHTML = "משתתפים: " + (names.length ? names.join(", ") : "אין");
+
+  wheel.innerHTML = "";
   if (names.length === 0) return;
 
   const angle = 360 / names.length;
@@ -126,7 +135,8 @@ function render() {
   names.forEach((name, i) => {
     const slice = document.createElement("div");
     slice.className = "slice";
-    slice.style.transform = `rotate(${i * angle}deg) skewY(${90 - angle}deg)`;
+    slice.style.transform = `rotate(${i * angle}deg)`;
+    slice.style.background = `hsl(${i * 360 / names.length}, 80%, 80%)`;
     slice.innerText = name;
     wheel.appendChild(slice);
   });
