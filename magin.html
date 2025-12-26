@@ -2,50 +2,205 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>🎡 רולטה משותפת - קוד מתוקן</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎡 רולטה מיקומים מעוצבת</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  text-align: center;
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
+* {
+  box-sizing: border-box;
 }
 
-input, button {
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+h1 {
+  color: #4a5568;
+  margin-bottom: 30px;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+input {
+  flex: 1;
+  min-width: 150px;
   font-size: 16px;
-  padding: 10px;
-  margin: 5px;
-  border: 2px solid #ddd;
-  border-radius: 5px;
+  padding: 12px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  background: #f8fafc;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4299e1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
 }
 
 button {
-  background: #4CAF50;
-  color: white;
+  font-size: 16px;
+  padding: 12px 20px;
   border: none;
+  border-radius: 12px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-button:hover {
-  background: #45a049;
+.btn-add {
+  background: linear-gradient(45deg, #48bb78, #38a169);
+  color: white;
+  box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+}
+
+.btn-add:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
+}
+
+.btn-reset {
+  background: linear-gradient(45deg, #f56565, #e53e3e);
+  color: white;
+  box-shadow: 0 4px 15px rgba(245, 101, 101, 0.4);
+}
+
+.btn-reset:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 101, 101, 0.6);
+}
+
+.btn-spin {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  font-size: 20px;
+  padding: 15px 30px;
+  margin: 20px 0;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-spin:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
 }
 
 button:disabled {
-  background: #cccccc;
+  background: #cbd5e0;
+  color: #a0aec0;
   cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.status {
+  padding: 12px 20px;
+  margin: 15px 0;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.status.success {
+  background: linear-gradient(45deg, #c6f6d5, #9ae6b4);
+  color: #22543d;
+  border: 2px solid #68d391;
+}
+
+.status.error {
+  background: linear-gradient(45deg, #fed7d7, #feb2b2);
+  color: #742a2a;
+  border: 2px solid #f56565;
+}
+
+.status.connecting {
+  background: linear-gradient(45deg, #bee3f8, #90cdf4);
+  color: #2a4365;
+  border: 2px solid #4299e1;
+}
+
+.participants {
+  background: #f7fafc;
+  border-radius: 12px;
+  padding: 15px;
+  margin: 20px 0;
+  border: 2px solid #e2e8f0;
+}
+
+.participants h3 {
+  margin: 0 0 10px 0;
+  color: #4a5568;
+}
+
+.participant-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.participant-tag {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.wheel-container {
+  position: relative;
+  margin: 30px auto;
 }
 
 #wheel {
-  margin: 20px auto;
-  width: 300px;
-  height: 300px;
+  width: 350px;
+  height: 350px;
   border-radius: 50%;
-  border: 5px solid #333;
+  border: 8px solid #4a5568;
   position: relative;
-  transition: transform 3s ease-out;
+  transition: transform 4s cubic-bezier(0.2, 0, 0.2, 1);
   overflow: hidden;
+  box-shadow: 
+    0 0 0 4px rgba(255, 255, 255, 0.3),
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    inset 0 0 20px rgba(0, 0, 0, 0.1);
+  background: conic-gradient(from 0deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff);
 }
 
 .slice {
@@ -58,107 +213,148 @@ button:disabled {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
   word-break: break-word;
-  color: #333;
+  text-align: center;
+  padding: 5px;
 }
 
 #pointer {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 0;
   height: 0;
-  margin: 20px auto;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 25px solid red;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 40px solid #e53e3e;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  z-index: 10;
 }
 
 #result {
-  font-size: 24px;
-  margin-top: 15px;
+  font-size: 28px;
+  margin-top: 20px;
   font-weight: bold;
-  color: #2e7d32;
+  padding: 20px;
+  border-radius: 12px;
+  background: linear-gradient(45deg, #48bb78, #38a169);
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+  transform: scale(0);
+  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-#list {
-  margin: 15px 0;
-  font-weight: bold;
-  font-size: 16px;
+#result.show {
+  transform: scale(1);
 }
 
-#debug {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin: 20px 0;
-  border-radius: 5px;
-  text-align: left;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  max-height: 200px;
-  overflow-y: auto;
+.empty-wheel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #718096;
+  height: 100%;
+  background: linear-gradient(135deg, #f7fafc, #edf2f7);
 }
 
-.status {
-  padding: 10px;
-  margin: 10px;
-  border-radius: 5px;
-  font-weight: bold;
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  #wheel {
+    width: 280px;
+    height: 280px;
+  }
+  
+  .input-row {
+    flex-direction: column;
+  }
+  
+  input {
+    min-width: unset;
+  }
 }
 
-.error {
-  background-color: #ffebee;
-  color: #c62828;
-  border: 2px solid #ef5350;
+/* אנימציות */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
-.success {
-  background-color: #e8f5e8;
-  color: #2e7d32;
-  border: 2px solid #66bb6a;
+.btn-spin:not(:disabled) {
+  animation: pulse 2s infinite;
 }
 
-.warning {
-  background-color: #fff8e1;
-  color: #f57f17;
-  border: 2px solid #ffca28;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.connecting {
-  background-color: #e3f2fd;
-  color: #1976d2;
-  border: 2px solid #42a5f5;
+.container {
+  animation: fadeInUp 0.8s ease-out;
 }
 </style>
 </head>
 
 <body>
+<div class="container">
+  <h1>🎡 רולטה מיקומים</h1>
+  
+  <div class="input-section">
+    <div class="input-row">
+      <input id="nameInput" placeholder="הכנס שם נציג" type="text">
+      <input id="locationInput" placeholder="הכנס מיקום" type="text">
+    </div>
+    <div class="input-row">
+      <button onclick="addParticipant()" class="btn-add" id="addBtn">🌍 הוסף מיקום</button>
+      <button onclick="reset()" class="btn-reset" id="resetBtn">🗑️ נקה הכל</button>
+    </div>
+  </div>
 
-<h1>🎡 רולטה משותפת (Firebase) - גרסה מתוקנת</h1>
+  <div id="status" class="status connecting">מתחבר ל-Firebase...</div>
 
-<div>
-  <input id="nameInput" placeholder="הכנס שם" onkeydown="if(event.key==='Enter') addName()">
-  <button onclick="addName()" id="addBtn">הוסף שם</button>
-  <button onclick="reset()" id="resetBtn">נקה הכל</button>
+  <div class="participants">
+    <h3>🌍 מיקומים ונציגים</h3>
+    <div id="participantsList" class="participant-list">
+      אין מיקומים עדיין
+    </div>
+  </div>
+
+  <div class="wheel-container">
+    <div id="pointer"></div>
+    <div id="wheel">
+      <div class="empty-wheel">הוסף משתתפים כדי להתחיל! 🎯</div>
+    </div>
+  </div>
+
+  <button onclick="spin()" class="btn-spin" id="spinBtn">🎲 סובב את הרולטה!</button>
+  
+  <div id="result"></div>
 </div>
-
-<div id="status" class="status connecting">מתחיל...</div>
-<div id="debug"><strong>לוג דיאגנוסטיקה:</strong><br></div>
-
-<div id="list">משתתפים: אין</div>
-
-<div id="pointer"></div>
-<div id="wheel"></div>
-
-<button onclick="spin()" id="spinBtn">🎲 סובב את הרולטה!</button>
-<div id="result"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// תצורת Firebase - עם databaseURL מפורש
 const firebaseConfig = {
   apiKey: "AIzaSyBWc81acgd-9tVi4wLlAw_PXdEgR0n81qU",
   authDomain: "trip-9506c.firebaseapp.com",
@@ -169,26 +365,24 @@ const firebaseConfig = {
   databaseURL: "https://trip-9506c-default-rtdb.firebaseio.com/"
 };
 
-let app, db, namesRef;
-let names = [];
+let app, db, participantsRef;
+let participants = [];
 let rotation = 0;
 let isConnected = false;
-
-// פונקציות עזר
-function log(message, type = "info") {
-  const now = new Date().toLocaleTimeString('he-IL');
-  const debugDiv = document.getElementById("debug");
-  const prefix = type === "error" ? "❌" : type === "success" ? "✅" : type === "warning" ? "⚠️" : "ℹ️";
-  debugDiv.innerHTML += `<div>[${now}] ${prefix} ${message}</div>`;
-  debugDiv.scrollTop = debugDiv.scrollHeight;
-  console.log(`[Firebase Debug] ${message}`);
-}
+let isSpinning = false;
 
 function showStatus(message, type) {
   const statusDiv = document.getElementById("status");
   statusDiv.textContent = message;
   statusDiv.className = `status ${type}`;
-  log(message, type);
+  
+  if (type === "success") {
+    setTimeout(() => {
+      statusDiv.style.display = "none";
+    }, 3000);
+  } else {
+    statusDiv.style.display = "block";
+  }
 }
 
 function updateButtons() {
@@ -196,74 +390,111 @@ function updateButtons() {
   const resetBtn = document.getElementById("resetBtn");
   const spinBtn = document.getElementById("spinBtn");
   
-  addBtn.disabled = !isConnected;
-  resetBtn.disabled = !isConnected;
-  spinBtn.disabled = !isConnected || names.length === 0;
+  addBtn.disabled = !isConnected || isSpinning;
+  resetBtn.disabled = !isConnected || isSpinning;
+  spinBtn.disabled = !isConnected || participants.length === 0 || isSpinning;
+}
+
+function renderParticipants() {
+  const listDiv = document.getElementById("participantsList");
+  
+  if (participants.length === 0) {
+    listDiv.innerHTML = "אין מיקומים עדיין";
+    return;
+  }
+  
+  listDiv.innerHTML = "";
+  participants.forEach(participant => {
+    const tag = document.createElement("div");
+    tag.className = "participant-tag";
+    tag.innerHTML = `<strong>${participant.location}</strong><br><small>נציג: ${participant.name}</small>`;
+    listDiv.appendChild(tag);
+  });
+}
+
+function renderWheel() {
+  const wheel = document.getElementById("wheel");
+  wheel.innerHTML = "";
+  
+  if (participants.length === 0) {
+    wheel.innerHTML = '<div class="empty-wheel">הוסף מיקומים כדי להתחיל! 🌍</div>';
+    return;
+  }
+
+  const angle = 360 / participants.length;
+  const colors = [
+    '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', 
+    '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43',
+    '#ee5a24', '#0984e3', '#6c5ce7', '#a29bfe', '#fd79a8'
+  ];
+
+  participants.forEach((participant, i) => {
+    const slice = document.createElement("div");
+    slice.className = "slice";
+    slice.style.transform = `rotate(${i * angle}deg)`;
+    slice.style.background = `linear-gradient(45deg, ${colors[i % colors.length]}, ${colors[(i + 1) % colors.length]})`;
+    slice.innerText = participant.location; // הצגת מיקום במקום שם
+    wheel.appendChild(slice);
+  });
 }
 
 // אתחול Firebase
 try {
-  log("מתחיל אתחול Firebase...");
-  
   app = initializeApp(firebaseConfig);
-  log("Firebase app אותחל בהצלחה");
-  
   db = getDatabase(app);
-  log("מתחבר למסד נתונים...");
+  participantsRef = ref(db, "participants");
   
-  namesRef = ref(db, "names");
-  log("יצר reference לנתיב 'names'");
-  
-  showStatus("מתחבר ל-Firebase...", "connecting");
-  
-  // מאזין לשינויים בזמן אמת
-  onValue(namesRef, (snapshot) => {
+  onValue(participantsRef, (snapshot) => {
     try {
-      log("קיבלתי עדכון מ-Firebase");
       const data = snapshot.val();
-      names = data ? Object.values(data) : [];
-      
-      log(`נטענו ${names.length} שמות: ${names.join(", ") || "אין"}`);
+      participants = data ? Object.values(data) : [];
       
       if (!isConnected) {
         isConnected = true;
         showStatus("מחובר בהצלחה ל-Firebase! 🎉", "success");
       }
       
-      render();
+      renderParticipants();
+      renderWheel();
       updateButtons();
       
     } catch (error) {
-      log(`שגיאה בעיבוד נתונים: ${error.message}`, "error");
-      showStatus("שגיאה בעיבוד נתונים מ-Firebase", "error");
+      showStatus("שגיאה בעיבוד נתונים", "error");
     }
   }, (error) => {
-    log(`שגיאה בחיבור ל-Firebase: ${error.code} - ${error.message}`, "error");
     showStatus(`שגיאה בחיבור: ${error.message}`, "error");
     isConnected = false;
     updateButtons();
   });
   
 } catch (error) {
-  log(`שגיאה קריטית באתחול: ${error.message}`, "error");
-  showStatus("שגיאה קריטית באתחול Firebase", "error");
+  showStatus("שגיאה באתחול Firebase", "error");
 }
 
-// פונקציית הוספת שם
-window.addName = function() {
-  const input = document.getElementById("nameInput");
-  const name = input.value.trim();
+// הוספת משתתף
+window.addParticipant = function() {
+  const nameInput = document.getElementById("nameInput");
+  const locationInput = document.getElementById("locationInput");
   
-  log(`ניסיון הוספת שם: "${name}"`);
+  const name = nameInput.value.trim();
+  const location = locationInput.value.trim();
   
   if (!name) {
-    showStatus("אנא הכנס שם תקין", "error");
+    showStatus("אנא הכנס שם", "error");
+    nameInput.focus();
     return;
   }
   
-  if (names.includes(name)) {
-    showStatus(`השם "${name}" כבר קיים ברשימה`, "warning");
-    input.focus();
+  if (!location) {
+    showStatus("אנא הכנס מיקום", "error");
+    locationInput.focus();
+    return;
+  }
+  
+  // בדיקת כפילויות לפי מיקום
+  if (participants.some(p => p.location === location)) {
+    showStatus(`המיקום "${location}" כבר קיים`, "error");
+    locationInput.focus();
     return;
   }
   
@@ -272,141 +503,100 @@ window.addName = function() {
     return;
   }
   
-  try {
-    log(`שולח שם "${name}" ל-Firebase...`);
-    
-    push(namesRef, name)
-      .then(() => {
-        log(`השם "${name}" נוסף בהצלחה ל-Firebase`, "success");
-        showStatus(`השם "${name}" נוסף בהצלחה! ✅`, "success");
-        input.value = "";
-        input.focus();
-      })
-      .catch(error => {
-        log(`שגיאה בהוספת שם ל-Firebase: ${error.code} - ${error.message}`, "error");
-        showStatus(`שגיאה בהוספת השם: ${error.message}`, "error");
-      });
-      
-  } catch (error) {
-    log(`שגיאה בפעולת ההוספה: ${error.message}`, "error");
-    showStatus("שגיאה בהוספת השם", "error");
-  }
+  const participant = { name, location };
+  
+  push(participantsRef, participant)
+    .then(() => {
+      showStatus(`המיקום "${location}" נוסף בהצלחה! ✅`, "success");
+      nameInput.value = "";
+      locationInput.value = "";
+      nameInput.focus();
+    })
+    .catch(error => {
+      showStatus(`שגיאה בהוספה: ${error.message}`, "error");
+    });
 };
 
-// פונקציית איפוס
+// איפוס
 window.reset = function() {
   if (!isConnected) {
     showStatus("אין חיבור ל-Firebase", "error");
     return;
   }
   
-  if (names.length === 0) {
-    showStatus("הרשימה כבר ריקה", "warning");
+  if (participants.length === 0) {
+    showStatus("הרשימה כבר ריקה", "error");
     return;
   }
   
-  if (!confirm(`האם אתה בטוח שברצונך למחוק את כל ${names.length} השמות?`)) {
-    log("הביטול נמחקה על ידי המשתמש");
+  if (!confirm(`האם אתה בטוח שברצונך למחוק את כל ${participants.length} המיקומים?`)) {
     return;
   }
   
-  try {
-    log("מוחק את כל השמות מ-Firebase...");
-    
-    remove(namesRef)
-      .then(() => {
-        log("כל השמות נמחקו בהצלחה מ-Firebase", "success");
-        showStatus("כל השמות נמחקו בהצלחה! 🗑️", "success");
-        document.getElementById("result").innerText = "";
-      })
-      .catch(error => {
-        log(`שגיאה במחיקת השמות: ${error.code} - ${error.message}`, "error");
-        showStatus(`שגיאה במחיקה: ${error.message}`, "error");
-      });
-      
-  } catch (error) {
-    log(`שגיאה בפעולת המחיקה: ${error.message}`, "error");
-    showStatus("שגיאה במחיקה", "error");
-  }
+  remove(participantsRef)
+    .then(() => {
+      showStatus("כל המיקומים נמחקו! 🗑️", "success");
+      document.getElementById("result").textContent = "";
+      document.getElementById("result").classList.remove("show");
+    })
+    .catch(error => {
+      showStatus(`שגיאה במחיקה: ${error.message}`, "error");
+    });
 };
 
-// פונקציית רינדור
-function render() {
-  const wheel = document.getElementById("wheel");
-  const listDiv = document.getElementById("list");
-
-  // עדכון רשימת המשתתפים
-  listDiv.innerHTML = `משתתפים (${names.length}): ` + (names.length ? names.join(", ") : "אין");
-
-  // ניקוי הרולטה
-  wheel.innerHTML = "";
-  
-  if (names.length === 0) {
-    wheel.style.background = "#f0f0f0";
-    return;
-  }
-
-  wheel.style.background = "white";
-  const angle = 360 / names.length;
-
-  names.forEach((name, i) => {
-    const slice = document.createElement("div");
-    slice.className = "slice";
-    slice.style.transform = `rotate(${i * angle}deg)`;
-    slice.style.background = `hsl(${(i * 360 / names.length + 20) % 360}, 70%, 85%)`;
-    slice.innerText = name;
-    wheel.appendChild(slice);
-  });
-  
-  log(`רולטה עודכנה עם ${names.length} שמות`);
-}
-
-// פונקציית סיבוב
+// סיבוב הרולטה
 window.spin = function() {
-  if (!isConnected) {
-    showStatus("אין חיבור ל-Firebase", "error");
-    return;
-  }
+  if (!isConnected || participants.length === 0 || isSpinning) return;
   
-  if (names.length === 0) {
-    showStatus("אין משתתפים לרולטה! הוסף שמות קודם", "warning");
-    return;
-  }
-
-  log(`מסובב את הרולטה עם ${names.length} משתתפים`);
+  isSpinning = true;
+  updateButtons();
   
-  // מחסום כפלה
   const spinBtn = document.getElementById("spinBtn");
-  spinBtn.disabled = true;
+  const resultDiv = document.getElementById("result");
+  
   spinBtn.innerText = "🎲 מסובב...";
+  resultDiv.classList.remove("show");
   
-  const extra = Math.floor(Math.random() * 360) + 720; // לפחות 2 סיבובים
-  rotation += extra;
+  // סיבוב אקראי
+  const spins = Math.floor(Math.random() * 5) + 3; // 3-7 סיבובים
+  const extraAngle = Math.floor(Math.random() * 360);
+  const totalRotation = (spins * 360) + extraAngle;
   
-  log(`סיבוב: ${extra} מעלות (סה"כ: ${rotation})`);
-  
+  rotation += totalRotation;
   document.getElementById("wheel").style.transform = `rotate(${rotation}deg)`;
 
-  const angle = 360 / names.length;
-  const normalizedRotation = (360 - rotation % 360) % 360;
-  const index = Math.floor(normalizedRotation / angle);
-  const winner = names[index];
-  
-  log(`חישוב זוכה: זווית=${angle}, סיבוב מנורמל=${normalizedRotation}, אינדקס=${index}, זוכה="${winner}"`);
+  // חישוב זוכה
+  const angle = 360 / participants.length;
+  const normalizedRotation = (360 - (rotation % 360)) % 360;
+  const winnerIndex = Math.floor(normalizedRotation / angle);
+  const winner = participants[winnerIndex];
 
   setTimeout(() => {
-    document.getElementById("result").innerText = `🎉 הזוכה הוא: ${winner}!`;
-    spinBtn.disabled = false;
+    resultDiv.innerHTML = `🎉 המיקום הזוכה:<br><strong>${winner.location}</strong><br><small>נציג: ${winner.name}</small>`;
+    resultDiv.classList.add("show");
+    
+    isSpinning = false;
     spinBtn.innerText = "🎲 סובב את הרולטה!";
-    log(`הזוכה נבחר: "${winner}"`, "success");
-  }, 3000);
+    updateButtons();
+  }, 4000);
 };
 
-// אתחול ראשוני
+// אירועי מקלדת
+document.getElementById("nameInput").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    document.getElementById("locationInput").focus();
+  }
+});
+
+document.getElementById("locationInput").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    addParticipant();
+  }
+});
+
+// אתחול
 updateButtons();
-log("הקוד נטען בהצלחה, מחכה לחיבור Firebase...");
 
 </script>
-
 </body>
 </html>
