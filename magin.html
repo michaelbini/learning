@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<title>🎡 רולטה משותפת</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  text-align: center;
+  padding: 20px;
+}
+
+input, button {
+  font-size: 16px;
+  padding: 8px;
+  margin: 5px;
+}
+
+#wheel {
+  margin: 30px auto;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  border: 5px solid #333;
+  position: relative;
+  transition: transform 3s ease-out;
+}
+
+.slice {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0% 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e0e0e0;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#pointer {
+  width: 0;
+  height: 0;
+  margin: auto;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid red;
+}
+
+#result {
+  font-size: 22px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🎡 רולטה משותפת (Firebase)</h2>
+
+<input id="nameInput" placeholder="הכנס שם" />
+<button onclick="addName()">הוסף</button>
+<button onclick="reset()">נקה</button>
+
+<div id="pointer"></div>
+<div id="wheel"></div>
+
+<button onclick="spin()">סובב</button>
+<div id="result"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+/* 🔴 Firebase שלך 🔴 */
+const firebaseConfig = {
+  apiKey: "AIzaSyBWc81acgd-9tVi4wLlAw_PXdEgR0n81qU",
+  authDomain: "trip-9506c.firebaseapp.com",
+  projectId: "trip-9506c",
+  storageBucket: "trip-9506c.firebasestorage.app",
+  messagingSenderId: "813393240812",
+  appId: "1:813393240812:web:929bed95de2c48d5e43bc9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const namesRef = ref(db, "names");
+
+let names = [];
+let rotation = 0;
+
+/* Sync בזמן אמת */
+onValue(namesRef, snap => {
+  const data = snap.val();
+  names = data ? Object.values(data) : [];
+  render();
+});
+
+window.addName = function() {
+  const input = document.getElementById("nameInput");
+  const name = input.value.trim();
+  if (!name) return;
+  push(namesRef, name);
+  input.value = "";
+};
+
+window.reset = function() {
+  remove(namesRef);
+  document.getElementById("result").innerText = "";
+};
+
+function render() {
+  const wheel = document.getElementById("wheel");
+  wheel.innerHTML = "";
+
+  if (names.length === 0) return;
+
+  const angle = 360 / names.length;
+
+  names.forEach((name, i) => {
+    const slice = document.createElement("div");
+    slice.className = "slice";
+    slice.style.transform = `rotate(${i * angle}deg) skewY(${90 - angle}deg)`;
+    slice.innerText = name;
+    wheel.appendChild(slice);
+  });
+}
+
+window.spin = function() {
+  if (names.length === 0) return;
+
+  const extra = Math.floor(Math.random() * 360) + 720;
+  rotation += extra;
+  document.getElementById("wheel").style.transform = `rotate(${rotation}deg)`;
+
+  const angle = 360 / names.length;
+  const index = Math.floor(((360 - rotation % 360) % 360) / angle);
+
+  setTimeout(() => {
+    document.getElementById("result").innerText = "🎉 נבחר: " + names[index];
+  }, 3000);
+};
+</script>
+
+</body>
+</html>
