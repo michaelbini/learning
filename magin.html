@@ -2,19 +2,39 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>🎡 רולטה משותפת</title>
+<title>🎡 רולטה משותפת - קוד מתוקן</title>
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #f5f5f5;
   text-align: center;
   padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 input, button {
   font-size: 16px;
-  padding: 8px;
+  padding: 10px;
   margin: 5px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+}
+
+button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
 }
 
 #wheel {
@@ -40,122 +60,352 @@ input, button {
   align-items: center;
   border: 1px solid #ccc;
   font-size: 14px;
+  font-weight: bold;
   word-break: break-word;
+  color: #333;
 }
 
 #pointer {
   width: 0;
   height: 0;
   margin: 20px auto;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 20px solid red;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 25px solid red;
 }
 
 #result {
-  font-size: 22px;
-  margin-top: 10px;
+  font-size: 24px;
+  margin-top: 15px;
   font-weight: bold;
+  color: #2e7d32;
 }
 
 #list {
-  margin-top: 10px;
+  margin: 15px 0;
   font-weight: bold;
+  font-size: 16px;
+}
+
+#debug {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 5px;
+  text-align: left;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.status {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 2px solid #ef5350;
+}
+
+.success {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  border: 2px solid #66bb6a;
+}
+
+.warning {
+  background-color: #fff8e1;
+  color: #f57f17;
+  border: 2px solid #ffca28;
+}
+
+.connecting {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 2px solid #42a5f5;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🎡 רולטה משותפת (Firebase)</h2>
+<h1>🎡 רולטה משותפת (Firebase) - גרסה מתוקנת</h1>
 
-<input id="nameInput" placeholder="הכנס שם">
-<button onclick="addName()">הוסף</button>
-<button onclick="reset()">נקה</button>
+<div>
+  <input id="nameInput" placeholder="הכנס שם" onkeydown="if(event.key==='Enter') addName()">
+  <button onclick="addName()" id="addBtn">הוסף שם</button>
+  <button onclick="reset()" id="resetBtn">נקה הכל</button>
+</div>
+
+<div id="status" class="status connecting">מתחיל...</div>
+<div id="debug"><strong>לוג דיאגנוסטיקה:</strong><br></div>
 
 <div id="list">משתתפים: אין</div>
+
 <div id="pointer"></div>
 <div id="wheel"></div>
 
-<button onclick="spin()">סובב</button>
+<button onclick="spin()" id="spinBtn">🎲 סובב את הרולטה!</button>
 <div id="result"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// 🔴 Firebase שלך 🔴
+// תצורת Firebase - עם databaseURL מפורש
 const firebaseConfig = {
   apiKey: "AIzaSyBWc81acgd-9tVi4wLlAw_PXdEgR0n81qU",
   authDomain: "trip-9506c.firebaseapp.com",
   projectId: "trip-9506c",
   storageBucket: "trip-9506c.firebasestorage.app",
   messagingSenderId: "813393240812",
-  appId: "1:813393240812:web:929bed95de2c48d5e43bc9"
+  appId: "1:813393240812:web:929bed95de2c48d5e43bc9",
+  databaseURL: "https://trip-9506c-default-rtdb.firebaseio.com/"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const namesRef = ref(db, "names");
-
+let app, db, namesRef;
 let names = [];
 let rotation = 0;
+let isConnected = false;
 
-// Sync בזמן אמת
-onValue(namesRef, snap => {
-  const data = snap.val();
-  names = data ? Object.values(data) : [];
-  render();
-});
+// פונקציות עזר
+function log(message, type = "info") {
+  const now = new Date().toLocaleTimeString('he-IL');
+  const debugDiv = document.getElementById("debug");
+  const prefix = type === "error" ? "❌" : type === "success" ? "✅" : type === "warning" ? "⚠️" : "ℹ️";
+  debugDiv.innerHTML += `<div>[${now}] ${prefix} ${message}</div>`;
+  debugDiv.scrollTop = debugDiv.scrollHeight;
+  console.log(`[Firebase Debug] ${message}`);
+}
 
+function showStatus(message, type) {
+  const statusDiv = document.getElementById("status");
+  statusDiv.textContent = message;
+  statusDiv.className = `status ${type}`;
+  log(message, type);
+}
+
+function updateButtons() {
+  const addBtn = document.getElementById("addBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const spinBtn = document.getElementById("spinBtn");
+  
+  addBtn.disabled = !isConnected;
+  resetBtn.disabled = !isConnected;
+  spinBtn.disabled = !isConnected || names.length === 0;
+}
+
+// אתחול Firebase
+try {
+  log("מתחיל אתחול Firebase...");
+  
+  app = initializeApp(firebaseConfig);
+  log("Firebase app אותחל בהצלחה");
+  
+  db = getDatabase(app);
+  log("מתחבר למסד נתונים...");
+  
+  namesRef = ref(db, "names");
+  log("יצר reference לנתיב 'names'");
+  
+  showStatus("מתחבר ל-Firebase...", "connecting");
+  
+  // מאזין לשינויים בזמן אמת
+  onValue(namesRef, (snapshot) => {
+    try {
+      log("קיבלתי עדכון מ-Firebase");
+      const data = snapshot.val();
+      names = data ? Object.values(data) : [];
+      
+      log(`נטענו ${names.length} שמות: ${names.join(", ") || "אין"}`);
+      
+      if (!isConnected) {
+        isConnected = true;
+        showStatus("מחובר בהצלחה ל-Firebase! 🎉", "success");
+      }
+      
+      render();
+      updateButtons();
+      
+    } catch (error) {
+      log(`שגיאה בעיבוד נתונים: ${error.message}`, "error");
+      showStatus("שגיאה בעיבוד נתונים מ-Firebase", "error");
+    }
+  }, (error) => {
+    log(`שגיאה בחיבור ל-Firebase: ${error.code} - ${error.message}`, "error");
+    showStatus(`שגיאה בחיבור: ${error.message}`, "error");
+    isConnected = false;
+    updateButtons();
+  });
+  
+} catch (error) {
+  log(`שגיאה קריטית באתחול: ${error.message}`, "error");
+  showStatus("שגיאה קריטית באתחול Firebase", "error");
+}
+
+// פונקציית הוספת שם
 window.addName = function() {
   const input = document.getElementById("nameInput");
   const name = input.value.trim();
-  if (!name) return;
-  push(namesRef, name);
-  input.value = "";
+  
+  log(`ניסיון הוספת שם: "${name}"`);
+  
+  if (!name) {
+    showStatus("אנא הכנס שם תקין", "error");
+    return;
+  }
+  
+  if (names.includes(name)) {
+    showStatus(`השם "${name}" כבר קיים ברשימה`, "warning");
+    input.focus();
+    return;
+  }
+  
+  if (!isConnected) {
+    showStatus("אין חיבור ל-Firebase", "error");
+    return;
+  }
+  
+  try {
+    log(`שולח שם "${name}" ל-Firebase...`);
+    
+    push(namesRef, name)
+      .then(() => {
+        log(`השם "${name}" נוסף בהצלחה ל-Firebase`, "success");
+        showStatus(`השם "${name}" נוסף בהצלחה! ✅`, "success");
+        input.value = "";
+        input.focus();
+      })
+      .catch(error => {
+        log(`שגיאה בהוספת שם ל-Firebase: ${error.code} - ${error.message}`, "error");
+        showStatus(`שגיאה בהוספת השם: ${error.message}`, "error");
+      });
+      
+  } catch (error) {
+    log(`שגיאה בפעולת ההוספה: ${error.message}`, "error");
+    showStatus("שגיאה בהוספת השם", "error");
+  }
 };
 
+// פונקציית איפוס
 window.reset = function() {
-  remove(namesRef);
-  document.getElementById("result").innerText = "";
+  if (!isConnected) {
+    showStatus("אין חיבור ל-Firebase", "error");
+    return;
+  }
+  
+  if (names.length === 0) {
+    showStatus("הרשימה כבר ריקה", "warning");
+    return;
+  }
+  
+  if (!confirm(`האם אתה בטוח שברצונך למחוק את כל ${names.length} השמות?`)) {
+    log("הביטול נמחקה על ידי המשתמש");
+    return;
+  }
+  
+  try {
+    log("מוחק את כל השמות מ-Firebase...");
+    
+    remove(namesRef)
+      .then(() => {
+        log("כל השמות נמחקו בהצלחה מ-Firebase", "success");
+        showStatus("כל השמות נמחקו בהצלחה! 🗑️", "success");
+        document.getElementById("result").innerText = "";
+      })
+      .catch(error => {
+        log(`שגיאה במחיקת השמות: ${error.code} - ${error.message}`, "error");
+        showStatus(`שגיאה במחיקה: ${error.message}`, "error");
+      });
+      
+  } catch (error) {
+    log(`שגיאה בפעולת המחיקה: ${error.message}`, "error");
+    showStatus("שגיאה במחיקה", "error");
+  }
 };
 
+// פונקציית רינדור
 function render() {
   const wheel = document.getElementById("wheel");
   const listDiv = document.getElementById("list");
 
-  listDiv.innerHTML = "משתתפים: " + (names.length ? names.join(", ") : "אין");
+  // עדכון רשימת המשתתפים
+  listDiv.innerHTML = `משתתפים (${names.length}): ` + (names.length ? names.join(", ") : "אין");
 
+  // ניקוי הרולטה
   wheel.innerHTML = "";
-  if (names.length === 0) return;
+  
+  if (names.length === 0) {
+    wheel.style.background = "#f0f0f0";
+    return;
+  }
 
+  wheel.style.background = "white";
   const angle = 360 / names.length;
 
   names.forEach((name, i) => {
     const slice = document.createElement("div");
     slice.className = "slice";
     slice.style.transform = `rotate(${i * angle}deg)`;
-    slice.style.background = `hsl(${i * 360 / names.length}, 80%, 80%)`;
+    slice.style.background = `hsl(${(i * 360 / names.length + 20) % 360}, 70%, 85%)`;
     slice.innerText = name;
     wheel.appendChild(slice);
   });
+  
+  log(`רולטה עודכנה עם ${names.length} שמות`);
 }
 
+// פונקציית סיבוב
 window.spin = function() {
-  if (names.length === 0) return;
+  if (!isConnected) {
+    showStatus("אין חיבור ל-Firebase", "error");
+    return;
+  }
+  
+  if (names.length === 0) {
+    showStatus("אין משתתפים לרולטה! הוסף שמות קודם", "warning");
+    return;
+  }
 
-  const extra = Math.floor(Math.random() * 360) + 720;
+  log(`מסובב את הרולטה עם ${names.length} משתתפים`);
+  
+  // מחסום כפלה
+  const spinBtn = document.getElementById("spinBtn");
+  spinBtn.disabled = true;
+  spinBtn.innerText = "🎲 מסובב...";
+  
+  const extra = Math.floor(Math.random() * 360) + 720; // לפחות 2 סיבובים
   rotation += extra;
+  
+  log(`סיבוב: ${extra} מעלות (סה"כ: ${rotation})`);
+  
   document.getElementById("wheel").style.transform = `rotate(${rotation}deg)`;
 
   const angle = 360 / names.length;
-  const index = Math.floor(((360 - rotation % 360) % 360) / angle);
+  const normalizedRotation = (360 - rotation % 360) % 360;
+  const index = Math.floor(normalizedRotation / angle);
+  const winner = names[index];
+  
+  log(`חישוב זוכה: זווית=${angle}, סיבוב מנורמל=${normalizedRotation}, אינדקס=${index}, זוכה="${winner}"`);
 
   setTimeout(() => {
-    document.getElementById("result").innerText = "🎉 נבחר: " + names[index];
+    document.getElementById("result").innerText = `🎉 הזוכה הוא: ${winner}!`;
+    spinBtn.disabled = false;
+    spinBtn.innerText = "🎲 סובב את הרולטה!";
+    log(`הזוכה נבחר: "${winner}"`, "success");
   }, 3000);
 };
+
+// אתחול ראשוני
+updateButtons();
+log("הקוד נטען בהצלחה, מחכה לחיבור Firebase...");
+
 </script>
 
 </body>
