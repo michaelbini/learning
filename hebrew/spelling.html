@@ -97,6 +97,7 @@
         // ============================================
         import { vocabularyService } from '../shared/vocabulary-service.js';
         import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+        import { statisticsService } from '../shared/statistics-service.js';
 
         // ============================================
         // Embedded vocabulary (fallback)
@@ -365,12 +366,19 @@
                 alert('אין מילים במשחק');
                 return;
             }
-            
+
             // Reset scores
             correctCount = 0;
             wrongCount = 0;
             streakCount = 0;
-            
+
+            // Start statistics session
+            statisticsService.startSession('hebrew-spelling', {
+                totalWords: gameWords.length,
+                difficulty: currentDifficulty,
+                source: vocabularyService.getLastSource()
+            });
+
             // Update UI
             document.getElementById('setupArea').style.display = 'none';
             document.getElementById('gameArea').classList.add('active');
@@ -378,7 +386,7 @@
             document.getElementById('correctScore').textContent = '0';
             document.getElementById('wrongScore').textContent = '0';
             document.getElementById('streakScore').textContent = '0';
-            
+
             // Display difficulty level
             const difficultyNames = {
                 'easy': 'קל 😊',
@@ -387,12 +395,12 @@
                 'expert': 'מומחה 🏆'
             };
             document.getElementById('difficultyDisplay').textContent = difficultyNames[currentDifficulty] || 'מותאם אישית';
-            
+
             // Start game
             isPlaying = true;
             document.getElementById('checkBtn').style.display = 'inline-block';
             document.getElementById('wordInput').disabled = false;
-            
+
             showNewWord();
         }
 
@@ -485,7 +493,15 @@
         }
 
         // New game
-        function newGame() {
+        async function newGame() {
+            // End statistics session if one was active
+            if (statisticsService.hasActiveSession()) {
+                await statisticsService.endSession({
+                    correctCount: correctCount,
+                    wrongCount: wrongCount
+                });
+            }
+
             document.getElementById('setupArea').style.display = 'block';
             document.getElementById('gameArea').classList.remove('active');
             isPlaying = false;
@@ -508,6 +524,13 @@
             }
         `;
         document.head.appendChild(style);
+
+        // Expose functions to global scope for onclick handlers
+        window.setDifficulty = setDifficulty;
+        window.startGame = startGame;
+        window.checkAnswer = checkAnswer;
+        window.speakWord = speakWord;
+        window.newGame = newGame;
     </script>
 </body>
 </html>

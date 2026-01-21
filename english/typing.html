@@ -86,6 +86,7 @@
         // ============================================
         import { vocabularyService } from '../shared/vocabulary-service.js';
         import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+        import { statisticsService } from '../shared/statistics-service.js';
 
         // ============================================
         // JSON מוטמע (ברירת מחדל)
@@ -226,6 +227,16 @@
             }
             words = shuffleArray([...vocabulary]);
             currentIndex = 0;
+
+            // Start statistics session
+            const currentLesson = typeof LessonManager !== 'undefined' ? LessonManager.getCurrentLesson() : null;
+            statisticsService.startSession('english-typing', {
+                totalWords: words.length,
+                lesson: currentLesson,
+                isRetryMode: isRetryMode,
+                source: vocabularyService.getLastSource()
+            });
+
             displayWord();
         }
 
@@ -332,18 +343,25 @@
             displayWord();
         }
 
-        function showCompleteScreen() {
+        async function showCompleteScreen() {
+            // End statistics session
+            await statisticsService.endSession({
+                correctCount: correctCount,
+                wrongCount: wrongCount,
+                skippedCount: skippedCount
+            });
+
             document.getElementById('gameArea').style.display = 'none';
             document.getElementById('completeScreen').style.display = 'block';
-            
+
             const total = words.length;
             const percentage = Math.round((correctCount / total) * 100);
-            
+
             document.getElementById('finalCorrect').textContent = correctCount;
             document.getElementById('finalWrong').textContent = wrongCount;
             document.getElementById('finalSkipped').textContent = skippedCount;
             document.getElementById('finalPercentage').textContent = `${percentage}%`;
-            
+
             // Show retry button if there are wrong words
             if (wrongWords.length > 0) {
                 const retryBtn = document.getElementById('retryWrongBtn');

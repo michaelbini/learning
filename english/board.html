@@ -63,6 +63,7 @@
         // ============================================
         import { vocabularyService } from '../shared/vocabulary-service.js';
         import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+        import { statisticsService } from '../shared/statistics-service.js';
 
         // ============================================
         // JSON מוטמע
@@ -172,10 +173,10 @@
             if (typeof LessonManager !== 'undefined') {
                 vocabulary = LessonManager.getCurrentVocabulary();
             }
-            
+
             const board = document.getElementById('board');
             board.innerHTML = '';
-            
+
             // Shuffle vocabulary and create tiles
             const shuffledVocab = shuffleArray([...vocabulary]);
             tiles = shuffledVocab.map((word, index) => ({
@@ -184,6 +185,14 @@
                 status: 'unanswered', // unanswered, correct, wrong
                 question: generateQuestion(word)
             }));
+
+            // Start statistics session
+            const currentLesson = typeof LessonManager !== 'undefined' ? LessonManager.getCurrentLesson() : null;
+            statisticsService.startSession('english-board', {
+                totalWords: tiles.length,
+                lesson: currentLesson,
+                source: vocabularyService.getLastSource()
+            });
 
             // Create tile elements
             tiles.forEach((tile, index) => {
@@ -306,7 +315,13 @@
             document.getElementById('totalAnswered').textContent = `${correctCount + wrongCount}/${tiles.length}`;
         }
 
-        function showCompleteScreen() {
+        async function showCompleteScreen() {
+            // End statistics session
+            await statisticsService.endSession({
+                correctCount: correctCount,
+                wrongCount: wrongCount
+            });
+
             document.getElementById('finalCorrect').textContent = correctCount;
             document.getElementById('finalWrong').textContent = wrongCount;
             const percentage = Math.round((correctCount / tiles.length) * 100);
@@ -328,6 +343,9 @@
         } else {
             loadVocabulary();
         }
+
+        // Expose functions to global scope for onclick handlers
+        window.restartGame = restartGame;
     </script>
 </body>
 </html>

@@ -15,14 +15,22 @@ This document outlines a design to migrate all learning games to use a shared Fi
 
 | Item | Count |
 |------|-------|
-| Total Tasks | 15 |
-| Tasks Completed | 7 ✅ |
-| Tasks Remaining | 8 |
-| Games to Migrate | 6 |
+| **Phase 1: Migration** | 14/15 ✅ |
+| **Phase 2: Statistics** | 8/8 ✅ |
+| Games Migrated | 6/6 ✅ |
 | Admin Tool | `admin/index.html` |
 | Test Runner | `test/test-runner.html` |
+| Stats Dashboard | `stats/index.html` |
 | Files to Keep | JSON fallbacks |
 | Total Tests | 33 |
+
+### URL Parameters
+
+| Parameter | Effect |
+|-----------|--------|
+| `?source=firebase` | Force Firebase only (no JSON fallback) |
+| `?source=json` | Force JSON only (skip Firebase) |
+| (none) | Default: Firebase → JSON → Embedded |
 
 ### Admin Tool
 
@@ -852,64 +860,54 @@ await vocabularyService.getHebrewByDifficulty('easy');
 
 ---
 
-### Phase 4: Migrate Games (Tasks 8-13) ⏳ NEXT
+### Phase 4: Migrate Games (Tasks 8-13) ✅ COMPLETED
 
 | Task | File | Status |
 |------|------|--------|
-| 8 | `english/flashcards.html` | ⏳ Next |
-| 9 | `english/quiz.html` | Pending |
-| 10 | `english/typing.html` | Pending |
-| 11 | `english/board.html` | Pending |
-| 12 | `hebrew/spelling.html` | Pending |
-| 13 | `hebrew/spelling-compar.html` | Pending |
+| 8 | `english/flashcards.html` | ✅ Done |
+| 9 | `english/quiz.html` | ✅ Done |
+| 10 | `english/typing.html` | ✅ Done |
+| 11 | `english/board.html` | ✅ Done |
+| 12 | `hebrew/spelling.html` | ✅ Done |
+| 13 | `hebrew/spelling-compar.html` | ✅ Done |
 
-**Migration pattern for each game:**
-```javascript
-// 1. Add imports at top of <script type="module">
-import { vocabularyService } from '../shared/vocabulary-service.js';
-import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
-
-// 2. Create offline indicator on page load
-createOfflineIndicator();
-
-// 3. Set status callback
-vocabularyService.setStatusCallback(({ isOnline, source }) => {
-    showOfflineIndicator(!isOnline);
-    console.log(`Data source: ${source}`);
-});
-
-// 4. Replace fetch() with service call
-// BEFORE:
-const response = await fetch('vocabulary.json');
-const data = await response.json();
-
-// AFTER:
-const data = await vocabularyService.getEnglishVocabulary();
-// or
-const data = await vocabularyService.getHebrewVocabulary();
-```
+**Changes applied to each game:**
+1. Changed `<script>` to `<script type="module">`
+2. Added imports for VocabularyService and offline-indicator
+3. Replaced `loadVocabulary()` to use VocabularyService with 3-tier fallback
+4. Added offline indicator that shows when data is loaded from JSON fallback
 
 ---
 
-### Phase 5: Cleanup (Tasks 14-15)
+### Phase 5: Cleanup (Task 14) ✅ COMPLETED
 
-| Task | Description |
-|------|-------------|
-| 14 | Delete orphaned files (root level) |
-| 15 | Update `magin.html` to use shared config |
+| Task | Description | Status |
+|------|-------------|--------|
+| 14 | Delete orphaned files + add URL source switch | ✅ Done |
+| 15 | Update `magin.html` to use shared config | ⏭️ Skipped |
+
+**Files Deleted:**
+- `/learning/word-pairs-manager.js` (root duplicate)
+- `/learning/hebrew/word-pairs-manager.js` (no longer needed)
+- `/learning/hebrew/vocabulary_numbers_small.json` (not referenced)
+
+**URL Source Switch Added:**
+- `?source=firebase` - Force Firebase only
+- `?source=json` - Force JSON only
 
 ---
 
-### Task Summary
+### Phase 1 Task Summary
 
 | Phase | Tasks | Count | Status |
 |-------|-------|-------|--------|
 | Testing Current Behavior | 1-3 | 3 | ✅ Complete |
 | Upload to Firebase | 4 | 1 | ✅ Complete |
 | Infrastructure | 5-7 | 3 | ✅ Complete |
-| Migrate Games | 8-13 | 6 | ⏳ Next |
-| Cleanup | 14-15 | 2 | Pending |
-| **Total** | | **15** | **7 done, 8 remaining** |
+| Migrate Games | 8-13 | 6 | ✅ Complete |
+| Cleanup | 14 | 1 | ✅ Complete |
+| Skipped | 15 | 1 | ⏭️ Skipped |
+| **Total Phase 1** | | **14/15** | **✅ COMPLETE** |
 
 ---
 
@@ -1582,6 +1580,458 @@ mkdir -p shared
 
 ---
 
+---
+
+# Phase 2: Game Statistics
+
+## Overview
+
+Track detailed game play statistics in Firebase to analyze usage patterns, player progress, and game popularity.
+
+### Key Features
+
+1. **Player Identification** - One-time name entry, stored in localStorage forever
+2. **Cross-Device Support** - Same player name links stats across all devices
+3. **Detailed Session Tracking** - Score, time, words played, difficulty
+4. **Statistics Dashboard** - View aggregated stats and player history
+
+---
+
+## Player Identification
+
+### Flow
+
+```
+First visit (any device):
+┌─────────────────────────────────┐
+│  🎮 Welcome to Learning Games   │
+│                                 │
+│  Enter your name:               │
+│  ┌─────────────────────────┐   │
+│  │ gen                      │   │
+│  └─────────────────────────┘   │
+│                                 │
+│  [Start Playing]                │
+└─────────────────────────────────┘
+         ↓
+   localStorage.setItem('player_name', 'gen')
+         ↓
+   Never asked again on this device
+```
+
+### Cross-Device Linking
+
+```
+Phone (first visit):   Enter "gen" → Saved to localStorage
+Tablet (first visit):  Enter "gen" → Saved to localStorage
+Computer (first visit): Enter "gen" → Saved to localStorage
+
+All devices → Same "gen" stats in Firebase
+```
+
+### Architecture (Separation of Concerns)
+
+```
+shared/
+├── player-service.js      ← Player ID + localStorage (Task 16 ✅)
+├── statistics-service.js  ← Session tracking, imports playerService (Task 17)
+├── vocabulary-service.js  ← Vocabulary data (existing)
+└── offline-indicator.js   ← UI component (existing)
+```
+
+**How it works:**
+- `player-service.js` handles player identification only
+- `statistics-service.js` imports `playerService` internally
+- Games only import `statisticsService` - player prompt happens automatically
+
+### Implementation
+
+**File: `shared/player-service.js`** ✅ Created
+
+```javascript
+import { playerService } from '../shared/player-service.js';
+
+// Get player ID (prompts on first visit, returns cached thereafter)
+const playerId = playerService.getPlayerId();
+
+// Check if player exists without prompting
+if (playerService.hasPlayerId()) { ... }
+
+// Get ID silently (returns null if not set)
+const id = playerService.getPlayerIdSilent();
+```
+
+**File: `shared/statistics-service.js`** (Task 17)
+
+```javascript
+import { playerService } from './player-service.js';
+
+class StatisticsService {
+  startSession(gameId, options) {
+    // Automatically gets player ID (prompts if needed)
+    const playerId = playerService.getPlayerId();
+    // ... start tracking
+  }
+}
+```
+
+**Usage in games:**
+
+```javascript
+import { statisticsService } from '../shared/statistics-service.js';
+
+// At game start - triggers player prompt if needed
+statisticsService.startSession('english-flashcards', { totalWords: 87 });
+
+// At game end
+statisticsService.endSession({ correctCount: 72, wrongCount: 15 });
+```
+
+---
+
+## Firebase Structure
+
+```
+/statistics
+  /players
+    /gen                                    # Player ID = lowercase name
+      createdAt: "2026-01-15T08:00:00Z"
+      lastSeen: "2026-01-21T10:30:45Z"
+      totalSessions: 47
+      gamesPlayed: ["english-flashcards", "hebrew-spelling", ...]
+
+  /sessions
+    /-OjXyz123abc                           # Auto-generated session ID
+      # Player & Game Info
+      playerId: "gen"
+      gameId: "english-flashcards"
+      timestamp: "2026-01-21T10:30:45Z"
+      date: "2026-01-21"                    # For easy date queries
+
+      # Game Results
+      totalWords: 87
+      wordsCompleted: 87
+      correctCount: 72
+      wrongCount: 15
+      skippedCount: 0
+      score: 83                             # Percentage (0-100)
+
+      # Time Tracking
+      durationSeconds: 342                  # 5 min 42 sec
+
+      # Context
+      lesson: 1                             # For English games (null if N/A)
+      difficulty: null                      # For Hebrew games (null if N/A)
+      isRetryMode: false                    # Playing wrong words only?
+      source: "firebase"                    # Data source used
+```
+
+---
+
+## Session Data Model
+
+```javascript
+{
+  // Player
+  playerId: string,           // "gen" - from localStorage
+
+  // Game identification
+  gameId: string,             // "english-flashcards", "hebrew-spelling", etc.
+  timestamp: string,          // ISO timestamp "2026-01-21T10:30:45Z"
+  date: string,               // "2026-01-21" for easy filtering
+
+  // Game results
+  totalWords: number,         // Total words in session
+  wordsCompleted: number,     // Words actually played (may differ if abandoned)
+  correctCount: number,       // Correct answers
+  wrongCount: number,         // Wrong answers
+  skippedCount: number,       // Skipped words (typing game)
+  score: number,              // Percentage 0-100
+
+  // Time tracking
+  startTime: number,          // Unix timestamp (ms) when game started
+  endTime: number,            // Unix timestamp (ms) when game ended
+  durationSeconds: number,    // Total play time in seconds
+
+  // Context (optional)
+  lesson: number | null,      // English lesson number (1, 2, etc.)
+  difficulty: string | null,  // Hebrew difficulty ("easy", "medium", "hard", "expert")
+  isRetryMode: boolean,       // Was this a retry of wrong words?
+  source: string              // "firebase" | "json" | "embedded"
+}
+```
+
+---
+
+## Statistics Service API
+
+### File: `shared/statistics-service.js`
+
+```javascript
+class StatisticsService {
+  constructor() {
+    this.playerId = null;
+    this.currentSession = null;
+    this.startTime = null;
+  }
+
+  // ============================================
+  // PLAYER IDENTIFICATION
+  // ============================================
+
+  // Get or prompt for player name (one-time prompt)
+  getPlayerId() {
+    if (this.playerId) return this.playerId;
+
+    let name = localStorage.getItem('player_name');
+    if (!name) {
+      name = prompt('🎮 Enter your name to track progress:');
+      if (name) {
+        name = name.toLowerCase().trim();
+        localStorage.setItem('player_name', name);
+      }
+    }
+    this.playerId = name;
+    return name;
+  }
+
+  // ============================================
+  // SESSION TRACKING
+  // ============================================
+
+  // Call when game starts
+  startSession(gameId, options = {}) {
+    this.startTime = Date.now();
+    this.currentSession = {
+      playerId: this.getPlayerId(),
+      gameId: gameId,
+      totalWords: options.totalWords || 0,
+      lesson: options.lesson || null,
+      difficulty: options.difficulty || null,
+      isRetryMode: options.isRetryMode || false,
+      source: options.source || 'unknown'
+    };
+  }
+
+  // Call when game ends - saves to Firebase
+  async endSession(results) {
+    if (!this.currentSession) return null;
+
+    const endTime = Date.now();
+    const session = {
+      ...this.currentSession,
+      timestamp: new Date().toISOString(),
+      date: new Date().toISOString().split('T')[0],
+      wordsCompleted: results.wordsCompleted || this.currentSession.totalWords,
+      correctCount: results.correctCount || 0,
+      wrongCount: results.wrongCount || 0,
+      skippedCount: results.skippedCount || 0,
+      score: this._calculateScore(results),
+      startTime: this.startTime,
+      endTime: endTime,
+      durationSeconds: Math.round((endTime - this.startTime) / 1000)
+    };
+
+    // Save to Firebase
+    const sessionId = await this._saveSession(session);
+
+    // Update player stats
+    await this._updatePlayerStats(session);
+
+    // Reset
+    this.currentSession = null;
+    this.startTime = null;
+
+    return sessionId;
+  }
+
+  // ============================================
+  // QUERY METHODS (for stats dashboard)
+  // ============================================
+
+  // Get all sessions for current player
+  async getPlayerSessions(limit = 50) { ... }
+
+  // Get sessions for a specific game
+  async getGameSessions(gameId, limit = 50) { ... }
+
+  // Get aggregated stats for a player
+  async getPlayerStats() { ... }
+
+  // Get aggregated stats for a game
+  async getGameStats(gameId) { ... }
+
+  // Get leaderboard for a game
+  async getLeaderboard(gameId, limit = 10) { ... }
+}
+
+export const statisticsService = new StatisticsService();
+```
+
+---
+
+## Usage in Games
+
+### At Game Start
+
+```javascript
+// In startGame() or initializeGame()
+statisticsService.startSession('english-flashcards', {
+  totalWords: vocabulary.length,
+  lesson: currentLesson,           // or null for Hebrew games
+  difficulty: currentDifficulty,   // or null for English games
+  isRetryMode: isRetryMode,
+  source: vocabularyService.getLastSource()
+});
+```
+
+### At Game End
+
+```javascript
+// In showFinalScreen() or showCompleteScreen()
+await statisticsService.endSession({
+  wordsCompleted: cards.length,
+  correctCount: correctCount,
+  wrongCount: wrongCount,
+  skippedCount: skippedCount || 0
+});
+```
+
+---
+
+## Statistics Dashboard
+
+### File: `stats/index.html`
+
+A page to view statistics with:
+
+1. **Player Summary**
+   - Total games played
+   - Total time spent
+   - Average score
+   - Favorite game
+
+2. **Recent Sessions**
+   - Last 20 game sessions
+   - Date, game, score, duration
+
+3. **Game Stats**
+   - Stats per game
+   - Best scores
+   - Progress over time
+
+4. **Leaderboard** (optional)
+   - Top players by score
+   - Top players by games played
+
+### Dashboard Mockup
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  📊 Learning Games Statistics                           │
+│  Player: gen                                            │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  📈 Your Summary                                        │
+│  ┌─────────────┬─────────────┬─────────────┬─────────┐  │
+│  │ Total Games │ Total Time  │ Avg Score   │ Streak  │  │
+│  │     47      │   4h 32m    │    81%      │   12    │  │
+│  └─────────────┴─────────────┴─────────────┴─────────┘  │
+│                                                         │
+│  🎮 Recent Sessions                                     │
+│  ┌────────────┬──────────────────┬───────┬──────────┐  │
+│  │ Date       │ Game             │ Score │ Duration │  │
+│  ├────────────┼──────────────────┼───────┼──────────┤  │
+│  │ 2026-01-21 │ English Quiz     │ 92%   │ 5:42     │  │
+│  │ 2026-01-21 │ Hebrew Spelling  │ 78%   │ 8:15     │  │
+│  │ 2026-01-20 │ English Typing   │ 85%   │ 4:30     │  │
+│  └────────────┴──────────────────┴───────┴──────────┘  │
+│                                                         │
+│  🏆 Best Scores by Game                                 │
+│  • English Flashcards: 95% (2026-01-18)                │
+│  • English Quiz: 92% (2026-01-21)                      │
+│  • Hebrew Spelling: 88% (2026-01-19)                   │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Phase 2 Tasks
+
+| Task | Description | Status |
+|------|-------------|--------|
+| 16 | Create `shared/player-service.js` - Player name prompt + localStorage | ✅ Done |
+| 17 | Create `shared/statistics-service.js` - Session tracking + Firebase save | ✅ Done |
+| 18 | Add statistics tracking to English games (4 games) | ✅ Done |
+| 19 | Add statistics tracking to Hebrew games (2 games) | ✅ Done |
+| 20 | Create `stats/index.html` - Statistics dashboard | ✅ Done |
+| 21 | Add player summary view to dashboard | ✅ Done (combined with 20) |
+| 22 | Add recent sessions + game stats to dashboard | ✅ Done (combined with 20) |
+| 23 | Create admin statistics dashboard (`stats/admin.html`) | ✅ Done |
+
+### Task Details
+
+**Task 16: Create Player Service** ✅ DONE
+- Created `shared/player-service.js`
+- On first visit, shows prompt: "🎮 Enter your name to track progress:"
+- Saves to `localStorage.setItem('player_name', name)`
+- Never asks again - stored forever
+- Same name on different devices = aggregated stats
+- Exports: `getPlayerId()`, `hasPlayerId()`, `getPlayerIdSilent()`, `clearPlayerId()`, `setPlayerId()`
+
+**Task 17: Create Statistics Service** ✅ DONE
+- Created `shared/statistics-service.js`
+- Imports `playerService` internally (separation of concerns)
+- `startSession(gameId, options)` - starts tracking, triggers player prompt if needed
+- `endSession(results)` - saves session to Firebase
+- Query methods for dashboard: `getPlayerSessions()`, `getPlayerStats()`, `getBestScores()`
+
+**Task 18: Add to English Games** ✅ DONE
+- `flashcards.html` - Track on game completion
+- `quiz.html` - Track on game completion
+- `typing.html` - Track on game completion
+- `board.html` - Track on game completion
+
+**Task 19: Add to Hebrew Games** ✅ DONE
+- `spelling.html` - Track on game completion
+- `spelling-compar.html` - Track on game completion
+
+**Task 20-22: Create Dashboard Page** ✅ DONE
+- Created `stats/index.html` with full dashboard
+- Player summary cards (total sessions, play time, avg score, games played)
+- Best scores per game section
+- Recent sessions table with score, duration, date
+- Link added to main `index.html`
+
+---
+
+## Firebase Security Rules Update
+
+```json
+{
+  "rules": {
+    "vocabulary": {
+      ".read": true,
+      ".write": false
+    },
+    "statistics": {
+      "sessions": {
+        ".read": true,
+        ".write": true,
+        ".indexOn": ["playerId", "gameId", "date"]
+      },
+      "players": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}
+```
+
+---
+
 ## Document History
 
 | Version | Date | Changes |
@@ -1594,4 +2044,9 @@ mkdir -p shared
 | 1.5 | Updated | Added admin tool, reordered tasks (upload first), structured DB approach |
 | 1.6 | Updated | Task 4 complete - vocabulary uploaded to Firebase (87 English, 792 Hebrew) |
 | 1.7 | Updated | Tasks 5-7 complete - shared/ infrastructure, VocabularyService, test runner wired to Firebase |
+| 1.8 | Updated | Phase 1 complete (14/15 tasks) - all games migrated, URL source switch added |
+| 1.9 | Updated | Added Phase 2: Statistics design with player tracking and dashboard |
+| 2.0 | Updated | Task 16 complete - player-service.js created, architecture clarified (separation of concerns) |
+| 2.1 | Updated | Phase 2 complete (7/7 tasks) - statistics-service.js, all 6 games integrated, stats dashboard created |
+| 2.2 | Updated | Added admin statistics dashboard (Task 23) - all players view, leaderboards, game stats |
 

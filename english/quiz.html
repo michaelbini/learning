@@ -66,6 +66,7 @@
         // ============================================
         import { vocabularyService } from '../shared/vocabulary-service.js';
         import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+        import { statisticsService } from '../shared/statistics-service.js';
 
         // ============================================
         // JSON מוטמע (ברירת מחדל)
@@ -198,11 +199,11 @@
 
         function initGame(retryMode = false) {
             isRetryMode = retryMode;
-            
+
             if (typeof LessonManager !== 'undefined') {
                 vocabulary = LessonManager.getCurrentVocabulary();
             }
-            
+
             if (retryMode && wrongWords.length > 0) {
                 // Use only the words that were answered incorrectly
                 const wordsToRetry = [...wrongWords];
@@ -215,11 +216,21 @@
                 questions = shuffleArray(questions);
                 wrongWords = []; // Reset wrong words for new game
             }
-            
+
             currentQuestionIndex = 0;
             correctAnswers = 0;
             wrongAnswers = 0;
             hasAnswered = false;
+
+            // Start statistics session
+            const currentLesson = typeof LessonManager !== 'undefined' ? LessonManager.getCurrentLesson() : null;
+            statisticsService.startSession('english-quiz', {
+                totalWords: questions.length,
+                lesson: currentLesson,
+                isRetryMode: isRetryMode,
+                source: vocabularyService.getLastSource()
+            });
+
             displayQuestion();
         }
 
@@ -305,10 +316,16 @@
             displayQuestion();
         }
 
-        function showFinalScore() {
+        async function showFinalScore() {
+            // End statistics session
+            await statisticsService.endSession({
+                correctCount: correctAnswers,
+                wrongCount: wrongAnswers
+            });
+
             document.getElementById('gameArea').style.display = 'none';
             document.getElementById('finalScore').style.display = 'block';
-            
+
             const percentage = Math.round((correctAnswers / questions.length) * 100);
             document.getElementById('finalScoreText').textContent = `${correctAnswers}`;
             

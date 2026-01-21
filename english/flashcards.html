@@ -80,6 +80,7 @@
         // ============================================
         import { vocabularyService } from '../shared/vocabulary-service.js';
         import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+        import { statisticsService } from '../shared/statistics-service.js';
 
         // ============================================
         // JSON מוטמע (ברירת מחדל)
@@ -159,6 +160,16 @@
             }
             cards = shuffleArray([...vocabulary]);
             currentIndex = 0;
+
+            // Start statistics session
+            const currentLesson = typeof LessonManager !== 'undefined' ? LessonManager.getCurrentLesson() : null;
+            statisticsService.startSession('english-flashcards', {
+                totalWords: cards.length,
+                lesson: currentLesson,
+                isRetryMode: isRetryMode,
+                source: vocabularyService.getLastSource()
+            });
+
             displayCard();
         }
 
@@ -176,32 +187,6 @@
                 [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
             }
             return newArray;
-        }
-
-        function speakWord() {
-            const card = cards[currentIndex];
-            if (!card) return;
-            
-            // Check if speech synthesis is supported
-            if ('speechSynthesis' in window) {
-                // Cancel any ongoing speech
-                window.speechSynthesis.cancel();
-                
-                const utterance = new SpeechSynthesisUtterance(card.english);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.8; // Slower for learning
-                
-                // Add animation
-                const btn = document.getElementById('speakerBtn');
-                if (btn) {
-                    btn.classList.add('playing');
-                    utterance.onend = () => {
-                        btn.classList.remove('playing');
-                    };
-                }
-                
-                window.speechSynthesis.speak(utterance);
-            }
         }
 
         // Initialize with shuffled cards
@@ -297,19 +282,25 @@
             displayCard();
         }
 
-        function showFinalScreen() {
+        async function showFinalScreen() {
+            // End statistics session
+            await statisticsService.endSession({
+                correctCount: correctCount,
+                wrongCount: wrongCount
+            });
+
             // Hide game area
             document.querySelector('.card-container').style.display = 'none';
             document.querySelector('.progress').style.display = 'none';
             document.getElementById('answerButtons').style.display = 'none';
             document.querySelector('.controls').style.display = 'none';
             document.querySelector('.hint').style.display = 'none';
-            
+
             // Show final screen
             document.getElementById('finalScreen').style.display = 'block';
             document.getElementById('finalCorrect').textContent = correctCount;
             document.getElementById('finalWrong').textContent = wrongCount;
-            
+
             // Show retry button if there are wrong cards
             if (wrongCards.length > 0) {
                 const retryBtn = document.getElementById('retryWrongBtn');

@@ -139,6 +139,7 @@
         // ============================================
         import { vocabularyService } from '../shared/vocabulary-service.js';
         import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+        import { statisticsService } from '../shared/statistics-service.js';
 
         // ============================================
         // Embedded word pairs (fallback)
@@ -304,6 +305,13 @@
             }
 
             console.log('🎮 Game starting with', gamePairs.length, 'pairs');
+
+            // Start statistics session
+            statisticsService.startSession('hebrew-spelling-compare', {
+                totalWords: totalQuestions,
+                difficulty: currentDifficulty,
+                source: vocabularyService.getLastSource()
+            });
 
             // Show first question
             showQuestion();
@@ -583,8 +591,14 @@
         }
 
         // End game
-        function endGame() {
+        async function endGame() {
             stopTimer();
+
+            // End statistics session
+            await statisticsService.endSession({
+                correctCount: correctScore,
+                wrongCount: wrongScore
+            });
 
             const accuracy = totalQuestions > 0 ? Math.round((correctScore / totalQuestions) * 100) : 0;
             let medal = '';
@@ -634,6 +648,15 @@
             }
             return newArray;
         }
+
+        // Expose functions to global scope for onclick handlers
+        window.selectMode = selectMode;
+        window.startGame = startGame;
+        window.selectCard = selectCard;
+        window.nextQuestion = nextQuestion;
+        window.skipQuestion = skipQuestion;
+        window.newGame = newGame;
+        window.playAgain = playAgain;
     </script>
 </body>
 </html>
