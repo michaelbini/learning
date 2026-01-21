@@ -15,7 +15,7 @@
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, push, set, get, query, orderByChild, equalTo, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, push, set, get, remove, update, query, orderByChild, equalTo, limitToLast } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { firebaseConfig } from './firebase-config.js';
 import { playerService } from './player-service.js';
 
@@ -154,7 +154,6 @@ class StatisticsService {
         if (!await this._init()) return;
 
         try {
-            const { push, set } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
             const sessionsRef = ref(this.db, DB_PATHS.SESSIONS);
             const newSessionRef = push(sessionsRef);
             this.sessionId = newSessionRef.key;
@@ -190,14 +189,15 @@ class StatisticsService {
         if (!this.sessionId || !await this._init()) return;
 
         try {
-            const { update } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
             const sessionRef = ref(this.db, `${DB_PATHS.SESSIONS}/${this.sessionId}`);
 
             await update(sessionRef, {
                 correctCount: this.currentSession.correctCount,
                 wrongCount: this.currentSession.wrongCount,
-                skippedCount: this.currentSession.skippedCount
+                skippedCount: this.currentSession.skippedCount,
+                lastUpdateTime: Date.now()
             });
+            console.log('📊 Live session updated:', this.currentSession.correctCount, 'correct');
         } catch (error) {
             console.warn('Statistics: Failed to update live session:', error.message);
         }
@@ -225,6 +225,17 @@ class StatisticsService {
         const skippedCount = results.skippedCount ?? this.currentSession.skippedCount;
         const wordsCompleted = results.wordsCompleted ||
             (correctCount + wrongCount + skippedCount);
+
+        // Don't save sessions with 0 correct answers (abandoned or no progress)
+        if (correctCount === 0 && wordsCompleted > 0) {
+            console.log('📊 Session not saved: 0 correct answers');
+            await this._deleteLiveSession();
+            this.currentSession = null;
+            this.startTime = null;
+            this.sessionId = null;
+            this.answersSinceLastSave = 0;
+            return null;
+        }
 
         const finalData = {
             status: 'completed',
@@ -287,12 +298,26 @@ class StatisticsService {
         if (!this.sessionId || !await this._init()) return;
 
         try {
-            const { update } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
             const sessionRef = ref(this.db, `${DB_PATHS.SESSIONS}/${this.sessionId}`);
             await update(sessionRef, finalData);
             console.log('📊 Live session finalized:', this.sessionId);
         } catch (error) {
             console.warn('Statistics: Failed to finalize session:', error.message);
+        }
+    }
+
+    /**
+     * Delete a live session from Firebase (for abandoned/0-score sessions).
+     */
+    async _deleteLiveSession() {
+        if (!this.sessionId || !await this._init()) return;
+
+        try {
+            const sessionRef = ref(this.db, `${DB_PATHS.SESSIONS}/${this.sessionId}`);
+            await remove(sessionRef);
+            console.log('📊 Live session deleted (0 correct):', this.sessionId);
+        } catch (error) {
+            console.warn('Statistics: Failed to delete session:', error.message);
         }
     }
 
@@ -603,6 +628,30 @@ class StatisticsService {
         } catch (error) {
             console.warn('Statistics: Failed to get leaderboard:', error.message);
             return [];
+        }
+    }
+
+    /**
+     * Clear all statistics data (admin).
+     * @returns {Promise<boolean>} Success status
+     */
+    async clearAllStats() {
+        if (!await this._init()) return false;
+
+        try {
+            // Delete all sessions
+            const sessionsRef = ref(this.db, DB_PATHS.SESSIONS);
+            await remove(sessionsRef);
+
+            // Delete all player stats
+            const playersRef = ref(this.db, DB_PATHS.PLAYERS);
+            await remove(playersRef);
+
+            console.log('📊 All statistics cleared');
+            return true;
+        } catch (error) {
+            console.warn('Statistics: Failed to clear stats:', error.message);
+            return false;
         }
     }
 

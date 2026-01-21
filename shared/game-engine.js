@@ -19,7 +19,7 @@
 
 import { vocabularyService } from './vocabulary-service.js';
 import { createOfflineIndicator, showOfflineIndicator } from './offline-indicator.js';
-import { statisticsService } from './statistics-service.js';
+import { statisticsService } from './statistics-service.js?v=5';
 
 const ENCOURAGING_MESSAGES = [
     "🎉 מצוין!",

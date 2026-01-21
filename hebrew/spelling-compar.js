@@ -3,7 +3,7 @@
  */
 import { vocabularyService } from '../shared/vocabulary-service.js';
 import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
-import { statisticsService } from '../shared/statistics-service.js';
+import { statisticsService } from '../shared/statistics-service.js?v=5';
 
 // Word pairs database
 let wordPairs = [];

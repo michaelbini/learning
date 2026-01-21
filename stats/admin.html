@@ -429,10 +429,19 @@
                 </div>
             </div>
         </div>
+
+        <!-- Danger Zone -->
+        <div class="section" style="border: 2px solid #ff6b6b;">
+            <h2 style="color: #ff6b6b;">⚠️ אזור סכנה</h2>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">פעולות אלו לא ניתנות לביטול!</p>
+            <button type="button" class="danger-btn" onclick="clearAllStats()" style="background: #ff6b6b; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: bold;">
+                🗑️ מחק את כל הסטטיסטיקות
+            </button>
+        </div>
     </div>
 
     <script type="module">
-        import { statisticsService } from '../shared/statistics-service.js';
+        import { statisticsService } from '../shared/statistics-service.js?v=5';
 
         // Game name mapping
         const GAME_NAMES = {
@@ -622,6 +631,32 @@
             container.innerHTML = html;
         }
 
+        // Calculate duration from timestamps if durationSeconds is missing
+        function calculateDuration(session) {
+            // If durationSeconds exists and is valid, use it
+            if (session.durationSeconds && session.durationSeconds > 0) {
+                return session.durationSeconds;
+            }
+
+            // Calculate from startTime and endTime
+            if (session.startTime && session.endTime) {
+                return Math.round((session.endTime - session.startTime) / 1000);
+            }
+
+            // Calculate from startTime and lastUpdateTime (for abandoned sessions)
+            if (session.startTime && session.lastUpdateTime) {
+                return Math.round((session.lastUpdateTime - session.startTime) / 1000);
+            }
+
+            // Calculate from startTime and timestamp (ISO string)
+            if (session.startTime && session.timestamp) {
+                const endTime = new Date(session.timestamp).getTime();
+                return Math.round((endTime - session.startTime) / 1000);
+            }
+
+            return 0;
+        }
+
         function renderRecentActivity(sessions) {
             const container = document.getElementById('recentActivityContainer');
 
@@ -642,6 +677,7 @@
                             <th>תאריך</th>
                             <th>שחקן</th>
                             <th>משחק</th>
+                            <th>אתגרים</th>
                             <th>ציון</th>
                             <th>זמן</th>
                         </tr>
@@ -650,14 +686,31 @@
             `;
 
             for (const session of sessions) {
-                const scoreClass = getScoreClass(session.score);
+                const isLive = session.status === 'in_progress';
+                const score = session.score ?? 0;
+                const scoreClass = isLive ? '' : getScoreClass(score);
+                const correctCount = session.correctCount || 0;
+                const wrongCount = session.wrongCount || 0;
+                const skippedCount = session.skippedCount || 0;
+                const wordsCompleted = session.wordsCompleted || (correctCount + wrongCount + skippedCount) || session.totalWords || 0;
+
+                // Skip completed sessions with 0 correct and some attempts (abandoned)
+                if (!isLive && correctCount === 0 && wordsCompleted > 0) continue;
+
+                // Calculate duration from timestamps if not available
+                const duration = calculateDuration(session);
+
+                const liveIndicator = isLive ? '<span style="color: #4ecdc4; font-weight: bold;">🔴 LIVE</span>' : '';
+                const scoreDisplay = isLive ? '-' : `${score}%`;
+
                 html += `
-                    <tr>
-                        <td>${formatDate(session.timestamp)}</td>
+                    <tr style="${isLive ? 'background: rgba(78, 205, 196, 0.1);' : ''}">
+                        <td>${formatDate(session.timestamp)} ${liveIndicator}</td>
                         <td>${session.playerId}</td>
                         <td>${getGameDisplay(session.gameId)}</td>
-                        <td class="${scoreClass}">${session.score}%</td>
-                        <td>${formatDuration(session.durationSeconds)}</td>
+                        <td>${correctCount}/${wordsCompleted}</td>
+                        <td class="${scoreClass}">${scoreDisplay}</td>
+                        <td>${formatDuration(duration)}</td>
                     </tr>
                 `;
             }
@@ -722,6 +775,29 @@
                 });
             });
         }
+
+        // Clear all stats function
+        async function clearAllStats() {
+            const confirmed = confirm('⚠️ האם אתה בטוח?\n\nפעולה זו תמחק את כל הסטטיסטיקות:\n- כל המשחקים\n- כל השחקנים\n- כל ההיסטוריה\n\nלא ניתן לבטל פעולה זו!');
+
+            if (!confirmed) return;
+
+            const doubleConfirm = confirm('🚨 אישור סופי\n\nהקלד "מחק" בתיבה הבאה כדי לאשר.');
+
+            if (!doubleConfirm) return;
+
+            const success = await statisticsService.clearAllStats();
+
+            if (success) {
+                alert('✅ כל הסטטיסטיקות נמחקו בהצלחה');
+                location.reload();
+            } else {
+                alert('❌ שגיאה במחיקת הסטטיסטיקות');
+            }
+        }
+
+        // Expose to global scope for onclick
+        window.clearAllStats = clearAllStats;
 
         // Load dashboard on page ready
         loadDashboard();

@@ -1,7 +1,7 @@
 /**
  * Statistics Dashboard
  */
-import { statisticsService } from '../shared/statistics-service.js';
+import { statisticsService } from '../shared/statistics-service.js?v=5';
 import { playerService } from '../shared/player-service.js';
 
 // Game name mapping
@@ -27,6 +27,32 @@ function formatDuration(seconds) {
         return `${hours} שעות ${minutes % 60} דקות`;
     }
     return `${minutes} דקות`;
+}
+
+// Calculate duration from timestamps if durationSeconds is missing
+function calculateDuration(session) {
+    // If durationSeconds exists and is valid, use it
+    if (session.durationSeconds && session.durationSeconds > 0) {
+        return session.durationSeconds;
+    }
+
+    // Calculate from startTime and endTime
+    if (session.startTime && session.endTime) {
+        return Math.round((session.endTime - session.startTime) / 1000);
+    }
+
+    // Calculate from startTime and lastUpdateTime (for abandoned sessions)
+    if (session.startTime && session.lastUpdateTime) {
+        return Math.round((session.lastUpdateTime - session.startTime) / 1000);
+    }
+
+    // Calculate from startTime and timestamp (ISO string)
+    if (session.startTime && session.timestamp) {
+        const endTime = new Date(session.timestamp).getTime();
+        return Math.round((endTime - session.startTime) / 1000);
+    }
+
+    return 0;
 }
 
 function formatDate(dateStr) {
@@ -142,14 +168,28 @@ function renderSessions(sessions) {
     `;
 
     for (const session of sessions) {
-        const scoreClass = getScoreClass(session.score);
+        // Skip in-progress sessions
+        if (session.status === 'in_progress') continue;
+
+        const score = session.score ?? 0;
+        const correctCount = session.correctCount || 0;
+        const wrongCount = session.wrongCount || 0;
+        const total = correctCount + wrongCount;
+
+        // Skip sessions with 0 correct and some attempts (abandoned)
+        if (correctCount === 0 && total > 0) continue;
+
+        // Calculate duration from timestamps if not available
+        const duration = calculateDuration(session);
+
+        const scoreClass = getScoreClass(score);
         html += `
             <tr>
                 <td>${formatDate(session.date)}</td>
                 <td>${getGameDisplay(session.gameId)}</td>
-                <td class="score-cell ${scoreClass}">${session.score}%</td>
-                <td>${session.correctCount}/${session.correctCount + session.wrongCount}</td>
-                <td>${formatDuration(session.durationSeconds)}</td>
+                <td class="score-cell ${scoreClass}">${score}%</td>
+                <td>${correctCount}/${total}</td>
+                <td>${formatDuration(duration)}</td>
             </tr>
         `;
     }
