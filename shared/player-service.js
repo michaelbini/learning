@@ -12,14 +12,30 @@ const STORAGE_KEY = 'player_name';
 class PlayerService {
     constructor() {
         this.playerId = null;
+        this._checkResetParam();
+    }
+
+    /**
+     * Check for ?reset-player URL parameter and clear name if present.
+     */
+    _checkResetParam() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('reset-player')) {
+            this.clearPlayerId();
+            // Remove the parameter from URL without reload
+            params.delete('reset-player');
+            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.history.replaceState({}, '', newUrl);
+        }
     }
 
     /**
      * Get the current player ID (name).
      * On first visit, prompts for name and saves to localStorage.
      * On subsequent visits, returns saved name without prompting.
+     * Keeps prompting until a valid name is entered.
      *
-     * @returns {string|null} Player name (lowercase, trimmed) or null if cancelled
+     * @returns {string} Player name (lowercase, trimmed)
      */
     getPlayerId() {
         if (this.playerId) {
@@ -29,15 +45,14 @@ class PlayerService {
         let name = localStorage.getItem(STORAGE_KEY);
 
         if (!name) {
-            name = prompt('🎮 Enter your name to track progress:');
-            if (name) {
-                name = name.toLowerCase().trim();
-                if (name.length > 0) {
-                    localStorage.setItem(STORAGE_KEY, name);
-                } else {
-                    name = null;
+            // Keep prompting until valid name is entered
+            while (!name || name.trim().length === 0) {
+                name = prompt('🎮 Enter your name to track progress:\n(Name cannot be empty)');
+                if (name) {
+                    name = name.toLowerCase().trim();
                 }
             }
+            localStorage.setItem(STORAGE_KEY, name);
         }
 
         this.playerId = name;

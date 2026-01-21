@@ -253,6 +253,11 @@
         <div class="player-name" id="playerNameDisplay">
             <span>טוען...</span>
         </div>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <button onclick="changePlayer()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.9em;">
+                🔄 החלף שחקן
+            </button>
+        </div>
 
         <!-- No Player State -->
         <div class="no-player" id="noPlayerState" style="display: none;">
@@ -469,6 +474,17 @@
             html += '</tbody></table>';
             container.innerHTML = html;
         }
+
+        // Change player function
+        function changePlayer() {
+            if (confirm('האם אתה בטוח שברצונך להחליף שחקן?')) {
+                playerService.clearPlayerId();
+                window.location.href = '../index.html';
+            }
+        }
+
+        // Expose to global scope for onclick
+        window.changePlayer = changePlayer;
 
         // Load on page ready
         loadDashboard();
