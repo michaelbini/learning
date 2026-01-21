@@ -1,6 +1,11 @@
 /**
  * VocabularyService - Data access layer for Learning Games
  * Provides vocabulary data with 3-tier fallback: Firebase -> JSON -> Embedded
+ *
+ * URL Parameters:
+ *   ?source=firebase  - Force Firebase only (no JSON fallback)
+ *   ?source=json      - Force JSON only (skip Firebase)
+ *   (no param)        - Default: Firebase -> JSON -> Embedded
  */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -16,6 +21,24 @@ class VocabularyService {
         this.cache = new Map();
         this.onStatusChange = null;
         this.lastSource = null;
+        this.forcedSource = this._getSourceFromUrl();
+    }
+
+    // ============================================
+    // URL PARAMETER HANDLING
+    // ============================================
+    _getSourceFromUrl() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const source = params.get('source');
+            if (source === 'firebase' || source === 'json') {
+                console.log(`🔧 Data source forced via URL: ${source}`);
+                return source;
+            }
+        } catch (e) {
+            // Not in browser context
+        }
+        return null;
     }
 
     async init() {
@@ -48,13 +71,30 @@ class VocabularyService {
     // ENGLISH VOCABULARY
     // ============================================
     async getEnglishVocabulary(jsonFallbackPath = '../english/vocabulary.json') {
-        // Try Firebase first
+        // Check for forced source via URL parameter
+        if (this.forcedSource === 'json') {
+            const jsonData = await this._tryJsonFallback(jsonFallbackPath);
+            if (jsonData) {
+                this._notifyStatus(false, 'json');
+                return jsonData;
+            }
+            this._notifyStatus(false, 'embedded');
+            return null;
+        }
+
+        // Try Firebase first (or only if forced)
         const firebaseData = await this._tryFirebase(DB_PATHS.VOCABULARY_ENGLISH);
         if (firebaseData) {
             this._notifyStatus(true, 'firebase');
             // Transform Firebase object to array
             const words = Object.values(firebaseData);
             return { vocabulary: words };
+        }
+
+        // If Firebase forced, don't fallback to JSON
+        if (this.forcedSource === 'firebase') {
+            this._notifyStatus(false, 'embedded');
+            return null;
         }
 
         // Fallback to JSON
@@ -73,13 +113,30 @@ class VocabularyService {
     // HEBREW VOCABULARY
     // ============================================
     async getHebrewVocabulary(jsonFallbackPath = '../hebrew/vocabulary.json') {
-        // Try Firebase first
+        // Check for forced source via URL parameter
+        if (this.forcedSource === 'json') {
+            const jsonData = await this._tryJsonFallback(jsonFallbackPath);
+            if (jsonData) {
+                this._notifyStatus(false, 'json');
+                return jsonData;
+            }
+            this._notifyStatus(false, 'embedded');
+            return null;
+        }
+
+        // Try Firebase first (or only if forced)
         const firebaseData = await this._tryFirebase(DB_PATHS.VOCABULARY_HEBREW);
         if (firebaseData) {
             this._notifyStatus(true, 'firebase');
             // Transform Firebase object to array
             const pairs = Object.values(firebaseData);
             return { wordPairs: pairs };
+        }
+
+        // If Firebase forced, don't fallback to JSON
+        if (this.forcedSource === 'firebase') {
+            this._notifyStatus(false, 'embedded');
+            return null;
         }
 
         // Fallback to JSON

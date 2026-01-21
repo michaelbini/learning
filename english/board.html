@@ -57,7 +57,13 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // ============================================
+        // IMPORTS
+        // ============================================
+        import { vocabularyService } from '../shared/vocabulary-service.js';
+        import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+
         // ============================================
         // JSON מוטמע
         // ============================================
@@ -73,36 +79,35 @@
 
         // ============================================
         // טעינה אוטומטית עם תמיכה בשיעורים
+        // 3-tier fallback: Firebase -> JSON -> Embedded
         // ============================================
         async function loadVocabulary() {
-            // Try to load from vocabulary.json first
-            try {
-                const response = await fetch('vocabulary.json');
-                if (response.ok) {
-                    const data = await response.json();
+            // Create offline indicator
+            createOfflineIndicator();
 
-                    // Check if LessonManager exists
-                    if (typeof LessonManager !== 'undefined') {
-                        await LessonManager.init(data.lessons && Array.isArray(data.lessons) ? data.lessons.flatMap(lesson => lesson.words) : data);
-                        LessonManager.createLessonSelector('lessonSelector', onLessonChange);
-                        console.log('✅ Vocabulary loaded from JSON with LessonManager');
-                    } else {
-                        // No LessonManager, load vocabulary directly
-                        if (data.lessons && Array.isArray(data.lessons)) {
-                            vocabulary = data.lessons.flatMap(lesson => lesson.words);
-                        } else {
-                            vocabulary = data;
-                        }
-                        console.log('✅ Vocabulary loaded from JSON');
-                    }
-                    initBoard();
-                    return;
+            // Set up status callback
+            vocabularyService.setStatusCallback(({ isOnline, source }) => {
+                showOfflineIndicator(!isOnline);
+            });
+
+            // Try VocabularyService (Firebase -> JSON -> null)
+            const data = await vocabularyService.getEnglishVocabulary();
+
+            if (data && data.vocabulary && data.vocabulary.length > 0) {
+                // Check if LessonManager exists
+                if (typeof LessonManager !== 'undefined') {
+                    await LessonManager.init(data.vocabulary);
+                    LessonManager.createLessonSelector('lessonSelector', onLessonChange);
+                } else {
+                    vocabulary = data.vocabulary;
                 }
-            } catch (error) {
-                console.log('⚠️ Could not load vocabulary.json, using embedded vocabulary');
+                console.log('✅ Vocabulary loaded from ' + vocabularyService.getLastSource());
+                initBoard();
+                return;
             }
 
             // Fallback to embedded vocabulary
+            showOfflineIndicator(true);
             if (typeof LessonManager !== 'undefined') {
                 await LessonManager.init(EMBEDDED_VOCABULARY);
                 LessonManager.createLessonSelector('lessonSelector', onLessonChange);

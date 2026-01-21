@@ -91,7 +91,13 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // ============================================
+        // IMPORTS
+        // ============================================
+        import { vocabularyService } from '../shared/vocabulary-service.js';
+        import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+
         // ============================================
         // Embedded vocabulary (fallback)
         // ============================================
@@ -118,47 +124,50 @@
         let currentDifficulty = 'medium';
 
         // ============================================
-        // Load vocabulary from vocabulary.json
+        // Load vocabulary - 3-tier fallback: Firebase -> JSON -> Embedded
         // ============================================
         async function loadVocabulary() {
-            try {
-                const response = await fetch('vocabulary.json');
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.wordPairs && Array.isArray(data.wordPairs)) {
-                        // Convert word pairs array to difficulty-based structure
-                        wordsByDifficulty = {
-                            easy: [],
-                            medium: [],
-                            hard: [],
-                            expert: []
-                        };
+            // Create offline indicator
+            createOfflineIndicator();
 
-                        // Extract words grouped by difficulty
-                        data.wordPairs.forEach(pair => {
-                            if (pair.word && pair.difficulty) {
-                                if (wordsByDifficulty[pair.difficulty]) {
-                                    wordsByDifficulty[pair.difficulty].push(pair.word);
-                                } else if (pair.difficulty === 'hard') {
-                                    // Map 'hard' to 'expert' if needed
-                                    wordsByDifficulty.hard.push(pair.word);
-                                }
-                            }
-                        });
+            // Set up status callback
+            vocabularyService.setStatusCallback(({ isOnline, source }) => {
+                showOfflineIndicator(!isOnline);
+            });
 
-                        // Add hard words to expert as well
-                        wordsByDifficulty.expert = [...wordsByDifficulty.hard];
+            // Try VocabularyService (Firebase -> JSON -> null)
+            const data = await vocabularyService.getHebrewVocabulary();
 
-                        currentWords = wordsByDifficulty[currentDifficulty];
-                        console.log('✅ Vocabulary loaded from vocabulary.json');
-                        console.log(`Easy: ${wordsByDifficulty.easy.length}, Medium: ${wordsByDifficulty.medium.length}, Hard: ${wordsByDifficulty.hard.length}, Expert: ${wordsByDifficulty.expert.length}`);
+            if (data && data.wordPairs && data.wordPairs.length > 0) {
+                // Convert word pairs array to difficulty-based structure
+                wordsByDifficulty = {
+                    easy: [],
+                    medium: [],
+                    hard: [],
+                    expert: []
+                };
+
+                // Extract words grouped by difficulty (only type='words')
+                data.wordPairs.forEach(pair => {
+                    if (pair.word && pair.difficulty && pair.type === 'words') {
+                        if (wordsByDifficulty[pair.difficulty]) {
+                            wordsByDifficulty[pair.difficulty].push(pair.word);
+                        }
                     }
-                } else {
-                    console.log('ℹ️ No vocabulary.json found, using embedded vocabulary');
-                }
-            } catch (error) {
-                console.log('ℹ️ Using embedded vocabulary');
+                });
+
+                // Add hard words to expert as well
+                wordsByDifficulty.expert = [...wordsByDifficulty.hard];
+
+                currentWords = wordsByDifficulty[currentDifficulty];
+                console.log('✅ Vocabulary loaded from ' + vocabularyService.getLastSource());
+                console.log(`Easy: ${wordsByDifficulty.easy.length}, Medium: ${wordsByDifficulty.medium.length}, Hard: ${wordsByDifficulty.hard.length}, Expert: ${wordsByDifficulty.expert.length}`);
+                return;
             }
+
+            // Fallback to embedded vocabulary
+            showOfflineIndicator(true);
+            console.log('ℹ️ Using embedded vocabulary');
         }
 
         // Initialize on page load

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>משחק זיהוי כתיב נכון</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="word-pairs-manager.js" onerror="console.log('word-pairs-manager.js not found, using basic mode')"></script>
 </head>
 <body>
     <div class="game-container">
@@ -134,7 +133,13 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // ============================================
+        // IMPORTS
+        // ============================================
+        import { vocabularyService } from '../shared/vocabulary-service.js';
+        import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
+
         // ============================================
         // Embedded word pairs (fallback)
         // ============================================
@@ -175,33 +180,31 @@
         let wordPairs = EMBEDDED_WORD_PAIRS.map(pair => ({...pair, type: 'words'}));
 
         // ============================================
-        // Load word pairs with WordPairsManager
+        // Load word pairs - 3-tier fallback: Firebase -> JSON -> Embedded
         // ============================================
         async function loadWordPairs() {
-            // Always load directly from vocabulary.json (bypass WordPairsManager for type support)
-            try {
-                // Add cache busting parameter
-                const cacheBuster = '?v=' + Date.now();
-                const response = await fetch('vocabulary.json' + cacheBuster);
-                if (response.ok) {
-                    const data = await response.json();
-                    // Get the wordPairs array from the JSON
-                    wordPairs = data.wordPairs || data;
-                    console.log('✅ Word pairs loaded from vocabulary.json');
-                    console.log('📊 Total pairs loaded:', wordPairs.length);
-                    console.log('📊 Sample pair:', wordPairs[0]);
-                    console.log('📊 Sample pair stringified:', JSON.stringify(wordPairs[0]));
-                    console.log('📊 Has type field?', 'type' in wordPairs[0]);
-                    console.log('📊 Type value:', wordPairs[0].type);
-                } else {
-                    console.log('ℹ️ Failed to load vocabulary.json, using embedded word pairs');
-                    wordPairs = EMBEDDED_WORD_PAIRS.map(pair => ({...pair, type: 'words'}));
-                }
-            } catch (error) {
-                console.log('❌ Error loading vocabulary.json:', error.message);
-                console.log('ℹ️ Using embedded word pairs');
-                wordPairs = EMBEDDED_WORD_PAIRS.map(pair => ({...pair, type: 'words'}));
+            // Create offline indicator
+            createOfflineIndicator();
+
+            // Set up status callback
+            vocabularyService.setStatusCallback(({ isOnline, source }) => {
+                showOfflineIndicator(!isOnline);
+            });
+
+            // Try VocabularyService (Firebase -> JSON -> null)
+            const data = await vocabularyService.getHebrewVocabulary();
+
+            if (data && data.wordPairs && data.wordPairs.length > 0) {
+                wordPairs = data.wordPairs;
+                console.log('✅ Word pairs loaded from ' + vocabularyService.getLastSource());
+                console.log('📊 Total pairs loaded:', wordPairs.length);
+                return;
             }
+
+            // Fallback to embedded word pairs
+            showOfflineIndicator(true);
+            console.log('ℹ️ Using embedded word pairs');
+            wordPairs = EMBEDDED_WORD_PAIRS.map(pair => ({...pair, type: 'words'}));
         }
 
         // Update title based on game type
