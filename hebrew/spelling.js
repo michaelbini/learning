@@ -5,17 +5,16 @@ import { vocabularyService } from '../shared/vocabulary-service.js';
 import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
 import { statisticsService } from '../shared/statistics-service.js?v=5';
 
-// Word Banks with Difficulty Levels
+// Word Banks with Difficulty Levels (3 levels: easy, hard, expert)
 let wordsByDifficulty = {
-    easy: [],
-    medium: [],
+    easy: [],    // Merged easy + medium
     hard: [],
     expert: []
 };
 
 // Current words based on difficulty
 let currentWords = [];
-let currentDifficulty = 'medium';
+let currentDifficulty = 'easy';
 
 // Game State
 let gameWords = [];
@@ -44,21 +43,24 @@ async function loadVocabulary() {
 
     if (data && data.wordPairs && data.wordPairs.length > 0) {
         wordsByDifficulty = {
-            easy: [],
-            medium: [],
+            easy: [],    // Merged easy + medium
             hard: [],
             expert: []
         };
 
         data.wordPairs.forEach(pair => {
             if (pair.word && pair.difficulty && pair.type === 'words') {
-                if (wordsByDifficulty[pair.difficulty]) {
-                    wordsByDifficulty[pair.difficulty].push(pair.word);
+                // Merge easy and medium into "easy"
+                if (pair.difficulty === 'easy' || pair.difficulty === 'medium') {
+                    wordsByDifficulty.easy.push(pair.word);
+                } else if (pair.difficulty === 'hard') {
+                    wordsByDifficulty.hard.push(pair.word);
+                } else if (pair.difficulty === 'expert') {
+                    wordsByDifficulty.expert.push(pair.word);
                 }
             }
         });
 
-        wordsByDifficulty.expert = [...wordsByDifficulty.hard];
         currentWords = wordsByDifficulty[currentDifficulty];
         console.log('✅ Vocabulary loaded from ' + vocabularyService.getLastSource());
 
@@ -118,9 +120,8 @@ function startGame() {
 
     const difficultyNames = {
         'easy': 'קל 😊',
-        'medium': 'בינוני 🎯',
-        'hard': 'קשה 💪',
-        'expert': 'מומחה 🏆'
+        'hard': 'בינוני 💪',
+        'expert': 'קשה 🏆'
     };
     document.getElementById('difficultyDisplay').textContent = difficultyNames[currentDifficulty] || 'מותאם אישית';
 

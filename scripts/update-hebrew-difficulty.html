@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Hebrew Vocabulary Difficulty</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        button {
+            background: #4ecdc4;
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #3dbdb5;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        #log {
+            background: #0d0d1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { color: #4ecdc4; }
+        .error { color: #ff6b6b; }
+        .info { color: #f59e0b; }
+    </style>
+</head>
+<body>
+    <h1>Update Hebrew Vocabulary Difficulty</h1>
+    <p>This script will change all "medium" difficulty entries to "easy" in Firebase.</p>
+
+    <button id="previewBtn" onclick="previewChanges()">Preview Changes</button>
+    <button id="updateBtn" onclick="updateFirebase()" disabled>Update Firebase</button>
+
+    <div id="log"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBWc81acgd-9tVi4wLlAw_PXdEgR0n81qU",
+            authDomain: "trip-9506c.firebaseapp.com",
+            projectId: "trip-9506c",
+            storageBucket: "trip-9506c.firebasestorage.app",
+            messagingSenderId: "813393240812",
+            appId: "1:813393240812:web:929bed95de2c48d5e43bc9",
+            databaseURL: "https://trip-9506c-default-rtdb.firebaseio.com/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        function log(message, type = '') {
+            const logEl = document.getElementById('log');
+            const className = type ? ` class="${type}"` : '';
+            logEl.innerHTML += `<span${className}>${message}</span>\n`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        let itemsToUpdate = [];
+
+        window.previewChanges = async function() {
+            const logEl = document.getElementById('log');
+            logEl.innerHTML = '';
+            itemsToUpdate = [];
+
+            log('Fetching Hebrew vocabulary from Firebase...', 'info');
+
+            try {
+                const snapshot = await get(ref(db, 'vocabulary/hebrew'));
+                const data = snapshot.val();
+
+                if (!data) {
+                    log('No data found in Firebase!', 'error');
+                    return;
+                }
+
+                const entries = Object.entries(data);
+                log(`Found ${entries.length} total entries`, 'info');
+
+                let mediumCount = 0;
+                for (const [key, value] of entries) {
+                    if (value.difficulty === 'medium') {
+                        mediumCount++;
+                        itemsToUpdate.push(key);
+                        if (mediumCount <= 10) {
+                            log(`  - ${key}: "${value.word || value.typo}" (medium -> easy)`);
+                        }
+                    }
+                }
+
+                if (mediumCount > 10) {
+                    log(`  ... and ${mediumCount - 10} more`);
+                }
+
+                log(`\nTotal items to update: ${mediumCount}`, 'success');
+
+                if (mediumCount > 0) {
+                    document.getElementById('updateBtn').disabled = false;
+                    log('\nClick "Update Firebase" to apply changes.', 'info');
+                } else {
+                    log('\nNo items need updating!', 'success');
+                }
+
+            } catch (error) {
+                log(`Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.updateFirebase = async function() {
+            if (itemsToUpdate.length === 0) {
+                log('No items to update!', 'error');
+                return;
+            }
+
+            document.getElementById('updateBtn').disabled = true;
+            document.getElementById('previewBtn').disabled = true;
+
+            log(`\nUpdating ${itemsToUpdate.length} items...`, 'info');
+
+            try {
+                // Create batch update object
+                const updates = {};
+                for (const key of itemsToUpdate) {
+                    updates[`vocabulary/hebrew/${key}/difficulty`] = 'easy';
+                }
+
+                await update(ref(db), updates);
+
+                log(`\nSuccessfully updated ${itemsToUpdate.length} items!`, 'success');
+                log('All "medium" difficulty entries are now "easy".', 'success');
+
+                itemsToUpdate = [];
+
+            } catch (error) {
+                log(`Error updating Firebase: ${error.message}`, 'error');
+                document.getElementById('updateBtn').disabled = false;
+            }
+
+            document.getElementById('previewBtn').disabled = false;
+        };
+    </script>
+</body>
+</html>

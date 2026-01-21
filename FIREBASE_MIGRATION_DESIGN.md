@@ -16,11 +16,13 @@ This document outlines a design to migrate all learning games to use a shared Fi
 | Item | Count |
 |------|-------|
 | **Phase 1: Migration** | 14/15 ✅ |
-| **Phase 2: Statistics** | 8/8 ✅ |
+| **Phase 2: Statistics** | 10/10 ✅ |
 | Games Migrated | 6/6 ✅ |
 | Admin Tool | `admin/index.html` |
 | Test Runner | `test/test-runner.html` |
 | Stats Dashboard | `stats/index.html` |
+| Admin Stats | `stats/admin.html` |
+| Hebrew Vocab Sync | `scripts/sync-hebrew-vocabulary.html` |
 | Files to Keep | JSON fallbacks |
 | Total Tests | 33 |
 
@@ -89,13 +91,18 @@ Each item has a Firebase-generated ID, enabling individual add/edit/delete opera
 | Math games | Embedded in HTML | Various formats |
 | Magin (roulette) | Firebase Realtime DB | `{ participants: [{name, location}] }` |
 
-### Data Counts (Verified by Tests)
+### Data Counts (Updated January 2026)
 
 | Dataset | Count | Breakdown |
 |---------|-------|-----------|
 | English Vocabulary | 87 words | Lesson 1: 66, Lesson 2: 21 |
-| Hebrew Word Pairs | 792 pairs | Words: 448, Numbers: 344 |
-| Hebrew Difficulty | 4 levels | Easy: 52, Medium: 209, Hard: 521, Expert: 10 |
+| Hebrew Word Pairs | 890 pairs | Words: 546, Numbers: 344 |
+| Hebrew Difficulty | 3 levels | Easy: 261 (merged with medium), Hard: 521, Expert: 108 |
+
+**Note:** Hebrew spelling game was simplified from 4 levels to 3 levels:
+- **Easy** (קל) - Merged original "easy" and "medium" levels
+- **Hard** (בינוני) - Intermediate difficulty
+- **Expert** (קשה) - Added 98 new expert-level words in January 2026
 
 ### Current Loading Pattern
 
@@ -1969,6 +1976,8 @@ A page to view statistics with:
 | 21 | Add player summary view to dashboard | ✅ Done (combined with 20) |
 | 22 | Add recent sessions + game stats to dashboard | ✅ Done (combined with 20) |
 | 23 | Create admin statistics dashboard (`stats/admin.html`) | ✅ Done |
+| 24 | Add live session tracking with real-time updates | ✅ Done |
+| 25 | Create Hebrew vocabulary sync tool | ✅ Done |
 
 ### Task Details
 
@@ -2003,6 +2012,58 @@ A page to view statistics with:
 - Best scores per game section
 - Recent sessions table with score, duration, date
 - Link added to main `index.html`
+
+**Task 24: Live Session Tracking** ✅ DONE
+- `statistics-service.js` now updates Firebase in real-time during gameplay
+- Added `lastUpdateTime` field to track session activity
+- Admin dashboard (`stats/admin.html`) shows "🔴 LIVE" indicator for `in_progress` sessions
+- Sessions with `status: 'in_progress'` are now visible in recent activity
+
+**Task 25: Hebrew Vocabulary Sync Tool** ✅ DONE
+- Created `scripts/sync-hebrew-vocabulary.html` for syncing local JSON to Firebase
+- 3-step process: Load Local JSON → Compare with Firebase → Sync
+- Shows stats breakdown by difficulty level (easy, hard, expert)
+- Link added to admin navigation at `stats/admin.html`
+
+---
+
+## Hebrew Spelling Game Updates (January 2026)
+
+### Difficulty Level Changes
+
+Changed from 4 levels to 3 levels for simplicity:
+
+| Old System | New System | UI Label |
+|------------|------------|----------|
+| easy | easy | קל (Easy) 😊 |
+| medium | easy (merged) | - |
+| hard | hard | בינוני (Medium) 💪 |
+| expert | expert | קשה (Hard) 🏆 |
+
+### Files Modified
+
+| File | Changes |
+|------|---------|
+| `hebrew/spelling.html` | 3 difficulty buttons instead of 4, updated labels |
+| `hebrew/spelling.js` | Merged easy+medium categories, updated difficultyNames map |
+| `hebrew/vocabulary.json` | Changed all "medium" → "easy", added 98 expert words |
+
+### Vocabulary Counts
+
+| Difficulty | Count | Notes |
+|------------|-------|-------|
+| Easy | 261 | Includes former "easy" and "medium" words |
+| Hard | 521 | Unchanged |
+| Expert | 108 | Added 98 new expert-level Hebrew words |
+| **Total** | **890** | Words only (excludes numbers) |
+
+### Sync Tool
+
+To update Firebase vocabulary after editing `vocabulary.json`:
+1. Open `http://localhost:8000/scripts/sync-hebrew-vocabulary.html`
+2. Click "Load Local JSON" to load vocabulary.json
+3. Click "Compare with Firebase" to see differences
+4. Click "Sync to Firebase" to upload changes
 
 ---
 
@@ -2049,4 +2110,6 @@ A page to view statistics with:
 | 2.0 | Updated | Task 16 complete - player-service.js created, architecture clarified (separation of concerns) |
 | 2.1 | Updated | Phase 2 complete (7/7 tasks) - statistics-service.js, all 6 games integrated, stats dashboard created |
 | 2.2 | Updated | Added admin statistics dashboard (Task 23) - all players view, leaderboards, game stats |
+| 2.3 | 2026-01 | Hebrew spelling: 4→3 difficulty levels (merged easy+medium), added 98 expert words |
+| 2.4 | 2026-01 | Added live session tracking with 🔴 LIVE indicator in admin, created vocab sync tool |
 

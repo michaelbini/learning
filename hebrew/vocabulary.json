@@ -165,7 +165,7 @@
       "typo": "תלמד",
       "hint": "תלמיד נכתב עם י",
       "example": "ה_____ לומד במחברת",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -173,7 +173,7 @@
       "typo": "מורא",
       "hint": "מורה - מלמד בבית ספר",
       "example": "ה_____ מלמד מתמטיקה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -181,7 +181,7 @@
       "typo": "כתה",
       "hint": "כיתה נכתב עם י",
       "example": "ה_____ שלי גדולה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -189,7 +189,7 @@
       "typo": "שעור",
       "hint": "שיעור נכתב עם י",
       "example": "ה_____ התחיל בשמונה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -197,7 +197,7 @@
       "typo": "חופס",
       "hint": "חופש נכתב עם ש",
       "example": "ב_____ אני נוסע לים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -205,7 +205,7 @@
       "typo": "משפכה",
       "hint": "משפחה נכתב עם ח",
       "example": "ה_____ שלי גדולה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -213,7 +213,7 @@
       "typo": "אֲרוחה",
       "hint": "ארוחה - ללא סימני ניקוד",
       "example": "אכלנו _____ טעימה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -221,7 +221,7 @@
       "typo": "עגבניה",
       "hint": "עגבנייה נכתב עם שתי י",
       "example": "ה_____ אדומה וטעימה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -229,7 +229,7 @@
       "typo": "מלפון",
       "hint": "מלפפון נכתב עם שתי פ",
       "example": "ה_____ ירוק וטרי",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -237,7 +237,7 @@
       "typo": "טפוז",
       "hint": "תפוז נכתב עם ת",
       "example": "ה_____ מלא במיץ",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -245,7 +245,7 @@
       "typo": "אנבים",
       "hint": "ענבים נכתב עם ע",
       "example": "ה_____ מתוקים מאוד",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -253,7 +253,7 @@
       "typo": "אבתיח",
       "hint": "אבטיח נכתב עם ט",
       "example": "ה_____ קר ומרענן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -261,7 +261,7 @@
       "typo": "עפרון",
       "hint": "עיפרון נכתב עם י",
       "example": "כתבתי ב_____ שחור",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -269,7 +269,7 @@
       "typo": "מחברט",
       "hint": "מחברת נכתב עם ת בסוף",
       "example": "ה_____ שלי כחולה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -277,7 +277,7 @@
       "typo": "טיק",
       "hint": "תיק נכתב עם ת",
       "example": "ה_____ שלי מלא בספרים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -285,7 +285,7 @@
       "typo": "ספריה",
       "hint": "ספרייה נכתב עם שתי י",
       "example": "הלכתי ל_____ העירונית",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -293,7 +293,7 @@
       "typo": "מכשב",
       "hint": "מחשב נכתב עם ח",
       "example": "ה_____ החדש מהיר מאוד",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -301,7 +301,7 @@
       "typo": "תלפון",
       "hint": "טלפון נכתב עם ט",
       "example": "ה_____ שלי צלצל",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -309,7 +309,7 @@
       "typo": "טלויזיה",
       "hint": "טלוויזיה נכתב עם ו אחת",
       "example": "ראיתי סרט ב_____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -317,7 +317,7 @@
       "typo": "אוטבוס",
       "hint": "אוטובוס נכתב עם ו",
       "example": "ה_____ הגיע בזמן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -325,7 +325,7 @@
       "typo": "רכבט",
       "hint": "רכבת נכתב עם ת",
       "example": "ה_____ נוסעת במסילה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -333,7 +333,7 @@
       "typo": "מתוס",
       "hint": "מטוס נכתב עם ט",
       "example": "ה_____ ממריא לשמיים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -341,7 +341,7 @@
       "typo": "אופנים",
       "hint": "אופניים עם שתי י",
       "example": "רכבתי על ה_____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -349,7 +349,7 @@
       "typo": "מכונת",
       "hint": "מכונית נכתב עם י",
       "example": "ה_____ חונה ברחוב",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -357,7 +357,7 @@
       "typo": "גנה",
       "hint": "גינה נכתב עם י",
       "example": "ה_____ מלאה בפרחים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -365,7 +365,7 @@
       "typo": "שלחן",
       "hint": "שולחן נכתב עם ו",
       "example": "ה_____ עשוי מעץ",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -373,7 +373,7 @@
       "typo": "כסא",
       "hint": "כיסא נכתב עם י",
       "example": "ה_____ נוח לישיבה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -381,7 +381,7 @@
       "typo": "כלון",
       "hint": "חלון נכתב עם ח",
       "example": "ה_____ פתוח לרווחה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -389,7 +389,7 @@
       "typo": "דלית",
       "hint": "דלת - ללא י",
       "example": "ה_____ נעולה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -397,7 +397,7 @@
       "typo": "מדרגת",
       "hint": "מדרגות בלשון רבים",
       "example": "עליתי ב_____ למעלה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -405,7 +405,7 @@
       "typo": "מעלת",
       "hint": "מעלית נכתב עם י",
       "example": "ה_____ מקולקלת",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -413,7 +413,7 @@
       "typo": "גק",
       "hint": "גג עם ג כפולה",
       "example": "ה_____ אדום",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -421,7 +421,7 @@
       "typo": "רצפא",
       "hint": "רצפה נכתב עם ה",
       "example": "ה_____ נקייה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -429,7 +429,7 @@
       "typo": "קר",
       "hint": "קיר נכתב עם י",
       "example": "ה_____ צבוע לבן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -437,7 +437,7 @@
       "typo": "תקרא",
       "hint": "תקרה נכתב עם ה",
       "example": "ה_____ גבוהה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -445,7 +445,7 @@
       "typo": "מתבח",
       "hint": "מטבח נכתב עם ט",
       "example": "ה_____ מאובזר",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -453,7 +453,7 @@
       "typo": "אמבטייה",
       "hint": "אמבטיה עם י אחת",
       "example": "ה_____ מלאה במים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -461,7 +461,7 @@
       "typo": "שרותים",
       "hint": "שירותים נכתב עם י",
       "example": "ה_____ נקיים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -469,7 +469,7 @@
       "typo": "סאלון",
       "hint": "סלון ללא א",
       "example": "ה_____ מרווח",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -477,7 +477,7 @@
       "typo": "חדאר",
       "hint": "חדר ללא א",
       "example": "ה_____ מסודר",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -485,7 +485,7 @@
       "typo": "מטה",
       "hint": "מיטה נכתב עם י",
       "example": "ה_____ רכה ונוחה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -493,7 +493,7 @@
       "typo": "כרת",
       "hint": "כרית נכתב עם י",
       "example": "ה_____ רכה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -501,7 +501,7 @@
       "typo": "שמכה",
       "hint": "שמיכה נכתב עם י",
       "example": "ה_____ חמה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -509,7 +509,7 @@
       "typo": "ארן",
       "hint": "ארון נכתב עם ו",
       "example": "ה_____ מלא בבגדים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -517,7 +517,7 @@
       "typo": "מדאף",
       "hint": "מדף ללא א",
       "example": "ה_____ עמוס בספרים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -525,7 +525,7 @@
       "typo": "שען",
       "hint": "שעון נכתב עם ו",
       "example": "ה_____ מראה שש",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -533,7 +533,7 @@
       "typo": "מרא",
       "hint": "מראה נכתב עם ה",
       "example": "ה_____ תלויה על הקיר",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -541,7 +541,7 @@
       "typo": "תמנה",
       "hint": "תמונה נכתב עם ו",
       "example": "ה_____ יפה מאוד",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -549,7 +549,7 @@
       "typo": "שתיח",
       "hint": "שטיח נכתב עם ט",
       "example": "ה_____ רך",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -557,7 +557,7 @@
       "typo": "וילן",
       "hint": "וילון נכתב עם ו",
       "example": "ה_____ סגור",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -565,7 +565,7 @@
       "typo": "מנרה",
       "hint": "מנורה נכתב עם ו",
       "example": "ה_____ דולקת",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -573,7 +573,7 @@
       "typo": "נאר",
       "hint": "נר ללא א",
       "example": "ה_____ דולק",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -581,7 +581,7 @@
       "typo": "גפרר",
       "hint": "גפרור נכתב עם ו",
       "example": "הדלקתי _____ אחד",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -589,7 +589,7 @@
       "typo": "סכן",
       "hint": "סכין נכתב עם י",
       "example": "ה_____ חדה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -597,7 +597,7 @@
       "typo": "מזלק",
       "hint": "מזלג נכתב עם ג",
       "example": "ה_____ על השולחן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -605,7 +605,7 @@
       "typo": "כאף",
       "hint": "כף ללא א",
       "example": "ה_____ קטנה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -613,7 +613,7 @@
       "typo": "צלחט",
       "hint": "צלחת נכתב עם ת",
       "example": "ה_____ נשברה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -621,7 +621,7 @@
       "typo": "כס",
       "hint": "כוס נכתב עם ו",
       "example": "ה_____ מלאה במים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -629,7 +629,7 @@
       "typo": "ספאל",
       "hint": "ספל ללא א",
       "example": "ה_____ של קפה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -637,7 +637,7 @@
       "typo": "קנקאן",
       "hint": "קנקן ללא א",
       "example": "ה_____ רותח",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -645,7 +645,7 @@
       "typo": "סר",
       "hint": "סיר נכתב עם י",
       "example": "ה_____ על הגז",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -653,7 +653,7 @@
       "typo": "מחבט",
       "hint": "מחבת נכתב עם ת",
       "example": "ה_____ חמה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -661,7 +661,7 @@
       "typo": "תנר",
       "hint": "תנור נכתב עם ו",
       "example": "ה_____ חם",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -669,7 +669,7 @@
       "typo": "מקרער",
       "hint": "מקרר עם שתי ר",
       "example": "ה_____ קר",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -677,7 +677,7 @@
       "typo": "כרים",
       "hint": "כיריים עם שתי י",
       "example": "ה_____ דולקות",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -685,7 +685,7 @@
       "typo": "שאב",
       "hint": "שואב נכתב עם ו",
       "example": "ה_____ אבק עובד",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -693,7 +693,7 @@
       "typo": "מכנת",
       "hint": "מכונת נכתב עם ו",
       "example": "_____ הכביסה מלאה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -701,7 +701,7 @@
       "typo": "מיבש",
       "hint": "מייבש עם שתי י",
       "example": "ה_____ פועל",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -709,7 +709,7 @@
       "typo": "מגבט",
       "hint": "מגבת נכתב עם ת",
       "example": "ה_____ רטובה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -717,7 +717,7 @@
       "typo": "סבן",
       "hint": "סבון נכתב עם ו",
       "example": "ה_____ ריחני",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -725,7 +725,7 @@
       "typo": "שאמפו",
       "hint": "שמפו ללא א",
       "example": "ה_____ לשיער",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -733,7 +733,7 @@
       "typo": "מברשט",
       "hint": "מברשת נכתב עם ת",
       "example": "ה_____ נקייה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -741,7 +741,7 @@
       "typo": "משחט",
       "hint": "משחת נכתב עם ת",
       "example": "_____ שיניים טובה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -749,7 +749,7 @@
       "typo": "מסראק",
       "hint": "מסרק ללא א",
       "example": "ה_____ של השיער",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -757,7 +757,7 @@
       "typo": "מספרים",
       "hint": "מספריים עם שתי י",
       "example": "ה_____ חדות",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -765,7 +765,7 @@
       "typo": "מחאט",
       "hint": "מחט ללא א",
       "example": "ה_____ דקה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -773,7 +773,7 @@
       "typo": "חט",
       "hint": "חוט נכתב עם ו",
       "example": "ה_____ דק",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -781,7 +781,7 @@
       "typo": "כפתר",
       "hint": "כפתור נכתב עם ו",
       "example": "ה_____ נפל",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -789,7 +789,7 @@
       "typo": "רכסן",
       "hint": "רוכסן נכתב עם ו",
       "example": "ה_____ נתקע",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -797,7 +797,7 @@
       "typo": "חגרה",
       "hint": "חגורה נכתב עם ו",
       "example": "ה_____ שחורה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -805,7 +805,7 @@
       "typo": "נעאל",
       "hint": "נעל ללא א",
       "example": "ה_____ נוחה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -813,7 +813,7 @@
       "typo": "גראב",
       "hint": "גרב ללא א",
       "example": "ה_____ חמה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -821,7 +821,7 @@
       "typo": "חלצה",
       "hint": "חולצה נכתב עם ו",
       "example": "ה_____ לבנה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -829,7 +829,7 @@
       "typo": "מכנסים",
       "hint": "מכנסיים עם שתי י",
       "example": "ה_____ ארוכות",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -837,7 +837,7 @@
       "typo": "שמאלה",
       "hint": "שמלה ללא א",
       "example": "ה_____ יפה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -845,7 +845,7 @@
       "typo": "חצאת",
       "hint": "חצאית נכתב עם י",
       "example": "ה_____ קצרה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -853,7 +853,7 @@
       "typo": "מעל",
       "hint": "מעיל נכתב עם י",
       "example": "ה_____ חם",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -861,7 +861,7 @@
       "typo": "זקט",
       "hint": "ז'קט נכתב עם ז'",
       "example": "ה_____ שחור",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -869,7 +869,7 @@
       "typo": "סודר",
       "hint": "סוודר נכתב עם שתי ו",
       "example": "ה_____ צמרי",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -877,7 +877,7 @@
       "typo": "כבע",
       "hint": "כובע נכתב עם ו",
       "example": "ה_____ על הראש",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -885,7 +885,7 @@
       "typo": "צעף",
       "hint": "צעיף נכתב עם י",
       "example": "ה_____ חם",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -893,7 +893,7 @@
       "typo": "כפות",
       "hint": "כפפות עם שתי פ",
       "example": "ה_____ חמות",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -901,7 +901,7 @@
       "typo": "משקפים",
       "hint": "משקפיים עם שתי י",
       "example": "ה_____ על האף",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -909,7 +909,7 @@
       "typo": "שען",
       "hint": "שעון נכתב עם ו",
       "example": "ה_____ יד יפה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -917,7 +917,7 @@
       "typo": "צמד",
       "hint": "צמיד נכתב עם י",
       "example": "ה_____ זהב",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -925,7 +925,7 @@
       "typo": "טבעט",
       "hint": "טבעת נכתב עם ת",
       "example": "ה_____ נוצצת",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -933,7 +933,7 @@
       "typo": "שרשרט",
       "hint": "שרשרת נכתב עם ת",
       "example": "ה_____ ארוכה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -941,7 +941,7 @@
       "typo": "עגל",
       "hint": "עגיל נכתב עם י",
       "example": "ה_____ יפה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -949,7 +949,7 @@
       "typo": "טיק",
       "hint": "תיק נכתב עם ת",
       "example": "ה_____ יד גדול",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -957,7 +957,7 @@
       "typo": "ארנאק",
       "hint": "ארנק ללא א",
       "example": "ה_____ מלא",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -965,7 +965,7 @@
       "typo": "מפתאח",
       "hint": "מפתח ללא א",
       "example": "ה_____ אבד",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -973,7 +973,7 @@
       "typo": "דלית",
       "hint": "דלת ללא י",
       "example": "פתחתי את ה_____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -981,7 +981,7 @@
       "typo": "מנעל",
       "hint": "מנעול נכתב עם ו",
       "example": "ה_____ נעול",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -989,7 +989,7 @@
       "typo": "פעמן",
       "hint": "פעמון נכתב עם ו",
       "example": "ה_____ צלצל",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -997,7 +997,7 @@
       "typo": "דאר",
       "hint": "דואר נכתב עם ו",
       "example": "קיבלתי _____ היום",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1005,7 +1005,7 @@
       "typo": "מכתאב",
       "hint": "מכתב ללא א",
       "example": "כתבתי _____ ארוך",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1013,7 +1013,7 @@
       "typo": "מעטפא",
       "hint": "מעטפה נכתב עם ה",
       "example": "ה_____ סגורה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1021,7 +1021,7 @@
       "typo": "בל",
       "hint": "בול נכתב עם ו",
       "example": "הדבקתי _____ על המעטפה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1029,7 +1029,7 @@
       "typo": "חבלה",
       "hint": "חבילה נכתב עם י",
       "example": "קיבלתי _____ בדואר",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1037,7 +1037,7 @@
       "typo": "משלח",
       "hint": "משלוח נכתב עם ו",
       "example": "ה_____ הגיע",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1045,7 +1045,7 @@
       "typo": "כתבת",
       "hint": "כתובת נכתב עם ו",
       "example": "ה_____ שלי חדשה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1053,7 +1053,7 @@
       "typo": "מספאר",
       "hint": "מספר ללא א",
       "example": "_____ הטלפון שלי",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1061,7 +1061,7 @@
       "typo": "שאם",
       "hint": "שם ללא א",
       "example": "_____ שלי דני",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1069,7 +1069,7 @@
       "typo": "משפאט",
       "hint": "משפט ללא א",
       "example": "כתבתי _____ ארוך",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1077,7 +1077,7 @@
       "typo": "מלה",
       "hint": "מילה נכתב עם י",
       "example": "_____ אחת ביום",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1085,7 +1085,7 @@
       "typo": "אוית",
       "hint": "אות ללא י",
       "example": "_____ א' ראשונה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1093,7 +1093,7 @@
       "typo": "סמן",
       "hint": "סימן נכתב עם י",
       "example": "_____ פיסוק חשוב",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1101,7 +1101,7 @@
       "typo": "נקדה",
       "hint": "נקודה נכתב עם ו",
       "example": "שמתי _____ בסוף",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1109,7 +1109,7 @@
       "typo": "פסק",
       "hint": "פסיק נכתב עם י",
       "example": "_____ מפריד בין משפטים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1117,7 +1117,7 @@
       "typo": "שאלא",
       "hint": "שאלה נכתב עם ה",
       "example": "שאלתי _____ קשה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1125,7 +1125,7 @@
       "typo": "תשבה",
       "hint": "תשובה נכתב עם ו",
       "example": "קיבלתי _____ טובה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1133,7 +1133,7 @@
       "typo": "שחה",
       "hint": "שיחה נכתב עם י",
       "example": "היתה לנו _____ ארוכה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1141,7 +1141,7 @@
       "typo": "דין",
       "hint": "דיון נכתב עם ו",
       "example": "ה_____ התארך",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1149,7 +1149,7 @@
       "typo": "וכוח",
       "hint": "ויכוח נכתב עם י",
       "example": "היה _____ ארוך",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1157,7 +1157,7 @@
       "typo": "דעא",
       "hint": "דעה נכתב עם ה",
       "example": "יש לי _____ אחרת",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1165,7 +1165,7 @@
       "typo": "רעין",
       "hint": "רעיון נכתב עם ו",
       "example": "יש לי _____ טוב",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1173,7 +1173,7 @@
       "typo": "מחשבא",
       "hint": "מחשבה נכתב עם ה",
       "example": "עלתה לי _____ מעניינת",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1181,7 +1181,7 @@
       "typo": "הצעא",
       "hint": "הצעה נכתב עם ה",
       "example": "קיבלתי _____ מפתה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1189,7 +1189,7 @@
       "typo": "החלטא",
       "hint": "החלטה נכתב עם ה",
       "example": "קיבלתי _____ חשובה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1197,7 +1197,7 @@
       "typo": "בחרה",
       "hint": "בחירה נכתב עם י",
       "example": "עשיתי _____ נכונה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1205,7 +1205,7 @@
       "typo": "אפשרת",
       "hint": "אפשרות נכתב עם ו",
       "example": "יש עוד _____ אחת",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1213,7 +1213,7 @@
       "typo": "סכוי",
       "hint": "סיכוי נכתב עם י",
       "example": "יש _____ טוב",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1221,7 +1221,7 @@
       "typo": "מזאל",
       "hint": "מזל ללא א",
       "example": "_____ טוב לך",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1229,7 +1229,7 @@
       "typo": "הצלחא",
       "hint": "הצלחה נכתב עם ה",
       "example": "אני מאחל לך _____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1237,7 +1237,7 @@
       "typo": "כשלון",
       "hint": "כישלון נכתב עם י",
       "example": "זה היה _____ גדול",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1245,7 +1245,7 @@
       "typo": "ניצחן",
       "hint": "ניצחון נכתב עם ו",
       "example": "זה _____ גדול",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1253,7 +1253,7 @@
       "typo": "תבסה",
       "hint": "תבוסה נכתב עם ו",
       "example": "ספגנו _____ קשה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1261,7 +1261,7 @@
       "typo": "משחאק",
       "hint": "משחק ללא א",
       "example": "ה_____ מעניין",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1269,7 +1269,7 @@
       "typo": "תחרת",
       "hint": "תחרות נכתב עם ו",
       "example": "זכיתי ב_____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1277,7 +1277,7 @@
       "typo": "פראס",
       "hint": "פרס ללא א",
       "example": "קיבלתי _____ ראשון",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1285,7 +1285,7 @@
       "typo": "מדלה",
       "hint": "מדליה נכתב עם י",
       "example": "ה_____ זהב יפה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1293,7 +1293,7 @@
       "typo": "גבע",
       "hint": "גביע נכתב עם י",
       "example": "ה_____ גדול ומבריק",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1301,7 +1301,7 @@
       "typo": "ספרט",
       "hint": "ספורט נכתב עם ו",
       "example": "אני אוהב _____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1309,7 +1309,7 @@
       "typo": "כדרגל",
       "hint": "כדורגל נכתב עם ו",
       "example": "_____ הוא ספורט פופולרי",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1317,7 +1317,7 @@
       "typo": "כדרסל",
       "hint": "כדורסל נכתב עם ו",
       "example": "_____ משחק מהיר",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1325,7 +1325,7 @@
       "typo": "תניס",
       "hint": "טניס נכתב עם ט",
       "example": "_____ זה משחק מעניין",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1333,7 +1333,7 @@
       "typo": "שחיה",
       "hint": "שחייה עם שתי י",
       "example": "_____ זה ספורט בריא",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1341,7 +1341,7 @@
       "typo": "רצה",
       "hint": "ריצה נכתב עם י",
       "example": "_____ בבוקר בריאה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1349,7 +1349,7 @@
       "typo": "קפצה",
       "hint": "קפיצה נכתב עם י",
       "example": "_____ לגובה קשה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1357,7 +1357,7 @@
       "typo": "זרקה",
       "hint": "זריקה נכתב עם י",
       "example": "_____ למרחק מרשימה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1365,7 +1365,7 @@
       "typo": "אמון",
       "hint": "אימון נכתב עם י",
       "example": "ה_____ קשה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1373,7 +1373,7 @@
       "typo": "מאמאן",
       "hint": "מאמן ללא א",
       "example": "ה_____ קפדן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1381,7 +1381,7 @@
       "typo": "שחקאן",
       "hint": "שחקן ללא א",
       "example": "ה_____ טוב מאוד",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1389,7 +1389,7 @@
       "typo": "קבצה",
       "hint": "קבוצה נכתב עם ו",
       "example": "ה_____ זכתה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1397,7 +1397,7 @@
       "typo": "מגראש",
       "hint": "מגרש ללא א",
       "example": "ה_____ מטופח",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1405,7 +1405,7 @@
       "typo": "שאר",
       "hint": "שער נכתב עם ע",
       "example": "השחקן כבש _____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1413,7 +1413,7 @@
       "typo": "כדר",
       "hint": "כדור נכתב עם ו",
       "example": "ה_____ עגול",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1421,7 +1421,7 @@
       "typo": "רשית",
       "hint": "רשת ללא י",
       "example": "ה_____ קרועה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1429,7 +1429,7 @@
       "typo": "מטרא",
       "hint": "מטרה נכתב עם ה",
       "example": "פגעתי ב_____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1437,7 +1437,7 @@
       "typo": "נקוד",
       "hint": "ניקוד נכתב עם י",
       "example": "ה_____ הסופי 3-2",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1445,7 +1445,7 @@
       "typo": "תוצא",
       "hint": "תוצאה נכתב עם ה",
       "example": "ה_____ מפתיעה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1453,7 +1453,7 @@
       "typo": "משחאק",
       "hint": "משחק ללא א",
       "example": "ה_____ היה מרתק",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1461,7 +1461,7 @@
       "typo": "ענה",
       "hint": "עונה נכתב עם ו",
       "example": "ה_____ התחילה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1469,7 +1469,7 @@
       "typo": "אליפת",
       "hint": "אליפות נכתב עם ו",
       "example": "זכינו ב_____",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1477,7 +1477,7 @@
       "typo": "גמאר",
       "hint": "גמר ללא א",
       "example": "ה_____ היה מרגש",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1485,7 +1485,7 @@
       "typo": "חצ",
       "hint": "חצי נכתב עם י",
       "example": "_____ גמר קשה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1493,7 +1493,7 @@
       "typo": "רבאע",
       "hint": "רבע ללא א",
       "example": "_____ גמר ראשון",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1501,7 +1501,7 @@
       "typo": "סבוב",
       "hint": "סיבוב נכתב עם י",
       "example": "_____ ראשון התחיל",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1509,7 +1509,7 @@
       "typo": "שלאב",
       "hint": "שלב ללא א",
       "example": "_____ הבא קשה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1517,7 +1517,7 @@
       "typo": "שפט",
       "hint": "שופט נכתב עם ו",
       "example": "ה_____ שרק",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1525,7 +1525,7 @@
       "typo": "שרקה",
       "hint": "שריקה נכתב עם י",
       "example": "_____ סיום המשחק",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1533,7 +1533,7 @@
       "typo": "עברה",
       "hint": "עבירה נכתב עם י",
       "example": "היתה _____ קשה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1541,7 +1541,7 @@
       "typo": "ענש",
       "hint": "עונש נכתב עם ו",
       "example": "_____ חמור לשחקן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1549,7 +1549,7 @@
       "typo": "כרתיס",
       "hint": "כרטיס נכתב עם ט",
       "example": "_____ צהוב לשחקן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1557,7 +1557,7 @@
       "typo": "אהד",
       "hint": "אוהד נכתב עם ו",
       "example": "ה_____ צועק",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1565,7 +1565,7 @@
       "typo": "קהאל",
       "hint": "קהל ללא א",
       "example": "ה_____ מריע",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1573,7 +1573,7 @@
       "typo": "אצטדין",
       "hint": "אצטדיון נכתב עם ו",
       "example": "ה_____ מלא",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -1581,7 +1581,7 @@
       "typo": "יצע",
       "hint": "יציע נכתב עם י",
       "example": "ה_____ צפוף",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "words"
     },
     {
@@ -3685,7 +3685,7 @@
       "typo": "שבע",
       "hint": "לזכר אומרים 'שבעה', לנקבה 'שבע'",
       "example": "___ ימים בשבוע",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3693,7 +3693,7 @@
       "typo": "שבעה",
       "hint": "לזכר אומרים 'שבעה', לנקבה 'שבע'",
       "example": "___ שעות עבודה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3701,7 +3701,7 @@
       "typo": "שמונה",
       "hint": "שמונה - זהה בזכר ונקבה",
       "example": "___ כוכבים בשמיים",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3709,7 +3709,7 @@
       "typo": "תשע",
       "hint": "לזכר אומרים 'תשעה', לנקבה 'תשע'",
       "example": "___ תלמידים בכיתה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3717,7 +3717,7 @@
       "typo": "תשעה",
       "hint": "לזכר אומרים 'תשעה', לנקבה 'תשע'",
       "example": "___ תלמידות בכיתה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3725,7 +3725,7 @@
       "typo": "עשר",
       "hint": "לזכר אומרים 'עשרה', לנקבה 'עשר'",
       "example": "___ שקלים בכיס",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3733,7 +3733,7 @@
       "typo": "עשרה",
       "hint": "לזכר אומרים 'עשרה', לנקבה 'עשר'",
       "example": "___ אגורות בכיס",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3741,7 +3741,7 @@
       "typo": "אחת עשרה",
       "hint": "לזכר: אחד עשר, לנקבה: אחת עשרה",
       "example": "___ ילדים במשחק",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3749,7 +3749,7 @@
       "typo": "שתים עשרה",
       "hint": "לזכר: שנים עשר, לנקבה: שתים עשרה",
       "example": "___ חודשים בשנה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3757,7 +3757,7 @@
       "typo": "עשרים ואחת",
       "hint": "לזכר אומרים 'עשרים ואחד', לנקבה 'עשרים ואחת'",
       "example": "___ תלמידים בכיתה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -3765,7 +3765,7 @@
       "typo": "עשרים ואחד",
       "hint": "לזכר אומרים 'עשרים ואחד', לנקבה 'עשרים ואחת'",
       "example": "___ תלמידות בכיתה",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4037,7 +4037,7 @@
       "typo": "אחת עשרה",
       "hint": "לזכר אומרים 'אחד עשר', לנקבה 'אחת עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4045,7 +4045,7 @@
       "typo": "אחד עשר",
       "hint": "לזכר אומרים 'אחד עשר', לנקבה 'אחת עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4053,7 +4053,7 @@
       "typo": "שתים עשרה",
       "hint": "לזכר אומרים 'שנים עשר', לנקבה 'שתים עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4061,7 +4061,7 @@
       "typo": "שנים עשר",
       "hint": "לזכר אומרים 'שנים עשר', לנקבה 'שתים עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4069,7 +4069,7 @@
       "typo": "שלוש עשרה",
       "hint": "לזכר אומרים 'שלושה עשר', לנקבה 'שלוש עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4077,7 +4077,7 @@
       "typo": "שלושה עשר",
       "hint": "לזכר אומרים 'שלושה עשר', לנקבה 'שלוש עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4085,7 +4085,7 @@
       "typo": "ארבע עשרה",
       "hint": "לזכר אומרים 'ארבעה עשר', לנקבה 'ארבע עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4093,7 +4093,7 @@
       "typo": "ארבעה עשר",
       "hint": "לזכר אומרים 'ארבעה עשר', לנקבה 'ארבע עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4101,7 +4101,7 @@
       "typo": "חמש עשרה",
       "hint": "לזכר אומרים 'חמישה עשר', לנקבה 'חמש עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4109,7 +4109,7 @@
       "typo": "חמישה עשר",
       "hint": "לזכר אומרים 'חמישה עשר', לנקבה 'חמש עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4117,7 +4117,7 @@
       "typo": "שש עשרה",
       "hint": "לזכר אומרים 'שישה עשר', לנקבה 'שש עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4125,7 +4125,7 @@
       "typo": "שישה עשר",
       "hint": "לזכר אומרים 'שישה עשר', לנקבה 'שש עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4133,7 +4133,7 @@
       "typo": "שבע עשרה",
       "hint": "לזכר אומרים 'שבעה עשר', לנקבה 'שבע עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4141,7 +4141,7 @@
       "typo": "שבעה עשר",
       "hint": "לזכר אומרים 'שבעה עשר', לנקבה 'שבע עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4149,7 +4149,7 @@
       "typo": "שמונה עשרה",
       "hint": "לזכר אומרים 'שמונה עשר', לנקבה 'שמונה עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4157,7 +4157,7 @@
       "typo": "שמונה עשר",
       "hint": "לזכר אומרים 'שמונה עשר', לנקבה 'שמונה עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4165,7 +4165,7 @@
       "typo": "תשע עשרה",
       "hint": "לזכר אומרים 'תשעה עשר', לנקבה 'תשע עשרה'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4173,7 +4173,7 @@
       "typo": "תשעה עשר",
       "hint": "לזכר אומרים 'תשעה עשר', לנקבה 'תשע עשרה'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4181,7 +4181,7 @@
       "typo": "עשרים",
       "hint": "לזכר אומרים 'עשרים', לנקבה 'עשרים'",
       "example": "יש ___ פריטים במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -4189,7 +4189,7 @@
       "typo": "עשרים",
       "hint": "לזכר אומרים 'עשרים', לנקבה 'עשרים'",
       "example": "יש ___ קופסאות במחסן",
-      "difficulty": "medium",
+      "difficulty": "easy",
       "type": "numbers"
     },
     {
@@ -6335,6 +6335,790 @@
       "example": "___ משתתפות בכנס",
       "difficulty": "hard",
       "type": "numbers"
+    },
+    {
+      "word": "אנציקלופדיה",
+      "typo": "אנציקלופדייה",
+      "hint": "אנציקלופדיה נכתב עם י אחת בסוף",
+      "example": "חיפשתי מידע ב_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פסיכולוגיה",
+      "typo": "פסיכולוגייה",
+      "hint": "פסיכולוגיה נכתב עם י אחת",
+      "example": "היא לומדת _____ באוניברסיטה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "ביולוגיה",
+      "typo": "ביאולוגיה",
+      "hint": "ביולוגיה נכתב בלי א",
+      "example": "שיעור ה_____ היה מעניין",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פילוסופיה",
+      "typo": "פילוזופיה",
+      "hint": "פילוסופיה נכתב עם ס",
+      "example": "הוא מתעניין ב_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "מתמטיקה",
+      "typo": "מטמטיקה",
+      "hint": "מתמטיקה נכתב עם ת בהתחלה",
+      "example": "אני אוהב _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "טכנולוגיה",
+      "typo": "תכנולוגיה",
+      "hint": "טכנולוגיה נכתב עם ט",
+      "example": "ה_____ מתקדמת מהר",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אלקטרוניקה",
+      "typo": "אלקטרוניכה",
+      "hint": "אלקטרוניקה נכתב עם ק בסוף",
+      "example": "חנות ל_____ נפתחה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "ארכיאולוגיה",
+      "typo": "ארכאולוגיה",
+      "hint": "ארכיאולוגיה נכתב עם י",
+      "example": "הוא חוקר _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "גיאוגרפיה",
+      "typo": "גאוגרפיה",
+      "hint": "גיאוגרפיה נכתב עם י",
+      "example": "למדנו _____ של ישראל",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "מטאורולוגיה",
+      "typo": "מטאורולוגייה",
+      "hint": "מטאורולוגיה נכתב עם י אחת בסוף",
+      "example": "תחזית _____ לשבוע",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אקולוגיה",
+      "typo": "אקולוגייה",
+      "hint": "אקולוגיה נכתב עם י אחת",
+      "example": "שמירה על ה_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "סוציולוגיה",
+      "typo": "סוציולוגייה",
+      "hint": "סוציולוגיה נכתב עם י אחת",
+      "example": "מחקר ב_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אנתרופולוגיה",
+      "typo": "אנטרופולוגיה",
+      "hint": "אנתרופולוגיה נכתב עם ת",
+      "example": "לימודי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פרמקולוגיה",
+      "typo": "פרמכולוגיה",
+      "hint": "פרמקולוגיה נכתב עם ק",
+      "example": "מחקר ב_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "מיקרוסקופ",
+      "typo": "מיקרוסכופ",
+      "hint": "מיקרוסקופ נכתב עם ק בסוף",
+      "example": "הסתכלתי דרך ה_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אלגוריתם",
+      "typo": "אלגוריטם",
+      "hint": "אלגוריתם נכתב עם ת",
+      "example": "כתבתי _____ חדש",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "היפותזה",
+      "typo": "היפותיזה",
+      "hint": "היפותזה נכתב בלי י",
+      "example": "ה_____ שלי הוכחה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "סטטיסטיקה",
+      "typo": "סתטיסטיקה",
+      "hint": "סטטיסטיקה נכתב עם ט בהתחלה",
+      "example": "נתוני ה_____ מראים",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קטגוריה",
+      "typo": "קטיגוריה",
+      "hint": "קטגוריה נכתב בלי י אחרי ט",
+      "example": "ה_____ הזו מעניינת",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "סינתזה",
+      "typo": "סינטזה",
+      "hint": "סינתזה נכתב עם ת",
+      "example": "_____ של רעיונות",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אנליזה",
+      "typo": "אנאליזה",
+      "hint": "אנליזה נכתב בלי א באמצע",
+      "example": "_____ מעמיקה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "דיאגנוזה",
+      "typo": "דיאגנוזא",
+      "hint": "דיאגנוזה נכתב עם ה בסוף",
+      "example": "הרופא נתן _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פרוגנוזה",
+      "typo": "פרוגנוזא",
+      "hint": "פרוגנוזה נכתב עם ה בסוף",
+      "example": "ה_____ חיובית",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "כרומוזום",
+      "typo": "כרומוזם",
+      "hint": "כרומוזום נכתב עם ו",
+      "example": "ל_____ יש גנים",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אנטיביוטיקה",
+      "typo": "אנתיביוטיקה",
+      "hint": "אנטיביוטיקה נכתב עם ט",
+      "example": "הרופא רשם _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אלרגיה",
+      "typo": "אלרגייה",
+      "hint": "אלרגיה נכתב עם י אחת",
+      "example": "יש לי _____ לאבק",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "בקטריה",
+      "typo": "בקתריה",
+      "hint": "בקטריה נכתב עם ט",
+      "example": "ה_____ גורמת למחלה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פיזיותרפיה",
+      "typo": "פיזיותרפייה",
+      "hint": "פיזיותרפיה נכתב עם י אחת בסוף",
+      "example": "הוא מקבל _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אורתופדיה",
+      "typo": "אורטופדיה",
+      "hint": "אורתופדיה נכתב עם ת",
+      "example": "מחלקת _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קרדיולוגיה",
+      "typo": "קרדיולוגייה",
+      "hint": "קרדיולוגיה נכתב עם י אחת",
+      "example": "רופא _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "נוירולוגיה",
+      "typo": "נאורולוגיה",
+      "hint": "נוירולוגיה נכתב עם וי",
+      "example": "מומחה ל_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פסיכיאטריה",
+      "typo": "פסיכיאתריה",
+      "hint": "פסיכיאטריה נכתב עם ט",
+      "example": "מחלקת _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אנסתזיה",
+      "typo": "אנסטזיה",
+      "hint": "אנסתזיה נכתב עם ת",
+      "example": "קיבל _____ כללית",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אולטרסאונד",
+      "typo": "אולטראסאונד",
+      "hint": "אולטרסאונד נכתב בלי א באמצע",
+      "example": "בדיקת _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "כולסטרול",
+      "typo": "כולסתרול",
+      "hint": "כולסטרול נכתב עם ט",
+      "example": "רמת ה_____ גבוהה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "ויטמינים",
+      "typo": "ויתמינים",
+      "hint": "ויטמינים נכתב עם ט",
+      "example": "לקחתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אימונולוגיה",
+      "typo": "אימונולוגייה",
+      "hint": "אימונולוגיה נכתב עם י אחת",
+      "example": "מחקר ב_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אפילפסיה",
+      "typo": "אפילפסייה",
+      "hint": "אפילפסיה נכתב עם י אחת בסוף",
+      "example": "חולה ב_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "סכיזופרניה",
+      "typo": "שיזופרניה",
+      "hint": "סכיזופרניה נכתב עם ס וכ",
+      "example": "מאובחן עם _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "דיסלקציה",
+      "typo": "דיסלקסיה",
+      "hint": "דיסלקציה נכתב עם צ",
+      "example": "סובל מ_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "מטבוליזם",
+      "typo": "מתבוליזם",
+      "hint": "מטבוליזם נכתב עם ט",
+      "example": "ה_____ שלי מהיר",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קונסטיטוציה",
+      "typo": "קונסתיתוציה",
+      "hint": "קונסטיטוציה נכתב עם ט",
+      "example": "ה_____ קובעת חוקים",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "בירוקרטיה",
+      "typo": "ביורוקרטיה",
+      "hint": "בירוקרטיה נכתב בלי ו אחרי י",
+      "example": "ה_____ מסובכת",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "דמוקרטיה",
+      "typo": "דמוקרתיה",
+      "hint": "דמוקרטיה נכתב עם ט",
+      "example": "ישראל היא _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אריסטוקרטיה",
+      "typo": "אריסתוקרטיה",
+      "hint": "אריסטוקרטיה נכתב עם ט",
+      "example": "ה_____ שלטה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "לגיטימציה",
+      "typo": "לגיתימציה",
+      "hint": "לגיטימציה נכתב עם ט",
+      "example": "קיבל _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פרוצדורה",
+      "typo": "פרוצדורא",
+      "hint": "פרוצדורה נכתב עם ה בסוף",
+      "example": "ה_____ מסובכת",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "רגולציה",
+      "typo": "רגולצייה",
+      "hint": "רגולציה נכתב עם י אחת",
+      "example": "_____ חדשה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קואליציה",
+      "typo": "קואליצייה",
+      "hint": "קואליציה נכתב עם י אחת",
+      "example": "ה_____ התפרקה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אופוזיציה",
+      "typo": "אופוזיצייה",
+      "hint": "אופוזיציה נכתב עם י אחת",
+      "example": "ה_____ מתנגדת",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פרלמנט",
+      "typo": "פרלמנת",
+      "hint": "פרלמנט נכתב עם ט בסוף",
+      "example": "ה_____ התכנס",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קונסנזוס",
+      "typo": "קונסנסוס",
+      "hint": "קונסנזוס נכתב עם ז",
+      "example": "הגענו ל_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "רפרנדום",
+      "typo": "רפרנדם",
+      "hint": "רפרנדום נכתב עם ו",
+      "example": "נערך _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "דיפלומטיה",
+      "typo": "דיפלומתיה",
+      "hint": "דיפלומטיה נכתב עם ט",
+      "example": "_____ בינלאומית",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התלהבות",
+      "typo": "התלהבת",
+      "hint": "התלהבות נכתב עם ו",
+      "example": "הוא מלא _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אינטליגנציה",
+      "typo": "אינטליגנצייה",
+      "hint": "אינטליגנציה נכתב עם י אחת",
+      "example": "_____ מלאכותית",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קומוניקציה",
+      "typo": "קומוניקצייה",
+      "hint": "קומוניקציה נכתב עם י אחת",
+      "example": "_____ טובה חשובה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אינפורמציה",
+      "typo": "אינפורמצייה",
+      "hint": "אינפורמציה נכתב עם י אחת",
+      "example": "קיבלתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "טרנספורמציה",
+      "typo": "תרנספורמציה",
+      "hint": "טרנספורמציה נכתב עם ט",
+      "example": "עברתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אינטרפרטציה",
+      "typo": "אינתרפרתציה",
+      "hint": "אינטרפרטציה נכתב עם ט",
+      "example": "_____ מעניינת",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "דוקומנטציה",
+      "typo": "דוקומנתציה",
+      "hint": "דוקומנטציה נכתב עם ט",
+      "example": "כתבתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אימפרוביזציה",
+      "typo": "אימפרוביזצייה",
+      "hint": "אימפרוביזציה נכתב עם י אחת",
+      "example": "הוא מלך ה_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אוריינטציה",
+      "typo": "אוריינתציה",
+      "hint": "אוריינטציה נכתב עם ט",
+      "example": "יום _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קונצנטרציה",
+      "typo": "קונצנתרציה",
+      "hint": "קונצנטרציה נכתב עם ט",
+      "example": "_____ גבוהה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פרופורציה",
+      "typo": "פרופורצייה",
+      "hint": "פרופורציה נכתב עם י אחת",
+      "example": "_____ נכונה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אינפלציה",
+      "typo": "אינפלצייה",
+      "hint": "אינפלציה נכתב עם י אחת",
+      "example": "ה_____ עלתה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אינטואיציה",
+      "typo": "אינתואיציה",
+      "hint": "אינטואיציה נכתב עם ט",
+      "example": "סמכתי על ה_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אמביציה",
+      "typo": "אמביצייה",
+      "hint": "אמביציה נכתב עם י אחת",
+      "example": "יש לו _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "טרדיציה",
+      "typo": "תרדיציה",
+      "hint": "טרדיציה נכתב עם ט",
+      "example": "_____ משפחתית",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קומפוזיציה",
+      "typo": "קומפוזיצייה",
+      "hint": "קומפוזיציה נכתב עם י אחת",
+      "example": "_____ מוזיקלית",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "רזולוציה",
+      "typo": "רזולוצייה",
+      "hint": "רזולוציה נכתב עם י אחת",
+      "example": "_____ גבוהה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "רבולוציה",
+      "typo": "רבולוצייה",
+      "hint": "רבולוציה נכתב עם י אחת",
+      "example": "פרצה _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אבולוציה",
+      "typo": "אבולוצייה",
+      "hint": "אבולוציה נכתב עם י אחת",
+      "example": "תורת ה_____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "סימולציה",
+      "typo": "סימולצייה",
+      "hint": "סימולציה נכתב עם י אחת",
+      "example": "הרצתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אילוסטרציה",
+      "typo": "אילוסתרציה",
+      "hint": "אילוסטרציה נכתב עם ט",
+      "example": "_____ יפה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "דמונסטרציה",
+      "typo": "דמונסתרציה",
+      "hint": "דמונסטרציה נכתב עם ט",
+      "example": "נערכה _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פרופסיונלי",
+      "typo": "פרופסיונאלי",
+      "hint": "פרופסיונלי נכתב בלי א",
+      "example": "הוא מאוד _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אינטלקטואלי",
+      "typo": "אינתלקתואלי",
+      "hint": "אינטלקטואלי נכתב עם ט",
+      "example": "דיון _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "קונבנציונלי",
+      "typo": "קונבנציונאלי",
+      "hint": "קונבנציונלי נכתב בלי א",
+      "example": "פתרון _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פונדמנטלי",
+      "typo": "פונדמנתלי",
+      "hint": "פונדמנטלי נכתב עם ט",
+      "example": "עיקרון _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "סנטימנטלי",
+      "typo": "סנתימנתלי",
+      "hint": "סנטימנטלי נכתב עם ט",
+      "example": "סרט _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התנדבות",
+      "typo": "התנדבת",
+      "hint": "התנדבות נכתב עם ו",
+      "example": "עשיתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התמחות",
+      "typo": "התמחת",
+      "hint": "התמחות נכתב עם ו",
+      "example": "עברתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התעמלות",
+      "typo": "התעמלת",
+      "hint": "התעמלות נכתב עם ו",
+      "example": "שיעור _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התפתחות",
+      "typo": "התפתחת",
+      "hint": "התפתחות נכתב עם ו",
+      "example": "_____ מרשימה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התנהגות",
+      "typo": "התנהגת",
+      "hint": "התנהגות נכתב עם ו",
+      "example": "_____ טובה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התרגשות",
+      "typo": "התרגשת",
+      "hint": "התרגשות נכתב עם ו",
+      "example": "הרגשתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התחייבות",
+      "typo": "התחייבת",
+      "hint": "התחייבות נכתב עם ו",
+      "example": "לקחתי _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "התמודדות",
+      "typo": "התמודדת",
+      "hint": "התמודדות נכתב עם ו",
+      "example": "_____ עם קשיים",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אדמיניסטרציה",
+      "typo": "אדמיניסתרציה",
+      "hint": "אדמיניסטרציה נכתב עם ט",
+      "example": "ה_____ טיפלה",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אינסטרומנטלי",
+      "typo": "אינסתרומנתלי",
+      "hint": "אינסטרומנטלי נכתב עם ט",
+      "example": "מוזיקה _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אקספרימנטלי",
+      "typo": "אקספרימנתלי",
+      "hint": "אקספרימנטלי נכתב עם ט",
+      "example": "מחקר _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פרגמטי",
+      "typo": "פרגמתי",
+      "hint": "פרגמטי נכתב עם ט",
+      "example": "גישה _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "סיסטמטי",
+      "typo": "סיסתמתי",
+      "hint": "סיסטמטי נכתב עם ט",
+      "example": "עבודה _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "אוטומטי",
+      "typo": "אוטומתי",
+      "hint": "אוטומטי נכתב עם ט בסוף",
+      "example": "תהליך _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "דיפלומטי",
+      "typo": "דיפלומתי",
+      "hint": "דיפלומטי נכתב עם ט",
+      "example": "פתרון _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "פרובלמטי",
+      "typo": "פרובלמתי",
+      "hint": "פרובלמטי נכתב עם ט",
+      "example": "מצב _____",
+      "difficulty": "expert",
+      "type": "words"
+    },
+    {
+      "word": "כריזמטי",
+      "typo": "כריזמתי",
+      "hint": "כריזמטי נכתב עם ט",
+      "example": "מנהיג _____",
+      "difficulty": "expert",
+      "type": "words"
     }
   ]
 }

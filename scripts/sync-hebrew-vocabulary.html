@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sync Hebrew Vocabulary to Firebase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: white;
+        }
+        button {
+            background: #4ecdc4;
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #3dbdb5;
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        button.danger {
+            background: #ff6b6b;
+        }
+        button.danger:hover {
+            background: #ff5252;
+        }
+        #log {
+            background: #0d0d1a;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { color: #4ecdc4; }
+        .error { color: #ff6b6b; }
+        .info { color: #f59e0b; }
+        .stats {
+            background: #0d0d1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .stats h3 { margin-top: 0; color: #4ecdc4; }
+    </style>
+</head>
+<body>
+    <h1>Sync Hebrew Vocabulary to Firebase</h1>
+    <p>This script uploads the local vocabulary.json to Firebase, replacing all Hebrew vocabulary data.</p>
+
+    <div class="stats" id="stats" style="display: none;">
+        <h3>Vocabulary Stats</h3>
+        <div id="statsContent"></div>
+    </div>
+
+    <button id="loadBtn" onclick="loadLocalVocabulary()">1. Load Local JSON</button>
+    <button id="compareBtn" onclick="compareWithFirebase()" disabled>2. Compare with Firebase</button>
+    <button id="syncBtn" onclick="syncToFirebase()" disabled class="danger">3. Sync to Firebase</button>
+
+    <div id="log"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBWc81acgd-9tVi4wLlAw_PXdEgR0n81qU",
+            authDomain: "trip-9506c.firebaseapp.com",
+            projectId: "trip-9506c",
+            storageBucket: "trip-9506c.firebasestorage.app",
+            messagingSenderId: "813393240812",
+            appId: "1:813393240812:web:929bed95de2c48d5e43bc9",
+            databaseURL: "https://trip-9506c-default-rtdb.firebaseio.com/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let localData = null;
+        let firebaseData = null;
+
+        function log(message, type = '') {
+            const logEl = document.getElementById('log');
+            const className = type ? ` class="${type}"` : '';
+            logEl.innerHTML += `<span${className}>${message}</span>\n`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function countByDifficulty(wordPairs) {
+            const counts = { easy: 0, medium: 0, hard: 0, expert: 0 };
+            for (const pair of wordPairs) {
+                if (counts[pair.difficulty] !== undefined) {
+                    counts[pair.difficulty]++;
+                }
+            }
+            return counts;
+        }
+
+        function showStats(label, wordPairs) {
+            const counts = countByDifficulty(wordPairs);
+            return `${label}: easy=${counts.easy}, medium=${counts.medium}, hard=${counts.hard}, expert=${counts.expert}, total=${wordPairs.length}`;
+        }
+
+        window.loadLocalVocabulary = async function() {
+            const logEl = document.getElementById('log');
+            logEl.innerHTML = '';
+
+            log('Loading local vocabulary.json...', 'info');
+
+            try {
+                const response = await fetch('../hebrew/vocabulary.json');
+                const data = await response.json();
+
+                if (!data.wordPairs || !Array.isArray(data.wordPairs)) {
+                    log('Invalid vocabulary format!', 'error');
+                    return;
+                }
+
+                localData = data.wordPairs;
+                log(`Loaded ${localData.length} word pairs from local JSON`, 'success');
+
+                const counts = countByDifficulty(localData);
+                document.getElementById('stats').style.display = 'block';
+                document.getElementById('statsContent').innerHTML = `
+                    <strong>Local JSON:</strong><br>
+                    - Easy: ${counts.easy}<br>
+                    - Medium: ${counts.medium}<br>
+                    - Hard: ${counts.hard}<br>
+                    - Expert: ${counts.expert}<br>
+                    - <strong>Total: ${localData.length}</strong>
+                `;
+
+                document.getElementById('compareBtn').disabled = false;
+                log('\nClick "Compare with Firebase" to see differences.', 'info');
+
+            } catch (error) {
+                log(`Error loading local JSON: ${error.message}`, 'error');
+            }
+        };
+
+        window.compareWithFirebase = async function() {
+            log('\nFetching Firebase data...', 'info');
+
+            try {
+                const snapshot = await get(ref(db, 'vocabulary/hebrew'));
+                const data = snapshot.val();
+
+                if (!data) {
+                    log('No data in Firebase!', 'info');
+                    firebaseData = [];
+                } else {
+                    firebaseData = Object.values(data);
+                    log(`Found ${firebaseData.length} word pairs in Firebase`, 'success');
+                }
+
+                const fbCounts = countByDifficulty(firebaseData);
+                const localCounts = countByDifficulty(localData);
+
+                document.getElementById('statsContent').innerHTML += `
+                    <br><strong>Firebase:</strong><br>
+                    - Easy: ${fbCounts.easy}<br>
+                    - Medium: ${fbCounts.medium}<br>
+                    - Hard: ${fbCounts.hard}<br>
+                    - Expert: ${fbCounts.expert}<br>
+                    - <strong>Total: ${firebaseData.length}</strong>
+                `;
+
+                log('\nDifferences:', 'info');
+                log(`  Local has ${localData.length - firebaseData.length} more entries`);
+                log(`  Easy: ${localCounts.easy} vs ${fbCounts.easy} (${localCounts.easy - fbCounts.easy > 0 ? '+' : ''}${localCounts.easy - fbCounts.easy})`);
+                log(`  Medium: ${localCounts.medium} vs ${fbCounts.medium}`);
+                log(`  Hard: ${localCounts.hard} vs ${fbCounts.hard}`);
+                log(`  Expert: ${localCounts.expert} vs ${fbCounts.expert} (${localCounts.expert - fbCounts.expert > 0 ? '+' : ''}${localCounts.expert - fbCounts.expert})`);
+
+                document.getElementById('syncBtn').disabled = false;
+                log('\nClick "Sync to Firebase" to upload local data.', 'info');
+
+            } catch (error) {
+                log(`Error fetching Firebase: ${error.message}`, 'error');
+            }
+        };
+
+        window.syncToFirebase = async function() {
+            if (!localData) {
+                log('No local data loaded!', 'error');
+                return;
+            }
+
+            const confirmed = confirm(`Are you sure you want to replace Firebase data?\n\nThis will upload ${localData.length} word pairs to Firebase.`);
+            if (!confirmed) return;
+
+            document.getElementById('syncBtn').disabled = true;
+            document.getElementById('loadBtn').disabled = true;
+            document.getElementById('compareBtn').disabled = true;
+
+            log('\nUploading to Firebase...', 'info');
+
+            try {
+                // Convert array to object with keys
+                const dataObject = {};
+                localData.forEach((item, index) => {
+                    dataObject[`word_${index.toString().padStart(4, '0')}`] = item;
+                });
+
+                await set(ref(db, 'vocabulary/hebrew'), dataObject);
+
+                log(`\nSuccessfully uploaded ${localData.length} word pairs to Firebase!`, 'success');
+                log('Firebase is now synced with local vocabulary.json', 'success');
+
+            } catch (error) {
+                log(`Error uploading to Firebase: ${error.message}`, 'error');
+                document.getElementById('syncBtn').disabled = false;
+            }
+
+            document.getElementById('loadBtn').disabled = false;
+        };
+    </script>
+</body>
+</html>
