@@ -1115,3 +1115,33 @@ h1 {
         padding: 1.5rem;
     }
 }
+
+/* ============================================
+   REDUCED MOTION SUPPORT
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .card {
+        transition: none;
+    }
+
+    .word-card {
+        transition: none;
+    }
+
+    button {
+        transition: none;
+    }
+
+    button:hover {
+        transform: none;
+    }
+}

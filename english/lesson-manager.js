@@ -6,34 +6,13 @@ const LessonManager = {
     currentLessonId: 'all',
 
     // Initialize and load vocabulary
-    async init(embeddedVocabulary) {
-        try {
-            const response = await fetch('vocabulary.json');
-            if (response.ok) {
-                const data = await response.json();
-
-                // Check if new structure (with vocabulary array)
-                if (data.vocabulary && Array.isArray(data.vocabulary)) {
-                    this.allVocabulary = data.vocabulary;
-                    console.log('✅ Vocabulary loaded from external JSON file (normalized structure)');
-                } else if (data.lessons && Array.isArray(data.lessons)) {
-                    // Legacy lessons structure
-                    this.allVocabulary = data.lessons.flatMap(lesson =>
-                        lesson.words.map(word => ({...word, lesson: lesson.id}))
-                    );
-                    console.log('✅ Vocabulary loaded from external JSON file (legacy lessons structure)');
-                } else {
-                    // Old structure - array of words without lesson property
-                    this.allVocabulary = data.map(word => ({...word, lesson: 1}));
-                    console.log('✅ Vocabulary loaded from external JSON file (legacy flat structure)');
-                }
-            } else {
-                console.log('ℹ️ No external JSON found, using embedded vocabulary');
-                this.allVocabulary = embeddedVocabulary;
-            }
-        } catch (error) {
-            console.log('ℹ️ Using embedded vocabulary');
-            this.allVocabulary = embeddedVocabulary;
+    async init(vocabulary) {
+        if (vocabulary && vocabulary.length > 0) {
+            this.allVocabulary = vocabulary;
+            console.log('✅ Vocabulary initialized with', vocabulary.length, 'words');
+        } else {
+            this.allVocabulary = [];
+            console.log('⚠️ No vocabulary provided');
         }
     },
     
@@ -62,6 +41,11 @@ const LessonManager = {
     // Get current vocabulary
     getCurrentVocabulary() {
         return this.getVocabularyForLesson(this.currentLessonId);
+    },
+
+    // Get current lesson ID
+    getCurrentLesson() {
+        return this.currentLessonId;
     },
     
     // Create lesson selector HTML

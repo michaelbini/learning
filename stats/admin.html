@@ -258,6 +258,16 @@
             100% { transform: rotate(360deg); }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         .empty-state .icon {
             font-size: 3em;
             margin-bottom: 15px;
@@ -383,12 +393,12 @@
         <div class="section">
             <h2>🏆 טבלאות מובילים</h2>
             <div class="leaderboard-tabs" id="leaderboardTabs">
-                <button class="leaderboard-tab active" data-game="english-flashcards">קלפים</button>
-                <button class="leaderboard-tab" data-game="english-quiz">חידון</button>
-                <button class="leaderboard-tab" data-game="english-typing">הקלדה</button>
-                <button class="leaderboard-tab" data-game="english-board">לוח</button>
-                <button class="leaderboard-tab" data-game="hebrew-spelling">איות עברית</button>
-                <button class="leaderboard-tab" data-game="hebrew-spelling-compare">השוואת איות</button>
+                <button type="button" class="leaderboard-tab active" data-game="english-flashcards">קלפים</button>
+                <button type="button" class="leaderboard-tab" data-game="english-quiz">חידון</button>
+                <button type="button" class="leaderboard-tab" data-game="english-typing">הקלדה</button>
+                <button type="button" class="leaderboard-tab" data-game="english-board">לוח</button>
+                <button type="button" class="leaderboard-tab" data-game="hebrew-spelling">איות עברית</button>
+                <button type="button" class="leaderboard-tab" data-game="hebrew-spelling-compare">השוואת איות</button>
             </div>
             <div id="leaderboardContainer">
                 <div class="loading">

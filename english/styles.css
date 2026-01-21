@@ -310,21 +310,21 @@ h1 {
 
 /* Quiz Modal Styles */
 .quiz-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
+    border: none;
+    background: transparent;
+    max-width: 100%;
+    max-height: 100%;
     padding: 20px;
 }
 
-.quiz-modal.active {
+.quiz-modal::backdrop {
+    background: rgba(0,0,0,0.8);
+}
+
+.quiz-modal[open] {
     display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .quiz-content {
@@ -1061,5 +1061,51 @@ h1 {
 
     .word-display {
         padding: 25px;
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY - Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .card {
+        transition: none;
+    }
+
+    .tile {
+        transition: none;
+    }
+
+    .game-card {
+        transition: none;
+    }
+
+    button {
+        transition: none;
+    }
+
+    button:hover {
+        transform: none;
+    }
+
+    .speaker-btn:hover {
+        transform: none;
+    }
+
+    .option-btn:hover:not(:disabled) {
+        transform: none;
+    }
+
+    .tile:hover {
+        transform: none;
     }
 }

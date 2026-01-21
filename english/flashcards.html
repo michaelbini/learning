@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>משחק קלפי אוצר מילים</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="lesson-manager.js" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
+    <script src="lesson-manager.js?v=2" onerror="console.log('lesson-manager.js not found, using basic mode')"></script>
 </head>
 <body class="flashcards-body">
     <div class="container">
@@ -29,12 +29,12 @@
         </div>
 
         <div class="card-container">
-            <button class="speaker-btn" id="speakerBtn" onclick="speakWord()" title="הקרא את המילה">
+            <button type="button" class="speaker-btn" id="speakerBtn" onclick="speakWord()" title="הקרא את המילה" aria-label="הקרא את המילה">
                 🔊
             </button>
             <div class="card" id="card" onclick="flipCard()">
                 <div class="card-face card-front" id="front">
-                    <button class="speaker-btn" onclick="event.stopPropagation(); speakWord();" title="הקרא את המילה">
+                    <button type="button" class="speaker-btn" onclick="event.stopPropagation(); speakWord();" title="הקרא את המילה" aria-label="הקרא את המילה">
                         🔊
                     </button>
                     <span id="question"></span>
@@ -49,10 +49,10 @@
         </div>
 
         <div class="controls" id="answerButtons">
-            <button style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 15px 30px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="markAnswer(true)">
+            <button type="button" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 15px 30px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="markAnswer(true)">
                 ✅ צדקתי
             </button>
-            <button style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; padding: 15px 30px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="markAnswer(false)">
+            <button type="button" style="background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; padding: 15px 30px; font-size: 1.1em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);" onclick="markAnswer(false)">
                 ❌ טעיתי
             </button>
         </div>
@@ -64,314 +64,16 @@
                 <div style="margin: 10px 0;">❌ טעיתי: <strong style="color: #eb3349; font-size: 1.5em;" id="finalWrong">0</strong></div>
             </div>
             <div style="margin-top: 30px;">
-                <button onclick="restartGame()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; font-size: 1.2em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px;">
+                <button type="button" onclick="restartGame()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 30px; font-size: 1.2em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px;">
                     🔄 שחק שוב (כל המילים)
                 </button>
-                <button id="retryWrongBtn" onclick="retryWrongCards()" style="display: none; background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; padding: 15px 30px; font-size: 1.2em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px;">
+                <button type="button" id="retryWrongBtn" onclick="retryWrongCards()" style="display: none; background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%); color: white; padding: 15px 30px; font-size: 1.2em; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin: 5px;">
                     💪 תרגל רק מילים שטעיתי
                 </button>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        // ============================================
-        // IMPORTS
-        // ============================================
-        import { vocabularyService } from '../shared/vocabulary-service.js';
-        import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
-        import { statisticsService } from '../shared/statistics-service.js';
-
-        // ============================================
-        // JSON מוטמע (ברירת מחדל)
-        // ============================================
-        const EMBEDDED_VOCABULARY = [
-            { "english": "perfect", "hebrew": "מושלם", "lesson": 1 },
-            { "english": "inside", "hebrew": "בפנים", "lesson": 1 },
-            { "english": "area", "hebrew": "אזור", "lesson": 1 },
-            { "english": "bridge", "hebrew": "גשר", "lesson": 1 },
-            { "english": "danger", "hebrew": "סכנה", "lesson": 1 }
-        ];
-
-        let vocabulary = EMBEDDED_VOCABULARY;
-
-        // ============================================
-        // טעינה אוטומטית עם תמיכה בשיעורים
-        // 3-tier fallback: Firebase -> JSON -> Embedded
-        // ============================================
-        async function loadVocabulary() {
-            // Create offline indicator
-            createOfflineIndicator();
-
-            // Set up status callback
-            vocabularyService.setStatusCallback(({ isOnline, source }) => {
-                showOfflineIndicator(!isOnline);
-            });
-
-            // Try VocabularyService (Firebase -> JSON -> null)
-            const data = await vocabularyService.getEnglishVocabulary();
-
-            if (data && data.vocabulary && data.vocabulary.length > 0) {
-                // Check if LessonManager exists
-                if (typeof LessonManager !== 'undefined') {
-                    await LessonManager.init(data.vocabulary);
-                    LessonManager.createLessonSelector('lessonSelector', onLessonChange, {
-                        includeShuffleButton: true,
-                        onShuffle: shuffleCards
-                    });
-                } else {
-                    vocabulary = data.vocabulary;
-                }
-                console.log('✅ Vocabulary loaded from ' + vocabularyService.getLastSource());
-                initializeGame();
-                return;
-            }
-
-            // Fallback to embedded vocabulary
-            showOfflineIndicator(true);
-            if (typeof LessonManager !== 'undefined') {
-                await LessonManager.init(EMBEDDED_VOCABULARY);
-                LessonManager.createLessonSelector('lessonSelector', onLessonChange, {
-                    includeShuffleButton: true,
-                    onShuffle: shuffleCards
-                });
-            }
-            console.log('ℹ️ Using embedded vocabulary');
-            initializeGame();
-        }
-        
-        function onLessonChange(lesson) {
-            // Reset game state
-            correctCount = 0;
-            wrongCount = 0;
-            wrongCards = [];
-            currentIndex = 0;
-            
-            document.getElementById('correctScore').textContent = '0';
-            document.getElementById('wrongScore').textContent = '0';
-            
-            // Reinitialize with new lesson
-            initializeGame();
-        }
-
-        function initializeGame() {
-            if (typeof LessonManager !== 'undefined') {
-                vocabulary = LessonManager.getCurrentVocabulary();
-            }
-            cards = shuffleArray([...vocabulary]);
-            currentIndex = 0;
-
-            // Start statistics session
-            const currentLesson = typeof LessonManager !== 'undefined' ? LessonManager.getCurrentLesson() : null;
-            statisticsService.startSession('english-flashcards', {
-                totalWords: cards.length,
-                lesson: currentLesson,
-                isRetryMode: isRetryMode,
-                source: vocabularyService.getLastSource()
-            });
-
-            displayCard();
-        }
-
-        let currentIndex = 0;
-        let cards = [];
-        let correctCount = 0;
-        let wrongCount = 0;
-        let wrongCards = []; // Track cards that were marked as wrong
-        let isRetryMode = false;
-
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        // Initialize with shuffled cards
-        cards = shuffleArray([...vocabulary]);
-
-        function displayCard() {
-            const card = cards[currentIndex];
-            const cardElement = document.getElementById('card');
-            
-            // Force remove flipped class immediately
-            cardElement.classList.remove('flipped');
-            
-            // Small delay to ensure DOM updates, then set content
-            setTimeout(() => {
-                document.getElementById('question').textContent = card.english;
-                document.getElementById('answer').textContent = card.hebrew;
-                document.getElementById('progress').textContent = `קלף ${currentIndex + 1} מתוך ${cards.length}`;
-            }, 0);
-        }
-
-        function speakWord() {
-            const card = cards[currentIndex];
-            if (!card) return;
-            
-            // Check if speech synthesis is supported
-            if ('speechSynthesis' in window) {
-                // Cancel any ongoing speech
-                window.speechSynthesis.cancel();
-                
-                const utterance = new SpeechSynthesisUtterance(card.english);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.8;
-                
-                const btn = document.querySelector('.speaker-btn');
-                if (btn) {
-                    btn.classList.add('playing');
-                    utterance.onend = () => {
-                        btn.classList.remove('playing');
-                    };
-                }
-                
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        function flipCard() {
-            document.getElementById('card').classList.toggle('flipped');
-        }
-
-        function markAnswer(isCorrect) {
-            if (isCorrect) {
-                correctCount++;
-                document.getElementById('correctScore').textContent = correctCount;
-            } else {
-                wrongCount++;
-                document.getElementById('wrongScore').textContent = wrongCount;
-                
-                // Track wrong card if not already tracked
-                const currentCard = cards[currentIndex];
-                if (!wrongCards.find(c => c.english === currentCard.english)) {
-                    wrongCards.push(currentCard);
-                }
-            }
-            
-            // First, flip back to English if card is flipped
-            const cardElement = document.getElementById('card');
-            if (cardElement.classList.contains('flipped')) {
-                cardElement.classList.remove('flipped');
-                
-                // Wait for flip animation to complete, then move to next card
-                setTimeout(() => {
-                    nextCard();
-                }, 300); // Half of the 0.6s flip animation
-            } else {
-                // If already showing English, move to next card immediately
-                nextCard();
-            }
-        }
-
-        function nextCard() {
-            currentIndex++;
-            if (currentIndex >= cards.length) {
-                showFinalScreen();
-            } else {
-                displayCard();
-            }
-        }
-
-        function shuffleCards() {
-            // Shuffle the current cards array
-            cards = shuffleArray(cards);
-            currentIndex = 0;
-            displayCard();
-        }
-
-        async function showFinalScreen() {
-            // End statistics session
-            await statisticsService.endSession({
-                correctCount: correctCount,
-                wrongCount: wrongCount
-            });
-
-            // Hide game area
-            document.querySelector('.card-container').style.display = 'none';
-            document.querySelector('.progress').style.display = 'none';
-            document.getElementById('answerButtons').style.display = 'none';
-            document.querySelector('.controls').style.display = 'none';
-            document.querySelector('.hint').style.display = 'none';
-
-            // Show final screen
-            document.getElementById('finalScreen').style.display = 'block';
-            document.getElementById('finalCorrect').textContent = correctCount;
-            document.getElementById('finalWrong').textContent = wrongCount;
-
-            // Show retry button if there are wrong cards
-            if (wrongCards.length > 0) {
-                const retryBtn = document.getElementById('retryWrongBtn');
-                retryBtn.style.display = 'inline-block';
-                retryBtn.textContent = `💪 תרגל רק מילים שטעיתי (${wrongCards.length} מילים)`;
-            }
-        }
-
-        function restartGame() {
-            // Reset everything and shuffle
-            cards = shuffleArray([...vocabulary]);
-            correctCount = 0;
-            wrongCount = 0;
-            wrongCards = [];
-            isRetryMode = false;
-            currentIndex = 0;
-            
-            document.getElementById('correctScore').textContent = '0';
-            document.getElementById('wrongScore').textContent = '0';
-            
-            // Show game area
-            document.querySelector('.card-container').style.display = 'block';
-            document.querySelector('.progress').style.display = 'block';
-            document.getElementById('answerButtons').style.display = 'flex';
-            document.querySelectorAll('.controls').forEach(el => el.style.display = 'flex');
-            document.querySelector('.hint').style.display = 'block';
-            document.getElementById('finalScreen').style.display = 'none';
-            
-            displayCard();
-        }
-
-        function retryWrongCards() {
-            // Use only wrong cards and shuffle them
-            cards = shuffleArray([...wrongCards]);
-            wrongCards = []; // Reset wrong cards for the new retry game
-            correctCount = 0;
-            wrongCount = 0;
-            isRetryMode = true;
-            currentIndex = 0;
-            
-            document.getElementById('correctScore').textContent = '0';
-            document.getElementById('wrongScore').textContent = '0';
-            
-            // Show game area
-            document.querySelector('.card-container').style.display = 'block';
-            document.querySelector('.progress').style.display = 'block';
-            document.getElementById('answerButtons').style.display = 'flex';
-            document.querySelectorAll('.controls').forEach(el => el.style.display = 'flex');
-            document.querySelector('.hint').style.display = 'block';
-            document.getElementById('finalScreen').style.display = 'none';
-            
-            displayCard();
-        }
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === ' ' || e.key === 'Enter') {
-                e.preventDefault();
-                flipCard();
-            } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-                e.preventDefault();
-                nextCard();
-            }
-        });
-
-        // Initialize game on load - automatically check for external JSON
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadVocabulary);
-        } else {
-            loadVocabulary();
-        }
-    </script>
+    <script type="module" src="flashcards.js"></script>
 </body>
 </html>

@@ -1528,3 +1528,33 @@ h3 {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     border-color: var(--primary-color);
 }
+
+/* ============================================
+   REDUCED MOTION SUPPORT
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .car {
+        transition: none !important;
+    }
+
+    .progress-bar {
+        transition: none !important;
+    }
+
+    .grid-cell {
+        transition: none !important;
+    }
+
+    .feedback {
+        transition: none !important;
+    }
+}

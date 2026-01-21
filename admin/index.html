@@ -131,23 +131,23 @@
         input:focus, select:focus { border-color: #4fc3f7; outline: none; }
 
         /* Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+        .modal-dialog {
+            border: none;
+            background: transparent;
+            padding: 0;
+            max-width: 100%;
+            max-height: 100%;
         }
-        .modal-overlay.active { display: flex; }
+        .modal-dialog::backdrop {
+            background: rgba(0,0,0,0.7);
+        }
         .modal {
             background: #2d2d44;
             padding: 25px;
             border-radius: 12px;
             min-width: 350px;
             max-width: 500px;
-            width: 90%;
+            width: 90vw;
             max-height: 80vh;
             overflow-y: auto;
         }
@@ -210,6 +210,16 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         /* Sync Panel */
         .sync-section {
             background: #252538;
@@ -263,10 +273,10 @@
         </div>
 
         <nav class="nav">
-            <button class="active" onclick="showPanel('dashboard')">📊 Dashboard</button>
-            <button onclick="showPanel('english')">🇬🇧 English</button>
-            <button onclick="showPanel('hebrew')">🇮🇱 Hebrew</button>
-            <button onclick="showPanel('sync')">🔄 Sync / Import</button>
+            <button type="button" class="active" onclick="showPanel('dashboard')">📊 Dashboard</button>
+            <button type="button" onclick="showPanel('english')">🇬🇧 English</button>
+            <button type="button" onclick="showPanel('hebrew')">🇮🇱 Hebrew</button>
+            <button type="button" onclick="showPanel('sync')">🔄 Sync / Import</button>
         </nav>
 
         <!-- Dashboard Panel -->
@@ -318,7 +328,7 @@
                 <select id="englishLessonFilter" onchange="renderEnglishTable()">
                     <option value="">All Lessons</option>
                 </select>
-                <button onclick="showAddEnglishModal()">+ Add Word</button>
+                <button type="button" onclick="showAddEnglishModal()">+ Add Word</button>
             </div>
             <div class="table-container">
                 <table>
@@ -335,7 +345,7 @@
             </div>
             <div id="englishEmpty" class="empty-state" style="display:none;">
                 <p>No English vocabulary in Firebase yet.</p>
-                <button onclick="showPanel('sync')" class="success">Import from JSON</button>
+                <button type="button" onclick="showPanel('sync')" class="success">Import from JSON</button>
             </div>
         </div>
 
@@ -355,7 +365,7 @@
                     <option value="hard">Hard</option>
                     <option value="expert">Expert</option>
                 </select>
-                <button onclick="showAddHebrewModal()">+ Add Pair</button>
+                <button type="button" onclick="showAddHebrewModal()">+ Add Pair</button>
             </div>
             <div class="table-container">
                 <table>
@@ -373,7 +383,7 @@
             </div>
             <div id="hebrewEmpty" class="empty-state" style="display:none;">
                 <p>No Hebrew vocabulary in Firebase yet.</p>
-                <button onclick="showPanel('sync')" class="success">Import from JSON</button>
+                <button type="button" onclick="showPanel('sync')" class="success">Import from JSON</button>
             </div>
         </div>
 
@@ -383,9 +393,9 @@
                 <h4>📤 Import JSON to Firebase</h4>
                 <p style="color: #888; margin-bottom: 15px;">Upload local JSON files to Firebase. This will add items with Firebase-generated IDs.</p>
                 <div class="sync-buttons">
-                    <button onclick="importToFirebase('english')" class="success">📤 Import English JSON</button>
-                    <button onclick="importToFirebase('hebrew')" class="success">📤 Import Hebrew JSON</button>
-                    <button onclick="importToFirebase('all')" class="success">📤 Import All</button>
+                    <button type="button" onclick="importToFirebase('english')" class="success">📤 Import English JSON</button>
+                    <button type="button" onclick="importToFirebase('hebrew')" class="success">📤 Import Hebrew JSON</button>
+                    <button type="button" onclick="importToFirebase('all')" class="success">📤 Import All</button>
                 </div>
             </div>
 
@@ -393,8 +403,8 @@
                 <h4>📥 Export Firebase to JSON</h4>
                 <p style="color: #888; margin-bottom: 15px;">Download current Firebase data as JSON files (for backup or fallback).</p>
                 <div class="sync-buttons">
-                    <button onclick="exportFromFirebase('english')" class="secondary">📥 Export English</button>
-                    <button onclick="exportFromFirebase('hebrew')" class="secondary">📥 Export Hebrew</button>
+                    <button type="button" onclick="exportFromFirebase('english')" class="secondary">📥 Export English</button>
+                    <button type="button" onclick="exportFromFirebase('hebrew')" class="secondary">📥 Export Hebrew</button>
                 </div>
             </div>
 
@@ -402,8 +412,8 @@
                 <h4>⚠️ Danger Zone</h4>
                 <p style="color: #888; margin-bottom: 15px;">Clear all data from Firebase. Use with caution!</p>
                 <div class="sync-buttons">
-                    <button onclick="clearFirebase('english')" class="danger">🗑️ Clear English</button>
-                    <button onclick="clearFirebase('hebrew')" class="danger">🗑️ Clear Hebrew</button>
+                    <button type="button" onclick="clearFirebase('english')" class="danger">🗑️ Clear English</button>
+                    <button type="button" onclick="clearFirebase('hebrew')" class="danger">🗑️ Clear Hebrew</button>
                 </div>
             </div>
 
@@ -415,53 +425,53 @@
     </div>
 
     <!-- Add/Edit English Modal -->
-    <div class="modal-overlay" id="englishModal">
+    <dialog class="modal-dialog" id="englishModal">
         <div class="modal">
             <h2 id="englishModalTitle">Add English Word</h2>
             <input type="hidden" id="englishEditId">
             <div class="form-group">
                 <label>English Word</label>
-                <input type="text" id="inputEnglish" placeholder="e.g., book">
+                <input type="text" id="inputEnglish" name="english" placeholder="e.g., book">
             </div>
             <div class="form-group">
                 <label>Hebrew Translation</label>
-                <input type="text" id="inputHebrew" placeholder="e.g., ספר" dir="rtl">
+                <input type="text" id="inputHebrew" name="hebrew" placeholder="e.g., ספר" dir="rtl">
             </div>
             <div class="form-group">
                 <label>Lesson</label>
-                <input type="number" id="inputLesson" placeholder="e.g., 1" min="1">
+                <input type="number" id="inputLesson" name="lesson" placeholder="e.g., 1" min="1">
             </div>
             <div class="modal-actions">
-                <button class="secondary" onclick="closeModal('englishModal')">Cancel</button>
-                <button onclick="saveEnglishWord()">Save</button>
+                <button type="button" class="secondary" onclick="closeModal('englishModal')">Cancel</button>
+                <button type="button" onclick="saveEnglishWord()">Save</button>
             </div>
         </div>
-    </div>
+    </dialog>
 
     <!-- Add/Edit Hebrew Modal -->
-    <div class="modal-overlay" id="hebrewModal">
+    <dialog class="modal-dialog" id="hebrewModal">
         <div class="modal">
             <h2 id="hebrewModalTitle">Add Hebrew Pair</h2>
             <input type="hidden" id="hebrewEditId">
             <div class="form-group">
                 <label>Correct Word</label>
-                <input type="text" id="inputWord" placeholder="e.g., ילד" dir="rtl">
+                <input type="text" id="inputWord" name="word" placeholder="e.g., ילד" dir="rtl">
             </div>
             <div class="form-group">
                 <label>Common Typo</label>
-                <input type="text" id="inputTypo" placeholder="e.g., ילת" dir="rtl">
+                <input type="text" id="inputTypo" name="typo" placeholder="e.g., ילת" dir="rtl">
             </div>
             <div class="form-row">
                 <div class="form-group">
                     <label>Type</label>
-                    <select id="inputType">
+                    <select id="inputType" name="type">
                         <option value="words">Words</option>
                         <option value="numbers">Numbers</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Difficulty</label>
-                    <select id="inputDifficulty">
+                    <select id="inputDifficulty" name="difficulty">
                         <option value="easy">Easy</option>
                         <option value="medium">Medium</option>
                         <option value="hard">Hard</option>
@@ -471,18 +481,18 @@
             </div>
             <div class="form-group">
                 <label>Hint (optional)</label>
-                <input type="text" id="inputHint" placeholder="e.g., נכתב עם ד בסוף" dir="rtl">
+                <input type="text" id="inputHint" name="hint" placeholder="e.g., נכתב עם ד בסוף" dir="rtl">
             </div>
             <div class="form-group">
                 <label>Example (optional)</label>
-                <input type="text" id="inputExample" placeholder="e.g., ה_____ משחק בגן" dir="rtl">
+                <input type="text" id="inputExample" name="example" placeholder="e.g., ה_____ משחק בגן" dir="rtl">
             </div>
             <div class="modal-actions">
-                <button class="secondary" onclick="closeModal('hebrewModal')">Cancel</button>
-                <button onclick="saveHebrewPair()">Save</button>
+                <button type="button" class="secondary" onclick="closeModal('hebrewModal')">Cancel</button>
+                <button type="button" onclick="saveHebrewPair()">Save</button>
             </div>
         </div>
-    </div>
+    </dialog>
 
     <!-- Toast -->
     <div class="toast" id="toast"></div>
@@ -686,7 +696,7 @@
 
         // Modal functions
         window.closeModal = function(id) {
-            document.getElementById(id).classList.remove('active');
+            document.getElementById(id).close();
         };
 
         window.showAddEnglishModal = function() {
@@ -695,7 +705,7 @@
             document.getElementById('inputEnglish').value = '';
             document.getElementById('inputHebrew').value = '';
             document.getElementById('inputLesson').value = '1';
-            document.getElementById('englishModal').classList.add('active');
+            document.getElementById('englishModal').showModal();
             document.getElementById('inputEnglish').focus();
         };
 
@@ -706,7 +716,7 @@
             document.getElementById('inputEnglish').value = word.english;
             document.getElementById('inputHebrew').value = word.hebrew;
             document.getElementById('inputLesson').value = word.lesson;
-            document.getElementById('englishModal').classList.add('active');
+            document.getElementById('englishModal').showModal();
         };
 
         window.saveEnglishWord = async function() {
@@ -757,7 +767,7 @@
             document.getElementById('inputDifficulty').value = 'medium';
             document.getElementById('inputHint').value = '';
             document.getElementById('inputExample').value = '';
-            document.getElementById('hebrewModal').classList.add('active');
+            document.getElementById('hebrewModal').showModal();
             document.getElementById('inputWord').focus();
         };
 
@@ -771,7 +781,7 @@
             document.getElementById('inputDifficulty').value = pair.difficulty;
             document.getElementById('inputHint').value = pair.hint || '';
             document.getElementById('inputExample').value = pair.example || '';
-            document.getElementById('hebrewModal').classList.add('active');
+            document.getElementById('hebrewModal').showModal();
         };
 
         window.saveHebrewPair = async function() {

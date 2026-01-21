@@ -47,7 +47,7 @@ class PlayerService {
         if (!name) {
             // Keep prompting until valid name is entered
             while (!name || name.trim().length === 0) {
-                name = prompt('🎮 Enter your name to track progress:\n(Name cannot be empty)');
+                name = prompt('🎮 Enter your name to track progress:');
                 if (name) {
                     name = name.toLowerCase().trim();
                 }

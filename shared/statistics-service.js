@@ -30,6 +30,17 @@ class StatisticsService {
         this.db = null;
         this.currentSession = null;
         this.startTime = null;
+        this.sessionId = null;  // Firebase session ID for live tracking
+        this.saveFrequency = 5; // Save to Firebase every N answers (configurable)
+        this.answersSinceLastSave = 0;
+    }
+
+    /**
+     * Set how often to save progress to Firebase.
+     * @param {number} frequency - Save every N answers (default: 5)
+     */
+    setSaveFrequency(frequency) {
+        this.saveFrequency = Math.max(1, frequency);
     }
 
     // ============================================
@@ -68,6 +79,7 @@ class StatisticsService {
     /**
      * Start a new game session.
      * Triggers player name prompt if not already set.
+     * Immediately saves to Firebase with status "in_progress".
      *
      * @param {string} gameId - Game identifier (e.g., 'english-flashcards')
      * @param {object} options - Session options
@@ -77,7 +89,7 @@ class StatisticsService {
      * @param {boolean} [options.isRetryMode] - Is this a retry of wrong words?
      * @param {string} [options.source] - Data source ('firebase', 'json', 'embedded')
      */
-    startSession(gameId, options = {}) {
+    async startSession(gameId, options = {}) {
         // Get player ID (prompts if needed)
         const playerId = playerService.getPlayerId();
 
@@ -87,6 +99,7 @@ class StatisticsService {
         }
 
         this.startTime = Date.now();
+        this.answersSinceLastSave = 0;  // Reset counter for new session
         this.currentSession = {
             playerId: playerId,
             gameId: gameId,
@@ -94,14 +107,104 @@ class StatisticsService {
             lesson: options.lesson || null,
             difficulty: options.difficulty || null,
             isRetryMode: options.isRetryMode || false,
-            source: options.source || 'unknown'
+            source: options.source || 'unknown',
+            // Live tracking
+            correctCount: 0,
+            wrongCount: 0,
+            skippedCount: 0
         };
+
+        // Immediately save to Firebase with "in_progress" status
+        await this._createLiveSession();
 
         console.log(`📊 Session started: ${gameId} (${options.totalWords} words)`);
     }
 
     /**
-     * End the current session and save to Firebase.
+     * Record a single answer (correct/wrong/skipped).
+     * Updates Firebase every N answers (configurable via setSaveFrequency).
+     *
+     * @param {'correct'|'wrong'|'skipped'} result - The answer result
+     */
+    async recordAnswer(result) {
+        if (!this.currentSession || !this.sessionId) {
+            return;
+        }
+
+        if (result === 'correct') {
+            this.currentSession.correctCount++;
+        } else if (result === 'wrong') {
+            this.currentSession.wrongCount++;
+        } else if (result === 'skipped') {
+            this.currentSession.skippedCount++;
+        }
+
+        // Only save to Firebase every N answers
+        this.answersSinceLastSave++;
+        if (this.answersSinceLastSave >= this.saveFrequency) {
+            await this._updateLiveSession();
+            this.answersSinceLastSave = 0;
+        }
+    }
+
+    /**
+     * Create the live session in Firebase.
+     */
+    async _createLiveSession() {
+        if (!await this._init()) return;
+
+        try {
+            const { push, set } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
+            const sessionsRef = ref(this.db, DB_PATHS.SESSIONS);
+            const newSessionRef = push(sessionsRef);
+            this.sessionId = newSessionRef.key;
+
+            const sessionData = {
+                playerId: this.currentSession.playerId,
+                gameId: this.currentSession.gameId,
+                status: 'in_progress',
+                timestamp: new Date().toISOString(),
+                date: new Date().toISOString().split('T')[0],
+                startTime: this.startTime,
+                totalWords: this.currentSession.totalWords,
+                correctCount: 0,
+                wrongCount: 0,
+                skippedCount: 0,
+                lesson: this.currentSession.lesson,
+                difficulty: this.currentSession.difficulty,
+                isRetryMode: this.currentSession.isRetryMode,
+                source: this.currentSession.source
+            };
+
+            await set(newSessionRef, sessionData);
+            console.log('📊 Live session created:', this.sessionId);
+        } catch (error) {
+            console.warn('Statistics: Failed to create live session:', error.message);
+        }
+    }
+
+    /**
+     * Update the live session in Firebase with current counts.
+     */
+    async _updateLiveSession() {
+        if (!this.sessionId || !await this._init()) return;
+
+        try {
+            const { update } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
+            const sessionRef = ref(this.db, `${DB_PATHS.SESSIONS}/${this.sessionId}`);
+
+            await update(sessionRef, {
+                correctCount: this.currentSession.correctCount,
+                wrongCount: this.currentSession.wrongCount,
+                skippedCount: this.currentSession.skippedCount
+            });
+        } catch (error) {
+            console.warn('Statistics: Failed to update live session:', error.message);
+        }
+    }
+
+    /**
+     * End the current session and update Firebase with final results.
      *
      * @param {object} results - Game results
      * @param {number} results.correctCount - Number of correct answers
@@ -117,52 +220,80 @@ class StatisticsService {
         }
 
         const endTime = Date.now();
+        const correctCount = results.correctCount ?? this.currentSession.correctCount;
+        const wrongCount = results.wrongCount ?? this.currentSession.wrongCount;
+        const skippedCount = results.skippedCount ?? this.currentSession.skippedCount;
         const wordsCompleted = results.wordsCompleted ||
-            (results.correctCount + results.wrongCount + (results.skippedCount || 0));
+            (correctCount + wrongCount + skippedCount);
 
-        const session = {
-            // Player & Game Info
-            playerId: this.currentSession.playerId,
-            gameId: this.currentSession.gameId,
-            timestamp: new Date().toISOString(),
-            date: new Date().toISOString().split('T')[0],
-
-            // Game Results
-            totalWords: this.currentSession.totalWords,
+        const finalData = {
+            status: 'completed',
             wordsCompleted: wordsCompleted,
-            correctCount: results.correctCount || 0,
-            wrongCount: results.wrongCount || 0,
-            skippedCount: results.skippedCount || 0,
-            score: this._calculateScore(results.correctCount, wordsCompleted),
-
-            // Time Tracking
-            startTime: this.startTime,
+            correctCount: correctCount,
+            wrongCount: wrongCount,
+            skippedCount: skippedCount,
+            score: this._calculateScore(correctCount, wordsCompleted),
             endTime: endTime,
-            durationSeconds: Math.round((endTime - this.startTime) / 1000),
-
-            // Context
-            lesson: this.currentSession.lesson,
-            difficulty: this.currentSession.difficulty,
-            isRetryMode: this.currentSession.isRetryMode,
-            source: this.currentSession.source
+            durationSeconds: Math.round((endTime - this.startTime) / 1000)
         };
 
-        // Save to Firebase
-        const sessionId = await this._saveSession(session);
+        // Update existing session or create new one if no live session
+        let sessionId = this.sessionId;
+        if (sessionId) {
+            await this._finalizeLiveSession(finalData);
+        } else {
+            // Fallback: create full session (shouldn't happen normally)
+            const session = {
+                playerId: this.currentSession.playerId,
+                gameId: this.currentSession.gameId,
+                timestamp: new Date().toISOString(),
+                date: new Date().toISOString().split('T')[0],
+                totalWords: this.currentSession.totalWords,
+                lesson: this.currentSession.lesson,
+                difficulty: this.currentSession.difficulty,
+                isRetryMode: this.currentSession.isRetryMode,
+                source: this.currentSession.source,
+                startTime: this.startTime,
+                ...finalData
+            };
+            sessionId = await this._saveSession(session);
+        }
 
         // Update player stats
         if (sessionId) {
-            await this._updatePlayerStats(session);
+            await this._updatePlayerStats({
+                ...this.currentSession,
+                ...finalData,
+                timestamp: new Date().toISOString()
+            });
         }
 
         // Log result
-        console.log(`📊 Session ended: ${session.score}% (${session.correctCount}/${wordsCompleted}) in ${session.durationSeconds}s`);
+        console.log(`📊 Session ended: ${finalData.score}% (${correctCount}/${wordsCompleted}) in ${finalData.durationSeconds}s`);
 
         // Reset
         this.currentSession = null;
         this.startTime = null;
+        this.sessionId = null;
+        this.answersSinceLastSave = 0;
 
         return sessionId;
+    }
+
+    /**
+     * Finalize a live session in Firebase with completed status.
+     */
+    async _finalizeLiveSession(finalData) {
+        if (!this.sessionId || !await this._init()) return;
+
+        try {
+            const { update } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js");
+            const sessionRef = ref(this.db, `${DB_PATHS.SESSIONS}/${this.sessionId}`);
+            await update(sessionRef, finalData);
+            console.log('📊 Live session finalized:', this.sessionId);
+        } catch (error) {
+            console.warn('Statistics: Failed to finalize session:', error.message);
+        }
     }
 
     /**
@@ -362,6 +493,8 @@ class StatisticsService {
             console.log('📊 Session cancelled');
             this.currentSession = null;
             this.startTime = null;
+            this.sessionId = null;
+            this.answersSinceLastSave = 0;
         }
     }
 

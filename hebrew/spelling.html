@@ -16,22 +16,22 @@
             <div class="difficulty-section">
                 <h3 style="text-align: center; margin-bottom: 15px; color: #4a5568;">בחר רמת קושי:</h3>
                 <div class="difficulty-buttons">
-                    <button class="difficulty-btn" onclick="setDifficulty('easy')" data-level="easy">
+                    <button type="button" class="difficulty-btn" onclick="setDifficulty('easy')" data-level="easy">
                         <span class="diff-emoji">😊</span>
                         <span class="diff-title">קל</span>
                         <span class="diff-desc">מילים בסיסיות<br>3-5 אותיות</span>
                     </button>
-                    <button class="difficulty-btn active" onclick="setDifficulty('medium')" data-level="medium">
+                    <button type="button" class="difficulty-btn active" onclick="setDifficulty('medium')" data-level="medium">
                         <span class="diff-emoji">🎯</span>
                         <span class="diff-title">בינוני</span>
                         <span class="diff-desc">מילים יומיומיות<br>4-7 אותיות</span>
                     </button>
-                    <button class="difficulty-btn" onclick="setDifficulty('hard')" data-level="hard">
+                    <button type="button" class="difficulty-btn" onclick="setDifficulty('hard')" data-level="hard">
                         <span class="diff-emoji">💪</span>
                         <span class="diff-title">קשה</span>
                         <span class="diff-desc">מילים מורכבות<br>6-10 אותיות</span>
                     </button>
-                    <button class="difficulty-btn" onclick="setDifficulty('expert')" data-level="expert">
+                    <button type="button" class="difficulty-btn" onclick="setDifficulty('expert')" data-level="expert">
                         <span class="diff-emoji">🏆</span>
                         <span class="diff-title">מומחה</span>
                         <span class="diff-desc">מילים מאתגרות<br>8+ אותיות</span>
@@ -40,7 +40,7 @@
             </div>
 
             <div style="text-align: center; margin-top: 2rem;">
-                <button class="btn btn-primary" onclick="startGame()" style="font-size: 1.2em; padding: 1rem 2rem;">
+                <button type="button" class="btn btn-primary" onclick="startGame()" style="font-size: 1.2em; padding: 1rem 2rem;">
                     ▶️ התחל משחק
                 </button>
             </div>
@@ -74,463 +74,23 @@
                         <div class="word-display" id="wordDisplay">לחץ להתחיל</div>
                     </div>
                     <div class="card-face card-back">
-                        <button class="speaker-button" onclick="speakWord()">🔊</button>
+                        <button type="button" class="speaker-button" onclick="speakWord()" aria-label="הקרא את המילה">🔊</button>
                         <div style="font-size: 2em; color: #667eea;">זכור את המילה!</div>
                     </div>
                 </div>
             </div>
 
             <div class="input-container" id="inputContainer">
-                <input type="text" id="wordInput" placeholder="כתוב את המילה כאן..." disabled>
+                <input type="text" id="wordInput" name="word" placeholder="כתוב את המילה כאן..." disabled>
             </div>
 
             <div style="text-align: center;">
-                <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()" style="display: none;">בדוק תשובה</button>
-                <button class="btn btn-success" onclick="newGame()">משחק חדש</button>
+                <button type="button" class="btn btn-primary" id="checkBtn" onclick="checkAnswer()" style="display: none;">בדוק תשובה</button>
+                <button type="button" class="btn btn-success" onclick="newGame()">משחק חדש</button>
             </div>
         </div>
     </div>
 
-    <script type="module">
-        // ============================================
-        // IMPORTS
-        // ============================================
-        import { vocabularyService } from '../shared/vocabulary-service.js';
-        import { createOfflineIndicator, showOfflineIndicator } from '../shared/offline-indicator.js';
-        import { statisticsService } from '../shared/statistics-service.js';
-
-        // ============================================
-        // Embedded vocabulary (fallback)
-        // ============================================
-        const EMBEDDED_VOCABULARY = {
-            easy: ['כלב', 'חתול', 'סוס', 'דג', 'ציפור', 'אדום', 'כחול', 'ירוק', 'צהוב', 'שחור',
-                   'לחם', 'חלב', 'ביצה', 'מים', 'גבינה', 'אמא', 'אבא', 'סבא', 'סבתא', 'אח',
-                   'יד', 'רגל', 'עין', 'אף', 'פה', 'בית', 'ספר', 'יום', 'לילה', 'פרח'],
-            medium: ['תרנגול', 'אריה', 'פיל', 'נמר', 'דובה', 'תכלת', 'ארגמן', 'זהוב', 'כסוף', 'סגול',
-                     'עגבנייה', 'בננה', 'גבינה', 'תפוח', 'תפוז', 'משפחה', 'דוד', 'דודה', 'בן', 'בת',
-                     'תלמיד', 'מורה', 'כיתה', 'ספר', 'מחברת', 'שיעור', 'חופש', 'ארוחה', 'מחשב', 'טלפון'],
-            hard: ['היפופוטם', 'קנגורו', 'תרנגולת', 'דולפין', 'פינגווין', 'ורוד', 'חום', 'לבן', 'אפור', 'כתום',
-                   'מלפפון', 'אבטיח', 'ענבים', 'תות', 'אננס', 'אוניברסיטה', 'פרופסור', 'מתמטיקה', 'היסטוריה', 'גיאוגרפיה',
-                   'הליקופטר', 'אוטובוס', 'רכבת', 'מטוס', 'אופניים', 'טלוויזיה', 'ספרייה', 'תרנגול', 'צוללת', 'עיפרון'],
-            expert: ['קרנף', 'תמנון', 'דינוזאור', 'טרנטולה', 'כריש', 'ביולוגיה', 'פסיכולוגיה', 'ארכיאולוגיה', 'אנציקלופדיה', 'טכנולוגיה',
-                     'מיקרוסקופ', 'אלקטרוני', 'אוטומטי', 'דמוקרטיה', 'אסטרונומיה', 'פילוסופיה', 'אנתרופולוגיה', 'מתודולוגיה',
-                     'אפידמיולוגיה', 'סוציולוגיה', 'אוניברסיטה', 'פרופסור', 'מתמטיקה', 'היסטוריה', 'גיאוגרפיה']
-        };
-
-        // Word Banks with Difficulty Levels
-        let wordsByDifficulty = EMBEDDED_VOCABULARY;
-
-        // Current words based on difficulty
-        let currentWords = wordsByDifficulty.medium; // Default to medium
-        let currentDifficulty = 'medium';
-
-        // ============================================
-        // Load vocabulary - 3-tier fallback: Firebase -> JSON -> Embedded
-        // ============================================
-        async function loadVocabulary() {
-            // Create offline indicator
-            createOfflineIndicator();
-
-            // Set up status callback
-            vocabularyService.setStatusCallback(({ isOnline, source }) => {
-                showOfflineIndicator(!isOnline);
-            });
-
-            // Try VocabularyService (Firebase -> JSON -> null)
-            const data = await vocabularyService.getHebrewVocabulary();
-
-            if (data && data.wordPairs && data.wordPairs.length > 0) {
-                // Convert word pairs array to difficulty-based structure
-                wordsByDifficulty = {
-                    easy: [],
-                    medium: [],
-                    hard: [],
-                    expert: []
-                };
-
-                // Extract words grouped by difficulty (only type='words')
-                data.wordPairs.forEach(pair => {
-                    if (pair.word && pair.difficulty && pair.type === 'words') {
-                        if (wordsByDifficulty[pair.difficulty]) {
-                            wordsByDifficulty[pair.difficulty].push(pair.word);
-                        }
-                    }
-                });
-
-                // Add hard words to expert as well
-                wordsByDifficulty.expert = [...wordsByDifficulty.hard];
-
-                currentWords = wordsByDifficulty[currentDifficulty];
-                console.log('✅ Vocabulary loaded from ' + vocabularyService.getLastSource());
-                console.log(`Easy: ${wordsByDifficulty.easy.length}, Medium: ${wordsByDifficulty.medium.length}, Hard: ${wordsByDifficulty.hard.length}, Expert: ${wordsByDifficulty.expert.length}`);
-                return;
-            }
-
-            // Fallback to embedded vocabulary
-            showOfflineIndicator(true);
-            console.log('ℹ️ Using embedded vocabulary');
-        }
-
-        // Initialize on page load
-        window.addEventListener('load', function() {
-            loadVocabulary();
-        });
-
-        // Game State
-        let selectedCategories = [];
-        let gameWords = [];
-        let customWords = [];
-        let currentWord = '';
-        let correctCount = 0;
-        let wrongCount = 0;
-        let streakCount = 0;
-        let isPlaying = false;
-
-        // Difficulty Selection
-        function setDifficulty(level) {
-            currentDifficulty = level;
-            currentWords = wordsByDifficulty[level];
-
-            // Update UI
-            document.querySelectorAll('.difficulty-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-level="${level}"]`).classList.add('active');
-        }
-        
-        function updateCategoryCounts() {
-            const categories = ['animals', 'colors', 'family', 'food', 'body', 'school', 'nature', 'house', 'vehicles', 'time'];
-            categories.forEach(cat => {
-                const btn = document.querySelector(`[data-category="${cat}"]`);
-                if (btn && wordCategories[cat]) {
-                    btn.querySelector('.category-count').textContent = `${wordCategories[cat].length} מילים`;
-                }
-            });
-        }
-
-        // Tab Switching
-        function switchTab(tabName) {
-            // Update tab buttons
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-        }
-
-        // Category Selection
-        function toggleCategory(category) {
-            const btn = document.querySelector(`[data-category="${category}"]`);
-            btn.classList.toggle('selected');
-            
-            if (selectedCategories.includes(category)) {
-                selectedCategories = selectedCategories.filter(c => c !== category);
-            } else {
-                selectedCategories.push(category);
-            }
-        }
-
-        // File Upload
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                readFile(file);
-            }
-        }
-
-        function handleDrop(event) {
-            event.preventDefault();
-            event.target.classList.remove('dragover');
-            
-            const file = event.dataTransfer.files[0];
-            if (file) {
-                readFile(file);
-            }
-        }
-
-        function handleDragOver(event) {
-            event.preventDefault();
-            event.target.classList.add('dragover');
-        }
-
-        function handleDragLeave(event) {
-            event.target.classList.remove('dragover');
-        }
-
-        function readFile(file) {
-            const reader = new FileReader();
-            const uploadStatus = document.getElementById('uploadStatus');
-            
-            reader.onload = function(e) {
-                try {
-                    let words = [];
-                    const content = e.target.result;
-                    
-                    if (file.name.endsWith('.json')) {
-                        const data = JSON.parse(content);
-                        words = data.words || data;
-                    } else {
-                        words = content.split('\n').filter(word => word.trim());
-                    }
-                    
-                    if (words.length > 0) {
-                        gameWords = words;
-                        uploadStatus.innerHTML = `<div style="color: green; margin-top: 10px;">✅ נטענו ${words.length} מילים!</div>`;
-                        setTimeout(() => startGame(), 1000);
-                    }
-                } catch (error) {
-                    uploadStatus.innerHTML = `<div style="color: red; margin-top: 10px;">❌ שגיאה בקריאת הקובץ</div>`;
-                }
-            };
-            
-            reader.readAsText(file);
-        }
-
-        // Custom Words
-        function addCustomWord() {
-            const input = document.getElementById('newWord');
-            const word = input.value.trim();
-            
-            if (word && !customWords.includes(word)) {
-                customWords.push(word);
-                updateCustomWordsList();
-                input.value = '';
-            }
-        }
-
-        function updateCustomWordsList() {
-            const listEl = document.getElementById('customWordsList');
-            
-            if (customWords.length === 0) {
-                listEl.innerHTML = '<p style="color: #718096; text-align: center;">עדיין לא הוספת מילים</p>';
-            } else {
-                listEl.innerHTML = customWords.map(word => 
-                    `<span class="word-tag">${word}<span class="remove" onclick="removeCustomWord('${word}')">✕</span></span>`
-                ).join('');
-            }
-        }
-
-        function removeCustomWord(word) {
-            customWords = customWords.filter(w => w !== word);
-            updateCustomWordsList();
-        }
-
-        function clearCustomWords() {
-            if (confirm('למחוק את כל המילים?')) {
-                customWords = [];
-                updateCustomWordsList();
-            }
-        }
-
-        function exportWords() {
-            const dataStr = JSON.stringify({ words: customWords }, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportLink = document.createElement('a');
-            exportLink.setAttribute('href', dataUri);
-            exportLink.setAttribute('download', 'my-words.json');
-            exportLink.click();
-        }
-
-        // Game Start Functions
-        function startWithBuiltin() {
-            if (selectedCategories.length === 0) {
-                alert('נא לבחור לפחות קטגוריה אחת');
-                return;
-            }
-            
-            gameWords = [];
-            selectedCategories.forEach(cat => {
-                gameWords = gameWords.concat(wordCategories[cat]);
-            });
-            
-            startGame();
-        }
-
-        function startWithCustom() {
-            if (customWords.length === 0) {
-                alert('נא להוסיף לפחות מילה אחת');
-                return;
-            }
-            
-            gameWords = [...customWords];
-            startGame();
-        }
-
-        function startGame() {
-            // Load all words from current difficulty level
-            gameWords = [...currentWords];
-
-            if (gameWords.length === 0) {
-                alert('אין מילים במשחק');
-                return;
-            }
-
-            // Reset scores
-            correctCount = 0;
-            wrongCount = 0;
-            streakCount = 0;
-
-            // Start statistics session
-            statisticsService.startSession('hebrew-spelling', {
-                totalWords: gameWords.length,
-                difficulty: currentDifficulty,
-                source: vocabularyService.getLastSource()
-            });
-
-            // Update UI
-            document.getElementById('setupArea').style.display = 'none';
-            document.getElementById('gameArea').classList.add('active');
-            document.getElementById('totalWords').textContent = gameWords.length;
-            document.getElementById('correctScore').textContent = '0';
-            document.getElementById('wrongScore').textContent = '0';
-            document.getElementById('streakScore').textContent = '0';
-
-            // Display difficulty level
-            const difficultyNames = {
-                'easy': 'קל 😊',
-                'medium': 'בינוני 🎯',
-                'hard': 'קשה 💪',
-                'expert': 'מומחה 🏆'
-            };
-            document.getElementById('difficultyDisplay').textContent = difficultyNames[currentDifficulty] || 'מותאם אישית';
-
-            // Start game
-            isPlaying = true;
-            document.getElementById('checkBtn').style.display = 'inline-block';
-            document.getElementById('wordInput').disabled = false;
-
-            showNewWord();
-        }
-
-        // Game Functions
-        function showNewWord() {
-            currentWord = gameWords[Math.floor(Math.random() * gameWords.length)];
-            const card = document.getElementById('card');
-            const wordDisplay = document.getElementById('wordDisplay');
-            const inputContainer = document.getElementById('inputContainer');
-            const wordInput = document.getElementById('wordInput');
-            
-            card.classList.remove('flipped');
-            wordDisplay.textContent = currentWord;
-            wordInput.value = '';
-            inputContainer.classList.remove('show');
-            document.getElementById('checkBtn').disabled = true;
-            wordInput.disabled = true;
-        }
-
-        // Card flip
-        document.getElementById('card').addEventListener('click', function() {
-            if (isPlaying && !this.classList.contains('flipped')) {
-                this.classList.add('flipped');
-                document.getElementById('inputContainer').classList.add('show');
-                document.getElementById('wordInput').disabled = false;
-                document.getElementById('checkBtn').disabled = false;
-                document.getElementById('wordInput').focus();
-            }
-        });
-
-        // Check answer
-        function checkAnswer() {
-            const userAnswer = document.getElementById('wordInput').value.trim();
-            
-            if (userAnswer === currentWord) {
-                correctCount++;
-                streakCount++;
-                document.getElementById('correctScore').textContent = correctCount;
-                document.getElementById('streakScore').textContent = streakCount;
-                showFeedback(true);
-                
-                if (streakCount % 5 === 0) {
-                    showCelebration();
-                }
-            } else {
-                wrongCount++;
-                streakCount = 0;
-                document.getElementById('wrongScore').textContent = wrongCount;
-                document.getElementById('streakScore').textContent = streakCount;
-                document.getElementById('wordDisplay').textContent = `הנכונה: ${currentWord}`;
-                document.getElementById('card').classList.remove('flipped');
-                showFeedback(false);
-            }
-            
-            setTimeout(() => showNewWord(), 2000);
-        }
-
-        // Speech
-        function speakWord() {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(currentWord);
-                utterance.lang = 'he-IL';
-                utterance.rate = 0.8;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        // Feedback
-        function showFeedback(isCorrect) {
-            const feedback = document.createElement('div');
-            feedback.className = `feedback ${isCorrect ? 'success' : 'error'}`;
-            feedback.textContent = isCorrect ? '✓' : '✗';
-            document.body.appendChild(feedback);
-            
-            setTimeout(() => feedback.remove(), 800);
-        }
-
-        function showCelebration() {
-            const celebration = document.createElement('div');
-            celebration.style.cssText = `
-                position: fixed; top: 50%; left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 60px; color: #ffd700;
-                animation: celebrate 1s ease; z-index: 2000;
-            `;
-            celebration.textContent = `🏆 רצף של ${streakCount}! 🏆`;
-            document.body.appendChild(celebration);
-            
-            setTimeout(() => celebration.remove(), 2000);
-        }
-
-        // New game
-        async function newGame() {
-            // End statistics session if one was active
-            if (statisticsService.hasActiveSession()) {
-                await statisticsService.endSession({
-                    correctCount: correctCount,
-                    wrongCount: wrongCount
-                });
-            }
-
-            document.getElementById('setupArea').style.display = 'block';
-            document.getElementById('gameArea').classList.remove('active');
-            isPlaying = false;
-        }
-
-        // Enter key support
-        document.getElementById('wordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !document.getElementById('checkBtn').disabled) {
-                checkAnswer();
-            }
-        });
-
-        // Add animation styles
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes celebrate {
-                0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
-                50% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); }
-                100% { transform: translate(-50%, -50%) scale(1) rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Expose functions to global scope for onclick handlers
-        window.setDifficulty = setDifficulty;
-        window.startGame = startGame;
-        window.checkAnswer = checkAnswer;
-        window.speakWord = speakWord;
-        window.newGame = newGame;
-    </script>
+    <script type="module" src="spelling.js"></script>
 </body>
 </html>

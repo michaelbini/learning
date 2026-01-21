@@ -20,35 +20,35 @@
 
             <div class="game-modes">
 
-                <button class="mode-btn active" onclick="selectLevel(1)">
+                <button type="button" class="mode-btn active" onclick="selectLevel(1)">
                     <span class="mode-icon">😊</span>
                     <span>רמה 1</span>
-                    
+
                 </button>
-                <button class="mode-btn " onclick="selectLevel(2)">
+                <button type="button" class="mode-btn " onclick="selectLevel(2)">
                     <span class="mode-icon">🎯</span>
                     <span>רמה 2</span>
-                    
+
                 </button>
-                <button class="mode-btn " onclick="selectLevel(3)">
+                <button type="button" class="mode-btn " onclick="selectLevel(3)">
                     <span class="mode-icon">💪</span>
                     <span>רמה 3</span>
-                    
+
                 </button>
-                <button class="mode-btn " onclick="selectLevel(4)">
+                <button type="button" class="mode-btn " onclick="selectLevel(4)">
                     <span class="mode-icon">🔥</span>
                     <span>רמה 4</span>
-                    
+
                 </button>
-                <button class="mode-btn " onclick="selectLevel(5)">
+                <button type="button" class="mode-btn " onclick="selectLevel(5)">
                     <span class="mode-icon">🚀</span>
                     <span>רמה 5</span>
-                    
+
                 </button>
             </div>
 
             <div class="buttons-container">
-                <button class="btn btn-primary" onclick="startGame()">התחל משחק</button>
+                <button type="button" class="btn btn-primary" onclick="startGame()">התחל משחק</button>
             </div>
         </div>
 
@@ -93,7 +93,7 @@
             <div class="cart-container">
                 <div class="cart-header">
                     <div class="cart-title">🛒 העגלה שלך</div>
-                    <button class="btn btn-warning btn-sm" onclick="clearCart()">נקה עגלה</button>
+                    <button type="button" class="btn btn-warning btn-sm" onclick="clearCart()">נקה עגלה</button>
                 </div>
                 <div class="cart-items" id="cartItems">
                     <div style="text-align: center; color: #999;">העגלה ריקה</div>
@@ -104,10 +104,10 @@
                 
                 <!-- חישוב עודף -->
                 <div style="text-align: center; margin-top: 20px;">
-                    <label style="font-size: 1.2em; margin-bottom: 10px; display: block;">
-                        כמה עודף תקבל? 
+                    <label for="changeInput" style="font-size: 1.2em; margin-bottom: 10px; display: block;">
+                        כמה עודף תקבל?
                     </label>
-                    <input type="number" class="change-input" id="changeInput" step="0.01" placeholder="0.00">
+                    <input type="number" class="change-input" id="changeInput" name="change" step="0.01" placeholder="0.00">
                 </div>
             </div>
 
@@ -119,9 +119,9 @@
 
             <!-- כפתורים -->
             <div style="text-align: center; margin-top: 30px;">
-                <button class="btn btn-primary" onclick="checkAnswer()">בדוק תשובה</button>
-                <button class="btn btn-success" onclick="newRound()">סיבוב חדש</button>
-                <button class="btn btn-info" onclick="showHint()">💡 רמז (-5 נק')</button>
+                <button type="button" class="btn btn-primary" onclick="checkAnswer()">בדוק תשובה</button>
+                <button type="button" class="btn btn-success" onclick="newRound()">סיבוב חדש</button>
+                <button type="button" class="btn btn-info" onclick="showHint()" aria-label="רמז">💡 רמז (-5 נק')</button>
             </div>
 
             <!-- משוב -->
