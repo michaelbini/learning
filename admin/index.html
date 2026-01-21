@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Admin</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            margin: 0;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #4fc3f7; margin-bottom: 5px; }
+        .subtitle { color: #888; margin-bottom: 20px; }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .nav button {
+            background: #2d2d44;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .nav button:hover { background: #3d3d54; }
+        .nav button.active { background: #4fc3f7; color: #000; }
+
+        /* Panels */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #2d2d44;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-card .number { font-size: 32px; font-weight: bold; color: #4fc3f7; }
+        .stat-card .label { color: #888; font-size: 13px; }
+
+        /* Tables */
+        .table-container {
+            background: #2d2d44;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #252538;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .table-header h3 { margin: 0; color: #4fc3f7; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #3d3d54;
+        }
+        th { background: #252538; color: #4fc3f7; font-weight: 600; }
+        tr:hover { background: #353550; }
+
+        /* Buttons */
+        button {
+            background: #4fc3f7;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        button:hover { background: #3db3e7; }
+        button:disabled { background: #555; color: #888; cursor: not-allowed; }
+        button.secondary { background: #555; color: #fff; }
+        button.secondary:hover { background: #666; }
+        button.danger { background: #e53935; color: #fff; }
+        button.danger:hover { background: #f44336; }
+        button.success { background: #4caf50; color: #fff; }
+        button.success:hover { background: #5cbf60; }
+        button.small { padding: 5px 10px; font-size: 12px; }
+
+        /* Forms */
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+            min-width: 150px;
+        }
+        .form-group label { font-size: 12px; color: #888; }
+        input, select {
+            background: #1a1a2e;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+        }
+        input:focus, select:focus { border-color: #4fc3f7; outline: none; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: #2d2d44;
+            padding: 25px;
+            border-radius: 12px;
+            min-width: 350px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal h2 { margin-top: 0; color: #4fc3f7; }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 10px;
+            padding: 15px;
+            background: #252538;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filters input { flex: 1; min-width: 200px; }
+        .filters select { min-width: 120px; }
+
+        /* Status */
+        .status-bar {
+            display: flex;
+            gap: 15px;
+            padding: 10px 15px;
+            background: #252538;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+        .status-item { display: flex; align-items: center; gap: 5px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .status-dot.green { background: #4caf50; }
+        .status-dot.yellow { background: #ffc107; }
+        .status-dot.red { background: #e53935; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            display: none;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+        }
+        .toast.error { background: #e53935; }
+        .toast.show { display: block; }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Sync Panel */
+        .sync-section {
+            background: #252538;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .sync-section h4 { margin-top: 0; color: #4fc3f7; }
+        .sync-buttons { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        #syncLog {
+            background: #1a1a2e;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        #syncLog .success { color: #4caf50; }
+        #syncLog .error { color: #e53935; }
+        #syncLog .info { color: #4fc3f7; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .empty-state button { margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Vocabulary Admin</h1>
+        <p class="subtitle">Manage vocabulary data for learning games (Firebase Realtime Database)</p>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-dot" id="firebaseStatus"></span>
+                <span id="firebaseStatusText">Connecting...</span>
+            </div>
+            <div class="status-item">
+                <span>English: <strong id="englishCount">-</strong></span>
+            </div>
+            <div class="status-item">
+                <span>Hebrew: <strong id="hebrewCount">-</strong></span>
+            </div>
+            <div class="status-item">
+                <span>Source: <strong id="dataSource">-</strong></span>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <button class="active" onclick="showPanel('dashboard')">📊 Dashboard</button>
+            <button onclick="showPanel('english')">🇬🇧 English</button>
+            <button onclick="showPanel('hebrew')">🇮🇱 Hebrew</button>
+            <button onclick="showPanel('sync')">🔄 Sync / Import</button>
+        </nav>
+
+        <!-- Dashboard Panel -->
+        <div id="dashboard" class="panel active">
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="number" id="statEnglishTotal">-</div>
+                    <div class="label">English Words</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="statEnglishLessons">-</div>
+                    <div class="label">English Lessons</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="statHebrewTotal">-</div>
+                    <div class="label">Hebrew Pairs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="statHebrewTypes">-</div>
+                    <div class="label">Hebrew Types</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>📚 English Lessons</h3>
+                </div>
+                <table>
+                    <thead><tr><th>Lesson</th><th>Words</th><th>Actions</th></tr></thead>
+                    <tbody id="lessonBreakdown"></tbody>
+                </table>
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h3>🇮🇱 Hebrew by Difficulty</h3>
+                </div>
+                <table>
+                    <thead><tr><th>Difficulty</th><th>Pairs</th><th>Actions</th></tr></thead>
+                    <tbody id="difficultyBreakdown"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- English Panel -->
+        <div id="english" class="panel">
+            <div class="filters">
+                <input type="text" id="englishSearch" placeholder="Search words..." oninput="renderEnglishTable()">
+                <select id="englishLessonFilter" onchange="renderEnglishTable()">
+                    <option value="">All Lessons</option>
+                </select>
+                <button onclick="showAddEnglishModal()">+ Add Word</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>English</th>
+                            <th>Hebrew</th>
+                            <th>Lesson</th>
+                            <th style="width: 120px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="englishTable"></tbody>
+                </table>
+            </div>
+            <div id="englishEmpty" class="empty-state" style="display:none;">
+                <p>No English vocabulary in Firebase yet.</p>
+                <button onclick="showPanel('sync')" class="success">Import from JSON</button>
+            </div>
+        </div>
+
+        <!-- Hebrew Panel -->
+        <div id="hebrew" class="panel">
+            <div class="filters">
+                <input type="text" id="hebrewSearch" placeholder="Search pairs..." oninput="renderHebrewTable()">
+                <select id="hebrewTypeFilter" onchange="renderHebrewTable()">
+                    <option value="">All Types</option>
+                    <option value="words">Words</option>
+                    <option value="numbers">Numbers</option>
+                </select>
+                <select id="hebrewDifficultyFilter" onchange="renderHebrewTable()">
+                    <option value="">All Difficulties</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="expert">Expert</option>
+                </select>
+                <button onclick="showAddHebrewModal()">+ Add Pair</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Word</th>
+                            <th>Typo</th>
+                            <th>Type</th>
+                            <th>Difficulty</th>
+                            <th style="width: 120px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hebrewTable"></tbody>
+                </table>
+            </div>
+            <div id="hebrewEmpty" class="empty-state" style="display:none;">
+                <p>No Hebrew vocabulary in Firebase yet.</p>
+                <button onclick="showPanel('sync')" class="success">Import from JSON</button>
+            </div>
+        </div>
+
+        <!-- Sync Panel -->
+        <div id="sync" class="panel">
+            <div class="sync-section">
+                <h4>📤 Import JSON to Firebase</h4>
+                <p style="color: #888; margin-bottom: 15px;">Upload local JSON files to Firebase. This will add items with Firebase-generated IDs.</p>
+                <div class="sync-buttons">
+                    <button onclick="importToFirebase('english')" class="success">📤 Import English JSON</button>
+                    <button onclick="importToFirebase('hebrew')" class="success">📤 Import Hebrew JSON</button>
+                    <button onclick="importToFirebase('all')" class="success">📤 Import All</button>
+                </div>
+            </div>
+
+            <div class="sync-section">
+                <h4>📥 Export Firebase to JSON</h4>
+                <p style="color: #888; margin-bottom: 15px;">Download current Firebase data as JSON files (for backup or fallback).</p>
+                <div class="sync-buttons">
+                    <button onclick="exportFromFirebase('english')" class="secondary">📥 Export English</button>
+                    <button onclick="exportFromFirebase('hebrew')" class="secondary">📥 Export Hebrew</button>
+                </div>
+            </div>
+
+            <div class="sync-section">
+                <h4>⚠️ Danger Zone</h4>
+                <p style="color: #888; margin-bottom: 15px;">Clear all data from Firebase. Use with caution!</p>
+                <div class="sync-buttons">
+                    <button onclick="clearFirebase('english')" class="danger">🗑️ Clear English</button>
+                    <button onclick="clearFirebase('hebrew')" class="danger">🗑️ Clear Hebrew</button>
+                </div>
+            </div>
+
+            <div class="sync-section">
+                <h4>📋 Log</h4>
+                <div id="syncLog">Ready...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit English Modal -->
+    <div class="modal-overlay" id="englishModal">
+        <div class="modal">
+            <h2 id="englishModalTitle">Add English Word</h2>
+            <input type="hidden" id="englishEditId">
+            <div class="form-group">
+                <label>English Word</label>
+                <input type="text" id="inputEnglish" placeholder="e.g., book">
+            </div>
+            <div class="form-group">
+                <label>Hebrew Translation</label>
+                <input type="text" id="inputHebrew" placeholder="e.g., ספר" dir="rtl">
+            </div>
+            <div class="form-group">
+                <label>Lesson</label>
+                <input type="number" id="inputLesson" placeholder="e.g., 1" min="1">
+            </div>
+            <div class="modal-actions">
+                <button class="secondary" onclick="closeModal('englishModal')">Cancel</button>
+                <button onclick="saveEnglishWord()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Hebrew Modal -->
+    <div class="modal-overlay" id="hebrewModal">
+        <div class="modal">
+            <h2 id="hebrewModalTitle">Add Hebrew Pair</h2>
+            <input type="hidden" id="hebrewEditId">
+            <div class="form-group">
+                <label>Correct Word</label>
+                <input type="text" id="inputWord" placeholder="e.g., ילד" dir="rtl">
+            </div>
+            <div class="form-group">
+                <label>Common Typo</label>
+                <input type="text" id="inputTypo" placeholder="e.g., ילת" dir="rtl">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="inputType">
+                        <option value="words">Words</option>
+                        <option value="numbers">Numbers</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Difficulty</label>
+                    <select id="inputDifficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Hint (optional)</label>
+                <input type="text" id="inputHint" placeholder="e.g., נכתב עם ד בסוף" dir="rtl">
+            </div>
+            <div class="form-group">
+                <label>Example (optional)</label>
+                <input type="text" id="inputExample" placeholder="e.g., ה_____ משחק בגן" dir="rtl">
+            </div>
+            <div class="modal-actions">
+                <button class="secondary" onclick="closeModal('hebrewModal')">Cancel</button>
+                <button onclick="saveHebrewPair()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, set, get, remove, update, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Firebase config (same as magin.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBWc81acgd-9tVi4wLlAw_PXdEgR0n81qU",
+            authDomain: "trip-9506c.firebaseapp.com",
+            projectId: "trip-9506c",
+            storageBucket: "trip-9506c.firebasestorage.app",
+            messagingSenderId: "813393240812",
+            appId: "1:813393240812:web:929bed95de2c48d5e43bc9",
+            databaseURL: "https://trip-9506c-default-rtdb.firebaseio.com/"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Data state - stored as { id: data } objects
+        let englishWords = {};  // { "-NxAbc": {english, hebrew, lesson}, ... }
+        let hebrewPairs = {};   // { "-NxDef": {word, typo, type, difficulty}, ... }
+        let isConnected = false;
+
+        // Initialize with real-time listeners
+        function init() {
+            updateStatus('yellow', 'Connecting...');
+
+            // Listen to English vocabulary
+            onValue(ref(db, 'vocabulary/english'), (snapshot) => {
+                englishWords = snapshot.val() || {};
+                updateUI();
+                if (!isConnected) {
+                    isConnected = true;
+                    updateStatus('green', 'Connected');
+                    document.getElementById('dataSource').textContent = 'Firebase';
+                }
+            }, (error) => {
+                console.error('English listener error:', error);
+                updateStatus('red', 'Error: ' + error.message);
+            });
+
+            // Listen to Hebrew vocabulary
+            onValue(ref(db, 'vocabulary/hebrew'), (snapshot) => {
+                hebrewPairs = snapshot.val() || {};
+                updateUI();
+            }, (error) => {
+                console.error('Hebrew listener error:', error);
+            });
+        }
+
+        // Update all UI
+        function updateUI() {
+            const englishArr = Object.values(englishWords);
+            const hebrewArr = Object.values(hebrewPairs);
+
+            // Counts
+            document.getElementById('englishCount').textContent = englishArr.length;
+            document.getElementById('hebrewCount').textContent = hebrewArr.length;
+            document.getElementById('statEnglishTotal').textContent = englishArr.length;
+            document.getElementById('statHebrewTotal').textContent = hebrewArr.length;
+
+            // Lessons
+            const lessons = [...new Set(englishArr.map(w => w.lesson))].sort((a,b) => a-b);
+            document.getElementById('statEnglishLessons').textContent = lessons.length;
+
+            // Types
+            const types = [...new Set(hebrewArr.map(p => p.type))];
+            document.getElementById('statHebrewTypes').textContent = types.length;
+
+            // Lesson breakdown
+            const lessonCounts = {};
+            englishArr.forEach(w => lessonCounts[w.lesson] = (lessonCounts[w.lesson] || 0) + 1);
+            document.getElementById('lessonBreakdown').innerHTML = lessons.map(l => `
+                <tr>
+                    <td>Lesson ${l}</td>
+                    <td>${lessonCounts[l] || 0}</td>
+                    <td><button class="small secondary" onclick="filterEnglishByLesson(${l})">View</button></td>
+                </tr>
+            `).join('') || '<tr><td colspan="3" style="color:#666;text-align:center;">No data</td></tr>';
+
+            // Difficulty breakdown
+            const diffCounts = { easy: 0, medium: 0, hard: 0, expert: 0 };
+            hebrewArr.forEach(p => diffCounts[p.difficulty] = (diffCounts[p.difficulty] || 0) + 1);
+            document.getElementById('difficultyBreakdown').innerHTML = ['easy', 'medium', 'hard', 'expert']
+                .filter(d => diffCounts[d] > 0)
+                .map(d => `
+                    <tr>
+                        <td style="text-transform:capitalize;">${d}</td>
+                        <td>${diffCounts[d]}</td>
+                        <td><button class="small secondary" onclick="filterHebrewByDifficulty('${d}')">View</button></td>
+                    </tr>
+                `).join('') || '<tr><td colspan="3" style="color:#666;text-align:center;">No data</td></tr>';
+
+            // Update lesson filter dropdown
+            const lessonFilter = document.getElementById('englishLessonFilter');
+            const currentLesson = lessonFilter.value;
+            lessonFilter.innerHTML = '<option value="">All Lessons</option>' +
+                lessons.map(l => `<option value="${l}">Lesson ${l}</option>`).join('');
+            lessonFilter.value = currentLesson;
+
+            // Render tables
+            renderEnglishTable();
+            renderHebrewTable();
+        }
+
+        // Render English table
+        window.renderEnglishTable = function() {
+            const search = document.getElementById('englishSearch').value.toLowerCase();
+            const lessonFilter = document.getElementById('englishLessonFilter').value;
+
+            const entries = Object.entries(englishWords).filter(([id, w]) => {
+                const matchSearch = !search || w.english.toLowerCase().includes(search) || w.hebrew.includes(search);
+                const matchLesson = !lessonFilter || w.lesson == lessonFilter;
+                return matchSearch && matchLesson;
+            });
+
+            document.getElementById('englishEmpty').style.display = entries.length === 0 ? 'block' : 'none';
+            document.getElementById('englishTable').innerHTML = entries.slice(0, 100).map(([id, w]) => `
+                <tr>
+                    <td>${w.english}</td>
+                    <td dir="rtl">${w.hebrew}</td>
+                    <td>${w.lesson}</td>
+                    <td>
+                        <button class="small secondary" onclick="editEnglish('${id}')">Edit</button>
+                        <button class="small danger" onclick="deleteEnglish('${id}')">Del</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (entries.length > 100) {
+                document.getElementById('englishTable').innerHTML += `
+                    <tr><td colspan="4" style="color:#888;text-align:center;">
+                        Showing 100 of ${entries.length} - use search to filter
+                    </td></tr>`;
+            }
+        };
+
+        // Render Hebrew table
+        window.renderHebrewTable = function() {
+            const search = document.getElementById('hebrewSearch').value.toLowerCase();
+            const typeFilter = document.getElementById('hebrewTypeFilter').value;
+            const diffFilter = document.getElementById('hebrewDifficultyFilter').value;
+
+            const entries = Object.entries(hebrewPairs).filter(([id, p]) => {
+                const matchSearch = !search || p.word.includes(search) || p.typo.includes(search);
+                const matchType = !typeFilter || p.type === typeFilter;
+                const matchDiff = !diffFilter || p.difficulty === diffFilter;
+                return matchSearch && matchType && matchDiff;
+            });
+
+            document.getElementById('hebrewEmpty').style.display = entries.length === 0 ? 'block' : 'none';
+            document.getElementById('hebrewTable').innerHTML = entries.slice(0, 100).map(([id, p]) => `
+                <tr>
+                    <td dir="rtl">${p.word}</td>
+                    <td dir="rtl">${p.typo}</td>
+                    <td>${p.type}</td>
+                    <td>${p.difficulty}</td>
+                    <td>
+                        <button class="small secondary" onclick="editHebrew('${id}')">Edit</button>
+                        <button class="small danger" onclick="deleteHebrew('${id}')">Del</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            if (entries.length > 100) {
+                document.getElementById('hebrewTable').innerHTML += `
+                    <tr><td colspan="5" style="color:#888;text-align:center;">
+                        Showing 100 of ${entries.length} - use search to filter
+                    </td></tr>`;
+            }
+        };
+
+        // Panel navigation
+        window.showPanel = function(panel) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(panel).classList.add('active');
+            event.target.classList.add('active');
+        };
+
+        // Filter shortcuts
+        window.filterEnglishByLesson = function(lesson) {
+            document.getElementById('englishLessonFilter').value = lesson;
+            showPanel('english');
+            document.querySelectorAll('.nav button')[1].classList.add('active');
+            document.querySelectorAll('.nav button')[0].classList.remove('active');
+            renderEnglishTable();
+        };
+
+        window.filterHebrewByDifficulty = function(diff) {
+            document.getElementById('hebrewDifficultyFilter').value = diff;
+            showPanel('hebrew');
+            document.querySelectorAll('.nav button')[2].classList.add('active');
+            document.querySelectorAll('.nav button')[0].classList.remove('active');
+            renderHebrewTable();
+        };
+
+        // Modal functions
+        window.closeModal = function(id) {
+            document.getElementById(id).classList.remove('active');
+        };
+
+        window.showAddEnglishModal = function() {
+            document.getElementById('englishModalTitle').textContent = 'Add English Word';
+            document.getElementById('englishEditId').value = '';
+            document.getElementById('inputEnglish').value = '';
+            document.getElementById('inputHebrew').value = '';
+            document.getElementById('inputLesson').value = '1';
+            document.getElementById('englishModal').classList.add('active');
+            document.getElementById('inputEnglish').focus();
+        };
+
+        window.editEnglish = function(id) {
+            const word = englishWords[id];
+            document.getElementById('englishModalTitle').textContent = 'Edit English Word';
+            document.getElementById('englishEditId').value = id;
+            document.getElementById('inputEnglish').value = word.english;
+            document.getElementById('inputHebrew').value = word.hebrew;
+            document.getElementById('inputLesson').value = word.lesson;
+            document.getElementById('englishModal').classList.add('active');
+        };
+
+        window.saveEnglishWord = async function() {
+            const id = document.getElementById('englishEditId').value;
+            const word = {
+                english: document.getElementById('inputEnglish').value.trim(),
+                hebrew: document.getElementById('inputHebrew').value.trim(),
+                lesson: parseInt(document.getElementById('inputLesson').value) || 1
+            };
+
+            if (!word.english || !word.hebrew) {
+                showToast('Please fill in English and Hebrew', true);
+                return;
+            }
+
+            try {
+                if (id) {
+                    // Update existing
+                    await set(ref(db, `vocabulary/english/${id}`), word);
+                    showToast('Word updated!');
+                } else {
+                    // Add new
+                    await push(ref(db, 'vocabulary/english'), word);
+                    showToast('Word added!');
+                }
+                closeModal('englishModal');
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        };
+
+        window.deleteEnglish = async function(id) {
+            if (!confirm('Delete this word?')) return;
+            try {
+                await remove(ref(db, `vocabulary/english/${id}`));
+                showToast('Word deleted');
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        };
+
+        window.showAddHebrewModal = function() {
+            document.getElementById('hebrewModalTitle').textContent = 'Add Hebrew Pair';
+            document.getElementById('hebrewEditId').value = '';
+            document.getElementById('inputWord').value = '';
+            document.getElementById('inputTypo').value = '';
+            document.getElementById('inputType').value = 'words';
+            document.getElementById('inputDifficulty').value = 'medium';
+            document.getElementById('inputHint').value = '';
+            document.getElementById('inputExample').value = '';
+            document.getElementById('hebrewModal').classList.add('active');
+            document.getElementById('inputWord').focus();
+        };
+
+        window.editHebrew = function(id) {
+            const pair = hebrewPairs[id];
+            document.getElementById('hebrewModalTitle').textContent = 'Edit Hebrew Pair';
+            document.getElementById('hebrewEditId').value = id;
+            document.getElementById('inputWord').value = pair.word;
+            document.getElementById('inputTypo').value = pair.typo;
+            document.getElementById('inputType').value = pair.type;
+            document.getElementById('inputDifficulty').value = pair.difficulty;
+            document.getElementById('inputHint').value = pair.hint || '';
+            document.getElementById('inputExample').value = pair.example || '';
+            document.getElementById('hebrewModal').classList.add('active');
+        };
+
+        window.saveHebrewPair = async function() {
+            const id = document.getElementById('hebrewEditId').value;
+            const pair = {
+                word: document.getElementById('inputWord').value.trim(),
+                typo: document.getElementById('inputTypo').value.trim(),
+                type: document.getElementById('inputType').value,
+                difficulty: document.getElementById('inputDifficulty').value
+            };
+
+            const hint = document.getElementById('inputHint').value.trim();
+            const example = document.getElementById('inputExample').value.trim();
+            if (hint) pair.hint = hint;
+            if (example) pair.example = example;
+
+            if (!pair.word || !pair.typo) {
+                showToast('Please fill in word and typo', true);
+                return;
+            }
+
+            try {
+                if (id) {
+                    await set(ref(db, `vocabulary/hebrew/${id}`), pair);
+                    showToast('Pair updated!');
+                } else {
+                    await push(ref(db, 'vocabulary/hebrew'), pair);
+                    showToast('Pair added!');
+                }
+                closeModal('hebrewModal');
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        };
+
+        window.deleteHebrew = async function(id) {
+            if (!confirm('Delete this pair?')) return;
+            try {
+                await remove(ref(db, `vocabulary/hebrew/${id}`));
+                showToast('Pair deleted');
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        };
+
+        // Sync functions
+        function syncLog(msg, type = '') {
+            const log = document.getElementById('syncLog');
+            log.innerHTML += `<div class="${type}">${new Date().toLocaleTimeString()} - ${msg}</div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        window.importToFirebase = async function(type) {
+            document.getElementById('syncLog').innerHTML = '';
+
+            try {
+                if (type === 'english' || type === 'all') {
+                    syncLog('Loading english/vocabulary.json...', 'info');
+                    const resp = await fetch('../english/vocabulary.json');
+                    const data = await resp.json();
+                    const words = data.vocabulary || [];
+                    syncLog(`Found ${words.length} words`, 'info');
+
+                    syncLog('Uploading to Firebase (individual items)...', 'info');
+                    let count = 0;
+                    for (const word of words) {
+                        await push(ref(db, 'vocabulary/english'), word);
+                        count++;
+                        if (count % 20 === 0) syncLog(`  Uploaded ${count}/${words.length}...`);
+                    }
+                    syncLog(`✅ English complete: ${count} words`, 'success');
+                }
+
+                if (type === 'hebrew' || type === 'all') {
+                    syncLog('Loading hebrew/vocabulary.json...', 'info');
+                    const resp = await fetch('../hebrew/vocabulary.json');
+                    const data = await resp.json();
+                    const pairs = data.wordPairs || [];
+                    syncLog(`Found ${pairs.length} pairs`, 'info');
+
+                    syncLog('Uploading to Firebase (individual items)...', 'info');
+                    let count = 0;
+                    for (const pair of pairs) {
+                        await push(ref(db, 'vocabulary/hebrew'), pair);
+                        count++;
+                        if (count % 50 === 0) syncLog(`  Uploaded ${count}/${pairs.length}...`);
+                    }
+                    syncLog(`✅ Hebrew complete: ${count} pairs`, 'success');
+                }
+
+                syncLog('🎉 Import complete!', 'success');
+                showToast('Import complete!');
+            } catch (e) {
+                syncLog(`❌ Error: ${e.message}`, 'error');
+                showToast('Import failed', true);
+            }
+        };
+
+        window.exportFromFirebase = function(type) {
+            try {
+                let data, filename;
+                if (type === 'english') {
+                    data = { vocabulary: Object.values(englishWords) };
+                    filename = 'vocabulary-english.json';
+                } else {
+                    data = { wordPairs: Object.values(hebrewPairs) };
+                    filename = 'vocabulary-hebrew.json';
+                }
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('Download started');
+                syncLog(`📥 Exported ${type} (${type === 'english' ? data.vocabulary.length : data.wordPairs.length} items)`, 'success');
+            } catch (e) {
+                showToast('Export failed: ' + e.message, true);
+            }
+        };
+
+        window.clearFirebase = async function(type) {
+            const count = type === 'english' ? Object.keys(englishWords).length : Object.keys(hebrewPairs).length;
+            if (!confirm(`⚠️ Delete ALL ${count} ${type} items from Firebase?\n\nThis cannot be undone!`)) return;
+
+            try {
+                await remove(ref(db, `vocabulary/${type}`));
+                showToast(`${type} cleared`);
+                syncLog(`🗑️ Cleared all ${type} data`, 'info');
+            } catch (e) {
+                showToast('Error: ' + e.message, true);
+            }
+        };
+
+        // UI Helpers
+        function updateStatus(color, text) {
+            document.getElementById('firebaseStatus').className = `status-dot ${color}`;
+            document.getElementById('firebaseStatusText').textContent = text;
+        }
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast show' + (isError ? ' error' : '');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Auto-import via URL parameter
+        async function checkAutoImport() {
+            const params = new URLSearchParams(window.location.search);
+            const importType = params.get('import');
+            if (importType) {
+                // Wait for Firebase to connect
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                showPanel('sync');
+                document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.nav button')[3].classList.add('active');
+
+                if (importType === 'english' || importType === 'all') {
+                    await importToFirebase(importType === 'all' ? 'all' : 'english');
+                } else if (importType === 'hebrew') {
+                    await importToFirebase('hebrew');
+                }
+
+                // Remove the parameter from URL after import
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        }
+
+        // Start
+        init();
+        checkAutoImport();
+    </script>
+</body>
+</html>

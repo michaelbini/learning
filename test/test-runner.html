@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Games - Test Runner</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #569cd6;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #808080;
+            margin-bottom: 20px;
+        }
+
+        .purpose-box {
+            background: linear-gradient(135deg, #1a3a5c 0%, #1e3a5f 100%);
+            border-left: 4px solid #569cd6;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            color: #b8d4e8;
+        }
+
+        .purpose-box em {
+            color: #4ec9b0;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #252526;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-group label {
+            color: #569cd6;
+            font-weight: bold;
+        }
+
+        .control-group select {
+            background: #3c3c3c;
+            color: #d4d4d4;
+            border: 1px solid #555;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .control-group select:hover {
+            border-color: #0e639c;
+        }
+
+        .source-status {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .source-status.ready {
+            background: #2d4a3e;
+            color: #4ec9b0;
+        }
+
+        .source-status.unavailable {
+            background: #4a3a2d;
+            color: #cca700;
+        }
+
+        .source-status.error {
+            background: #4a2d2d;
+            color: #f14c4c;
+        }
+
+        .control-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        button {
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 4px;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #1177bb;
+        }
+
+        button.secondary {
+            background: #3c3c3c;
+        }
+
+        button.secondary:hover {
+            background: #505050;
+        }
+
+        button.danger {
+            background: #c53030;
+        }
+
+        button.danger:hover {
+            background: #e53e3e;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            padding: 10px 15px;
+            background: #333;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-dot.green { background: #4ec9b0; }
+        .status-dot.red { background: #f14c4c; }
+        .status-dot.yellow { background: #cca700; }
+        .status-dot.gray { background: #808080; }
+
+        #results {
+            background: #252526;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            min-height: 200px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .pass { color: #4ec9b0; }
+        .fail { color: #f14c4c; }
+        .info { color: #569cd6; }
+        .warn { color: #cca700; }
+
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+        }
+
+        .summary.all-pass {
+            border-left: 4px solid #4ec9b0;
+        }
+
+        .summary.has-fail {
+            border-left: 4px solid #f14c4c;
+        }
+
+        .test-frame-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .test-frame-container.visible {
+            display: block;
+        }
+
+        .test-frame-container h3 {
+            color: #569cd6;
+            margin-bottom: 10px;
+        }
+
+        #testFrame {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: white;
+        }
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .section h2 {
+            color: #4ec9b0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .test-descriptions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        details {
+            background: #252526;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #569cd6;
+            padding: 5px 0;
+            font-size: 16px;
+        }
+
+        summary:hover {
+            color: #7cb7eb;
+        }
+
+        .desc-table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .desc-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #333;
+            vertical-align: top;
+        }
+
+        .desc-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .desc-table td:first-child {
+            width: 30px;
+            color: #808080;
+            text-align: center;
+        }
+
+        .desc-table td:nth-child(2) {
+            width: 180px;
+            color: #4ec9b0;
+        }
+
+        .desc-table td:nth-child(3) {
+            color: #d4d4d4;
+        }
+
+        .desc-table code {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #ce9178;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Learning Games - Test Runner</h1>
+    <p class="subtitle">Test suite for vocabulary loading and game functionality</p>
+
+    <div class="purpose-box">
+        <strong>🎯 Purpose:</strong> These tests establish a <em>baseline</em> of current functionality before migrating to Firebase.
+        After migration, all tests must still pass to ensure we didn't break anything.<br><br>
+        <strong>📁 Data Source:</strong> Use the dropdown to switch between <em>JSON</em> (local files), <em>Firebase</em> (remote database),
+        or <em>Fallback</em> (tries Firebase first, then JSON). Same tests run against any source!
+    </div>
+
+    <div class="status-bar">
+        <div class="status-item">
+            <span class="status-dot gray" id="statusDot"></span>
+            <span id="statusText">Ready to run tests</span>
+        </div>
+        <div class="status-item">
+            <span>Tests: <span id="testCount">0</span></span>
+        </div>
+        <div class="status-item">
+            <span class="pass">Passed: <span id="passCount">0</span></span>
+        </div>
+        <div class="status-item">
+            <span class="fail">Failed: <span id="failCount">0</span></span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Data Source:</label>
+            <select id="dataSource" onchange="updateDataSourceStatus()">
+                <option value="json" selected>📁 JSON Files (Local)</option>
+                <option value="firebase">🔥 Firebase (Remote)</option>
+                <option value="fallback">🔄 Fallback (Firebase → JSON)</option>
+            </select>
+            <span id="dataSourceStatus" class="source-status">Ready</span>
+        </div>
+        <div class="control-buttons">
+            <button onclick="runAllTests()">▶️ Run All Tests</button>
+            <button onclick="runEnglishTests()" class="secondary">🇬🇧 English Tests</button>
+            <button onclick="runHebrewTests()" class="secondary">🇮🇱 Hebrew Tests</button>
+            <button onclick="clearResults()" class="danger">🗑️ Clear</button>
+        </div>
+    </div>
+
+    <div id="results">
+Click "Run All Tests" to start testing...
+    </div>
+
+    <div class="section">
+        <h2>Test Descriptions</h2>
+        <div class="test-descriptions">
+            <details open>
+                <summary>🇬🇧 English Vocabulary Tests (11)</summary>
+                <table class="desc-table">
+                    <tr><td>1</td><td><strong>vocabulary.json loads</strong></td><td>Verifies the JSON file exists and server returns 200 OK</td></tr>
+                    <tr><td>2</td><td><strong>has vocabulary array</strong></td><td>Checks data has <code>vocabulary</code> property that is a non-empty array</td></tr>
+                    <tr><td>3</td><td><strong>words have fields</strong></td><td>Each word object has <code>english</code> and <code>hebrew</code> properties</td></tr>
+                    <tr><td>4</td><td><strong>exact word count (87)</strong></td><td>Verifies exactly <strong>87 words</strong> exist - fails if count changes</td></tr>
+                    <tr><td>5</td><td><strong>no empty values</strong></td><td>All words have non-empty <code>english</code> and <code>hebrew</code> values</td></tr>
+                    <tr><td>6</td><td><strong>sample data check</strong></td><td>Verifies first word has correct data types and structure</td></tr>
+                    <tr><td>7</td><td><strong>has lesson field</strong></td><td>All words have a <code>lesson</code> property (not null/undefined)</td></tr>
+                    <tr><td>8</td><td><strong>exactly 2 lessons</strong></td><td>Vocabulary contains exactly lessons <code>1</code> and <code>2</code></td></tr>
+                    <tr><td>9</td><td><strong>lesson 1 count (66)</strong></td><td>Filtering <code>lesson === 1</code> returns exactly <strong>66 words</strong></td></tr>
+                    <tr><td>10</td><td><strong>lesson 2 count (21)</strong></td><td>Filtering <code>lesson === 2</code> returns exactly <strong>21 words</strong></td></tr>
+                    <tr><td>11</td><td><strong>lesson filtering</strong></td><td>No words overlap between lessons, counts sum to total</td></tr>
+                </table>
+            </details>
+            <details open>
+                <summary>🇮🇱 Hebrew Vocabulary Tests (16)</summary>
+                <table class="desc-table">
+                    <tr><td>1</td><td><strong>vocabulary.json loads</strong></td><td>Verifies the JSON file exists and server returns 200 OK</td></tr>
+                    <tr><td>2</td><td><strong>has wordPairs array</strong></td><td>Checks data has <code>wordPairs</code> property that is a non-empty array</td></tr>
+                    <tr><td>3</td><td><strong>pairs have fields</strong></td><td>Each pair has <code>word</code>, <code>typo</code>, and <code>type</code> properties</td></tr>
+                    <tr><td>4</td><td><strong>exact total count (792)</strong></td><td>Verifies exactly <strong>792 pairs</strong> exist - fails if count changes</td></tr>
+                    <tr><td>5</td><td><strong>words filter (448)</strong></td><td>Filtering <code>type === 'words'</code> returns exactly <strong>448 pairs</strong></td></tr>
+                    <tr><td>6</td><td><strong>numbers filter (344)</strong></td><td>Filtering <code>type === 'numbers'</code> returns exactly <strong>344 pairs</strong></td></tr>
+                    <tr><td>7</td><td><strong>no empty values</strong></td><td>All pairs have non-empty <code>word</code> and <code>typo</code> values</td></tr>
+                    <tr><td>8</td><td><strong>valid types only</strong></td><td>All pairs have type of either <code>words</code> or <code>numbers</code></td></tr>
+                    <tr><td>9</td><td><strong>sample data check</strong></td><td>Verifies first pair has correct types and word ≠ typo</td></tr>
+                    <tr><td>10</td><td><strong>has difficulty field</strong></td><td>All pairs have a <code>difficulty</code> property</td></tr>
+                    <tr><td>11</td><td><strong>4 difficulty levels</strong></td><td>Contains exactly: <code>easy</code>, <code>medium</code>, <code>hard</code>, <code>expert</code></td></tr>
+                    <tr><td>12</td><td><strong>easy count (52)</strong></td><td>Filtering <code>difficulty === 'easy'</code> returns exactly <strong>52 pairs</strong></td></tr>
+                    <tr><td>13</td><td><strong>medium count (209)</strong></td><td>Filtering <code>difficulty === 'medium'</code> returns exactly <strong>209 pairs</strong></td></tr>
+                    <tr><td>14</td><td><strong>hard count (521)</strong></td><td>Filtering <code>difficulty === 'hard'</code> returns exactly <strong>521 pairs</strong></td></tr>
+                    <tr><td>15</td><td><strong>expert count (10)</strong></td><td>Filtering <code>difficulty === 'expert'</code> returns exactly <strong>10 pairs</strong></td></tr>
+                    <tr><td>16</td><td><strong>difficulty sum</strong></td><td>All difficulty counts sum to total (792)</td></tr>
+                </table>
+            </details>
+            <details open>
+                <summary>📄 Game Page Tests (6)</summary>
+                <table class="desc-table">
+                    <tr><td>1</td><td><strong>English Flashcards</strong></td><td>Verifies <code>english/flashcards.html</code> loads (HTTP 200)</td></tr>
+                    <tr><td>2</td><td><strong>English Quiz</strong></td><td>Verifies <code>english/quiz.html</code> loads (HTTP 200)</td></tr>
+                    <tr><td>3</td><td><strong>English Typing</strong></td><td>Verifies <code>english/typing.html</code> loads (HTTP 200)</td></tr>
+                    <tr><td>4</td><td><strong>English Board</strong></td><td>Verifies <code>english/board.html</code> loads (HTTP 200)</td></tr>
+                    <tr><td>5</td><td><strong>Hebrew Spelling</strong></td><td>Verifies <code>hebrew/spelling.html</code> loads (HTTP 200)</td></tr>
+                    <tr><td>6</td><td><strong>Hebrew Spelling Compare</strong></td><td>Verifies <code>hebrew/spelling-compar.html</code> loads (HTTP 200)</td></tr>
+                </table>
+            </details>
+        </div>
+    </div>
+
+    <div class="test-frame-container" id="frameContainer">
+        <h3>Test Frame (for page load tests)</h3>
+        <iframe id="testFrame" src="about:blank"></iframe>
+    </div>
+
+    <script type="module">
+        import { TestRunner, MockFetch, wait } from './test-utils.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { firebaseConfig, DB_PATHS, FIREBASE_TIMEOUT } from '../shared/firebase-config.js';
+
+        const runner = new TestRunner();
+
+        // ============================================
+        // DATA SOURCE ABSTRACTION
+        // ============================================
+        const DataSource = {
+            // Current mode: 'json' | 'firebase' | 'fallback'
+            mode: 'json',
+
+            // Firebase instances
+            firebaseApp: null,
+            firebaseDb: null,
+            isInitialized: false,
+
+            // Initialize Firebase
+            async initFirebase() {
+                if (this.isInitialized) return true;
+
+                try {
+                    this.firebaseApp = initializeApp(firebaseConfig);
+                    this.firebaseDb = getDatabase(this.firebaseApp);
+                    this.isInitialized = true;
+                    console.log('✅ Firebase initialized for tests');
+                    return true;
+                } catch (error) {
+                    console.warn('⚠️ Firebase init failed:', error.message);
+                    return false;
+                }
+            },
+
+            // Check if Firebase is available
+            isFirebaseAvailable() {
+                return this.isInitialized && this.firebaseDb !== null;
+            },
+
+            // Get English vocabulary from current source
+            async getEnglishVocabulary() {
+                const source = this.mode;
+
+                if (source === 'json') {
+                    return this._fetchJson('../english/vocabulary.json');
+                }
+
+                if (source === 'firebase') {
+                    await this.initFirebase();
+                    if (!this.isFirebaseAvailable()) {
+                        throw new Error('Firebase not available');
+                    }
+                    return this._fetchFirebase(DB_PATHS.VOCABULARY_ENGLISH, 'vocabulary');
+                }
+
+                if (source === 'fallback') {
+                    // Try Firebase first, fall back to JSON
+                    await this.initFirebase();
+                    if (this.isFirebaseAvailable()) {
+                        try {
+                            return await this._fetchFirebase(DB_PATHS.VOCABULARY_ENGLISH, 'vocabulary');
+                        } catch (e) {
+                            console.warn('Firebase failed, falling back to JSON:', e.message);
+                        }
+                    }
+                    return this._fetchJson('../english/vocabulary.json');
+                }
+
+                throw new Error(`Unknown data source: ${source}`);
+            },
+
+            // Get Hebrew vocabulary from current source
+            async getHebrewVocabulary() {
+                const source = this.mode;
+
+                if (source === 'json') {
+                    return this._fetchJson('../hebrew/vocabulary.json');
+                }
+
+                if (source === 'firebase') {
+                    await this.initFirebase();
+                    if (!this.isFirebaseAvailable()) {
+                        throw new Error('Firebase not available');
+                    }
+                    return this._fetchFirebase(DB_PATHS.VOCABULARY_HEBREW, 'wordPairs');
+                }
+
+                if (source === 'fallback') {
+                    await this.initFirebase();
+                    if (this.isFirebaseAvailable()) {
+                        try {
+                            return await this._fetchFirebase(DB_PATHS.VOCABULARY_HEBREW, 'wordPairs');
+                        } catch (e) {
+                            console.warn('Firebase failed, falling back to JSON:', e.message);
+                        }
+                    }
+                    return this._fetchJson('../hebrew/vocabulary.json');
+                }
+
+                throw new Error(`Unknown data source: ${source}`);
+            },
+
+            // Internal: Fetch from JSON file
+            async _fetchJson(url) {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${url}: ${response.status}`);
+                }
+                return response.json();
+            },
+
+            // Internal: Fetch from Firebase with timeout
+            async _fetchFirebase(path, wrapperKey) {
+                // Create timeout promise
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Firebase timeout')), FIREBASE_TIMEOUT);
+                });
+
+                // Create fetch promise
+                const fetchPromise = get(ref(this.firebaseDb, path));
+
+                // Race between fetch and timeout
+                const snapshot = await Promise.race([fetchPromise, timeoutPromise]);
+                const data = snapshot.val();
+
+                if (!data) {
+                    throw new Error(`No data found at ${path}`);
+                }
+
+                // Transform Firebase object to array and wrap in expected format
+                const array = Object.values(data);
+                console.log(`✅ Loaded ${array.length} items from Firebase: ${path}`);
+
+                // Return in expected format (vocabulary or wordPairs wrapper)
+                return { [wrapperKey]: array };
+            },
+
+            // Get current source description for logging
+            getSourceDescription() {
+                const descriptions = {
+                    'json': '📁 JSON Files',
+                    'firebase': '🔥 Firebase',
+                    'fallback': '🔄 Fallback Mode'
+                };
+                return descriptions[this.mode] || this.mode;
+            }
+        };
+
+        // Initialize Firebase on page load
+        DataSource.initFirebase().then(success => {
+            if (success) {
+                window.updateDataSourceStatus();
+            }
+        });
+
+        // Update UI status when data source changes
+        window.updateDataSourceStatus = function() {
+            const select = document.getElementById('dataSource');
+            const status = document.getElementById('dataSourceStatus');
+            DataSource.mode = select.value;
+
+            if (select.value === 'json') {
+                status.textContent = 'Ready';
+                status.className = 'source-status ready';
+            } else if (select.value === 'firebase') {
+                if (DataSource.isFirebaseAvailable()) {
+                    status.textContent = 'Connected ✓';
+                    status.className = 'source-status ready';
+                } else {
+                    status.textContent = 'Connecting...';
+                    status.className = 'source-status unavailable';
+                }
+            } else if (select.value === 'fallback') {
+                if (DataSource.isFirebaseAvailable()) {
+                    status.textContent = 'Firebase → JSON ✓';
+                    status.className = 'source-status ready';
+                } else {
+                    status.textContent = 'JSON only';
+                    status.className = 'source-status unavailable';
+                }
+            }
+        };
+
+        // Update UI with test status
+        function updateStatus(status, color) {
+            document.getElementById('statusText').textContent = status;
+            document.getElementById('statusDot').className = `status-dot ${color}`;
+        }
+
+        function updateCounts() {
+            document.getElementById('testCount').textContent = runner.passed + runner.failed;
+            document.getElementById('passCount').textContent = runner.passed;
+            document.getElementById('failCount').textContent = runner.failed;
+        }
+
+        function log(message, type = '') {
+            const results = document.getElementById('results');
+            const span = document.createElement('span');
+            span.className = type;
+            span.textContent = message + '\n';
+            results.appendChild(span);
+            results.scrollTop = results.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // ============================================
+        // ENGLISH VOCABULARY TESTS
+        // ============================================
+        const EXPECTED_ENGLISH_WORDS = 87;
+        const EXPECTED_LESSON_1_WORDS = 66;
+        const EXPECTED_LESSON_2_WORDS = 21;
+
+        async function runEnglishTests() {
+            runner.suite(`English Vocabulary [${DataSource.getSourceDescription()}]`);
+
+            // Test 1: Data source loads
+            await runner.run('vocabulary loads successfully', async () => {
+                const data = await DataSource.getEnglishVocabulary();
+                runner.assertNotNull(data, 'Data should not be null');
+            });
+
+            // Test 2: Data has correct structure
+            await runner.run('vocabulary has vocabulary array', async () => {
+                const data = await DataSource.getEnglishVocabulary();
+                runner.assertNotNull(data.vocabulary, 'Should have vocabulary property');
+                runner.assertTrue(Array.isArray(data.vocabulary), 'vocabulary should be an array');
+                runner.assertNotEmpty(data.vocabulary, 'vocabulary should not be empty');
+            });
+
+            // Test 3: Words have required fields
+            await runner.run('words have english and hebrew fields', async () => {
+                const data = await DataSource.getEnglishVocabulary();
+                const firstWord = data.vocabulary[0];
+
+                runner.assertHasProperty(firstWord, 'english', 'Word should have english');
+                runner.assertHasProperty(firstWord, 'hebrew', 'Word should have hebrew');
+            });
+
+            // Test 4: Verify expected count
+            await runner.run(`vocabulary has exactly ${EXPECTED_ENGLISH_WORDS} words`, async () => {
+                const data = await DataSource.getEnglishVocabulary();
+                const totalWords = data.vocabulary.length;
+                runner.assertEqual(totalWords, EXPECTED_ENGLISH_WORDS, 'Word count mismatch');
+                log(`   ✓ Verified: ${totalWords} words`, 'pass');
+            });
+
+            // Test 5: All words have non-empty values
+            await runner.run('all words have non-empty english and hebrew', async () => {
+                const data = await DataSource.getEnglishVocabulary();
+
+                const emptyWords = data.vocabulary.filter(w =>
+                    !w.english || w.english.trim() === '' ||
+                    !w.hebrew || w.hebrew.trim() === ''
+                );
+
+                runner.assertEqual(emptyWords.length, 0,
+                    `Found ${emptyWords.length} words with empty values`);
+            });
+
+            // Test 6: Sample data integrity check
+            await runner.run('sample word data is correct', async () => {
+                const data = await DataSource.getEnglishVocabulary();
+
+                // Check first word has expected structure
+                const first = data.vocabulary[0];
+                runner.assertTrue(typeof first.english === 'string', 'english should be string');
+                runner.assertTrue(typeof first.hebrew === 'string', 'hebrew should be string');
+                runner.assertTrue(first.english.length > 0, 'english should not be empty');
+                runner.assertTrue(first.hebrew.length > 0, 'hebrew should not be empty');
+                log(`   ℹ️ Sample: "${first.english}" = "${first.hebrew}"`, 'info');
+            });
+
+            // Test 7: All words have lesson field
+            await runner.run('all words have lesson field', async () => {
+                const data = await DataSource.getEnglishVocabulary();
+
+                const wordsWithoutLesson = data.vocabulary.filter(w =>
+                    w.lesson === undefined || w.lesson === null
+                );
+
+                runner.assertEqual(wordsWithoutLesson.length, 0,
+                    `Found ${wordsWithoutLesson.length} words without lesson field`);
+            });
+
+            // Test 8: Exactly 2 lessons exist
+            await runner.run('vocabulary has exactly 2 lessons (1 and 2)', async () => {
+                const data = await DataSource.getEnglishVocabulary();
+
+                const lessons = [...new Set(data.vocabulary.map(w => w.lesson))].sort();
+                runner.assertEqual(lessons.length, 2, 'Should have exactly 2 lessons');
+                runner.assertEqual(lessons[0], 1, 'First lesson should be 1');
+                runner.assertEqual(lessons[1], 2, 'Second lesson should be 2');
+                log(`   ✓ Lessons found: ${lessons.join(', ')}`, 'pass');
+            });
+
+            // Test 9: Lesson 1 has correct word count
+            await runner.run(`lesson 1 has exactly ${EXPECTED_LESSON_1_WORDS} words`, async () => {
+                const data = await DataSource.getEnglishVocabulary();
+
+                const lesson1Words = data.vocabulary.filter(w => w.lesson === 1);
+                runner.assertEqual(lesson1Words.length, EXPECTED_LESSON_1_WORDS,
+                    `Lesson 1 count mismatch`);
+                log(`   ✓ Verified: Lesson 1 has ${lesson1Words.length} words`, 'pass');
+            });
+
+            // Test 10: Lesson 2 has correct word count
+            await runner.run(`lesson 2 has exactly ${EXPECTED_LESSON_2_WORDS} words`, async () => {
+                const data = await DataSource.getEnglishVocabulary();
+
+                const lesson2Words = data.vocabulary.filter(w => w.lesson === 2);
+                runner.assertEqual(lesson2Words.length, EXPECTED_LESSON_2_WORDS,
+                    `Lesson 2 count mismatch`);
+                log(`   ✓ Verified: Lesson 2 has ${lesson2Words.length} words`, 'pass');
+            });
+
+            // Test 11: Lesson filtering works correctly
+            await runner.run('filtering by lesson returns correct subset', async () => {
+                const data = await DataSource.getEnglishVocabulary();
+
+                const lesson1 = data.vocabulary.filter(w => w.lesson === 1);
+                const lesson2 = data.vocabulary.filter(w => w.lesson === 2);
+
+                // Verify no overlap
+                const lesson1English = lesson1.map(w => w.english);
+                const lesson2English = lesson2.map(w => w.english);
+                const overlap = lesson1English.filter(e => lesson2English.includes(e));
+
+                runner.assertEqual(overlap.length, 0,
+                    `Found ${overlap.length} words in both lessons`);
+
+                // Verify sum equals total
+                runner.assertEqual(
+                    lesson1.length + lesson2.length,
+                    EXPECTED_ENGLISH_WORDS,
+                    'Lesson counts should sum to total'
+                );
+            });
+
+            updateCounts();
+        }
+
+        // ============================================
+        // HEBREW VOCABULARY TESTS
+        // ============================================
+        const EXPECTED_HEBREW_TOTAL = 792;
+        const EXPECTED_HEBREW_WORDS = 448;
+        const EXPECTED_HEBREW_NUMBERS = 344;
+        const EXPECTED_HEBREW_EASY = 52;
+        const EXPECTED_HEBREW_MEDIUM = 209;
+        const EXPECTED_HEBREW_HARD = 521;
+        const EXPECTED_HEBREW_EXPERT = 10;
+
+        async function runHebrewTests() {
+            runner.suite(`Hebrew Vocabulary [${DataSource.getSourceDescription()}]`);
+
+            // Helper to get pairs from data
+            const getPairs = (data) => data.wordPairs || data;
+
+            // Test 1: Data source loads
+            await runner.run('vocabulary loads successfully', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                runner.assertNotNull(data, 'Data should not be null');
+            });
+
+            // Test 2: Data has word pairs
+            await runner.run('vocabulary has wordPairs array', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+                runner.assertTrue(Array.isArray(pairs), 'Should be an array');
+                runner.assertNotEmpty(pairs, 'Should not be empty');
+            });
+
+            // Test 3: Word pairs have required fields
+            await runner.run('pairs have word, typo, and type fields', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+                const firstPair = pairs[0];
+
+                runner.assertHasProperty(firstPair, 'word', 'Should have word');
+                runner.assertHasProperty(firstPair, 'typo', 'Should have typo');
+                runner.assertHasProperty(firstPair, 'type', 'Should have type');
+            });
+
+            // Test 4: Verify total count
+            await runner.run(`vocabulary has exactly ${EXPECTED_HEBREW_TOTAL} pairs`, async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+                runner.assertEqual(pairs.length, EXPECTED_HEBREW_TOTAL, 'Total pairs mismatch');
+                log(`   ✓ Verified: ${pairs.length} total pairs`, 'pass');
+            });
+
+            // Test 5: Type filtering - words with exact count
+            await runner.run(`filtering by type=words returns ${EXPECTED_HEBREW_WORDS} pairs`, async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+                const wordPairs = pairs.filter(p => p.type === 'words');
+
+                runner.assertEqual(wordPairs.length, EXPECTED_HEBREW_WORDS, 'Words count mismatch');
+                runner.assertTrue(
+                    wordPairs.every(p => p.type === 'words'),
+                    'All filtered pairs should be words type'
+                );
+                log(`   ✓ Verified: ${wordPairs.length} word pairs`, 'pass');
+            });
+
+            // Test 6: Type filtering - numbers with exact count
+            await runner.run(`filtering by type=numbers returns ${EXPECTED_HEBREW_NUMBERS} pairs`, async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+                const numberPairs = pairs.filter(p => p.type === 'numbers');
+
+                runner.assertEqual(numberPairs.length, EXPECTED_HEBREW_NUMBERS, 'Numbers count mismatch');
+                runner.assertTrue(
+                    numberPairs.every(p => p.type === 'numbers'),
+                    'All filtered pairs should be numbers type'
+                );
+                log(`   ✓ Verified: ${numberPairs.length} number pairs`, 'pass');
+            });
+
+            // Test 7: All pairs have non-empty values
+            await runner.run('all pairs have non-empty word and typo', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const emptyPairs = pairs.filter(p =>
+                    !p.word || p.word.trim() === '' ||
+                    !p.typo || p.typo.trim() === ''
+                );
+
+                runner.assertEqual(emptyPairs.length, 0,
+                    `Found ${emptyPairs.length} pairs with empty values`);
+            });
+
+            // Test 8: All pairs have valid type
+            await runner.run('all pairs have valid type (words or numbers)', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const invalidTypes = pairs.filter(p =>
+                    p.type !== 'words' && p.type !== 'numbers'
+                );
+
+                runner.assertEqual(invalidTypes.length, 0,
+                    `Found ${invalidTypes.length} pairs with invalid type`);
+            });
+
+            // Test 9: Sample data integrity check
+            await runner.run('sample pair data is correct', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const first = pairs[0];
+                runner.assertTrue(typeof first.word === 'string', 'word should be string');
+                runner.assertTrue(typeof first.typo === 'string', 'typo should be string');
+                runner.assertTrue(first.word !== first.typo, 'word and typo should be different');
+                log(`   ℹ️ Sample: "${first.word}" (typo: "${first.typo}")`, 'info');
+            });
+
+            // Test 10: All pairs have difficulty field
+            await runner.run('all pairs have difficulty field', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const pairsWithoutDifficulty = pairs.filter(p =>
+                    p.difficulty === undefined || p.difficulty === null
+                );
+
+                runner.assertEqual(pairsWithoutDifficulty.length, 0,
+                    `Found ${pairsWithoutDifficulty.length} pairs without difficulty`);
+            });
+
+            // Test 11: Exactly 4 difficulty levels exist
+            await runner.run('vocabulary has 4 difficulty levels', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const difficulties = [...new Set(pairs.map(p => p.difficulty))].sort();
+                runner.assertEqual(difficulties.length, 4, 'Should have exactly 4 difficulty levels');
+                runner.assertTrue(difficulties.includes('easy'), 'Should have easy');
+                runner.assertTrue(difficulties.includes('medium'), 'Should have medium');
+                runner.assertTrue(difficulties.includes('hard'), 'Should have hard');
+                runner.assertTrue(difficulties.includes('expert'), 'Should have expert');
+                log(`   ✓ Difficulties: ${difficulties.join(', ')}`, 'pass');
+            });
+
+            // Test 12: Easy difficulty count
+            await runner.run(`easy difficulty has ${EXPECTED_HEBREW_EASY} pairs`, async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const easyPairs = pairs.filter(p => p.difficulty === 'easy');
+                runner.assertEqual(easyPairs.length, EXPECTED_HEBREW_EASY, 'Easy count mismatch');
+                log(`   ✓ Verified: ${easyPairs.length} easy pairs`, 'pass');
+            });
+
+            // Test 13: Medium difficulty count
+            await runner.run(`medium difficulty has ${EXPECTED_HEBREW_MEDIUM} pairs`, async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const mediumPairs = pairs.filter(p => p.difficulty === 'medium');
+                runner.assertEqual(mediumPairs.length, EXPECTED_HEBREW_MEDIUM, 'Medium count mismatch');
+                log(`   ✓ Verified: ${mediumPairs.length} medium pairs`, 'pass');
+            });
+
+            // Test 14: Hard difficulty count
+            await runner.run(`hard difficulty has ${EXPECTED_HEBREW_HARD} pairs`, async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const hardPairs = pairs.filter(p => p.difficulty === 'hard');
+                runner.assertEqual(hardPairs.length, EXPECTED_HEBREW_HARD, 'Hard count mismatch');
+                log(`   ✓ Verified: ${hardPairs.length} hard pairs`, 'pass');
+            });
+
+            // Test 15: Expert difficulty count
+            await runner.run(`expert difficulty has ${EXPECTED_HEBREW_EXPERT} pairs`, async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const expertPairs = pairs.filter(p => p.difficulty === 'expert');
+                runner.assertEqual(expertPairs.length, EXPECTED_HEBREW_EXPERT, 'Expert count mismatch');
+                log(`   ✓ Verified: ${expertPairs.length} expert pairs`, 'pass');
+            });
+
+            // Test 16: Difficulty counts sum to total
+            await runner.run('difficulty counts sum to total', async () => {
+                const data = await DataSource.getHebrewVocabulary();
+                const pairs = getPairs(data);
+
+                const easy = pairs.filter(p => p.difficulty === 'easy').length;
+                const medium = pairs.filter(p => p.difficulty === 'medium').length;
+                const hard = pairs.filter(p => p.difficulty === 'hard').length;
+                const expert = pairs.filter(p => p.difficulty === 'expert').length;
+
+                runner.assertEqual(
+                    easy + medium + hard + expert,
+                    EXPECTED_HEBREW_TOTAL,
+                    'Difficulty counts should sum to total'
+                );
+            });
+
+            updateCounts();
+        }
+
+        // ============================================
+        // GAME PAGE TESTS
+        // ============================================
+        async function runGamePageTests() {
+            runner.suite('Game Pages');
+
+            const games = [
+                { name: 'English Flashcards', path: '../english/flashcards.html' },
+                { name: 'English Quiz', path: '../english/quiz.html' },
+                { name: 'English Typing', path: '../english/typing.html' },
+                { name: 'English Board', path: '../english/board.html' },
+                { name: 'Hebrew Spelling', path: '../hebrew/spelling.html' },
+                { name: 'Hebrew Spelling Compare', path: '../hebrew/spelling-compar.html' },
+            ];
+
+            for (const game of games) {
+                await runner.run(`${game.name} page loads`, async () => {
+                    const response = await fetch(game.path);
+                    runner.assertTrue(response.ok, `${game.name} should load`);
+                });
+            }
+
+            updateCounts();
+        }
+
+        // ============================================
+        // RUN ALL TESTS
+        // ============================================
+        window.runAllTests = async function() {
+            runner.reset();
+            clearLog();
+            updateStatus('Running tests...', 'yellow');
+            log(`🧪 Starting all tests using ${DataSource.getSourceDescription()}...\n`, 'info');
+
+            try {
+                await runEnglishTests();
+                log('');
+                await runHebrewTests();
+                log('');
+                await runGamePageTests();
+
+                // Show summary
+                log('\n' + '═'.repeat(50));
+                const summary = runner.summary();
+
+                const summaryHtml = document.createElement('div');
+                summaryHtml.className = `summary ${summary.failed === 0 ? 'all-pass' : 'has-fail'}`;
+                summaryHtml.innerHTML = `
+                    <strong>📊 Results: ${summary.passed} passed, ${summary.failed} failed</strong><br>
+                    ${summary.failed === 0 ? '✅ All tests passed!' : '❌ Some tests failed'}
+                `;
+                document.getElementById('results').appendChild(summaryHtml);
+
+                updateStatus(
+                    summary.failed === 0 ? 'All tests passed!' : `${summary.failed} tests failed`,
+                    summary.failed === 0 ? 'green' : 'red'
+                );
+            } catch (error) {
+                log(`\n❌ Test runner error: ${error.message}`, 'fail');
+                updateStatus('Error running tests', 'red');
+            }
+        };
+
+        window.runEnglishTests = async function() {
+            runner.reset();
+            clearLog();
+            updateStatus('Running English tests...', 'yellow');
+            log('🧪 Running English vocabulary tests...\n', 'info');
+            await runEnglishTests();
+            updateStatus('English tests complete', runner.failed === 0 ? 'green' : 'red');
+        };
+
+        window.runHebrewTests = async function() {
+            runner.reset();
+            clearLog();
+            updateStatus('Running Hebrew tests...', 'yellow');
+            log('🧪 Running Hebrew vocabulary tests...\n', 'info');
+            await runHebrewTests();
+            updateStatus('Hebrew tests complete', runner.failed === 0 ? 'green' : 'red');
+        };
+
+        window.clearResults = function() {
+            runner.reset();
+            updateCounts();
+            updateStatus('Ready to run tests', 'gray');
+            document.getElementById('results').innerHTML = 'Results cleared. Click "Run All Tests" to start...';
+        };
+    </script>
+</body>
+</html>
